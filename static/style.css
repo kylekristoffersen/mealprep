@@ -137,3 +137,22 @@ pre.out{background:var(--bg);border:1px solid var(--line);border-radius:6px;padd
 .btn.tiny.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 @media (max-width:700px){.btn.tiny{padding:7px 10px;font-size:.82rem}}
 .cookhead{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline;margin-bottom:10px}
+
+/* Ingredients table: wider page, full names, nothing cut off; stacked cards on phones */
+body[data-tab="ingredients"] .wrap{max-width:1400px}
+.ingtable th,.ingtable td{padding:6px 5px;vertical-align:middle}
+.ingtable td.c-name{width:100%;min-width:300px}
+.ingtable input.name{width:100%;min-width:0}
+.ingtable input{width:60px}
+.ingtable td.c-chk,.ingtable th.c-chk{text-align:center}
+.ingtable td.c-act{white-space:nowrap}
+@media (max-width:900px){
+  .ingtable thead{display:none}
+  .ingtable,.ingtable tbody{display:block}
+  .ingtable tr{display:grid;grid-template-columns:repeat(4,1fr);gap:6px 10px;padding:12px;border-bottom:1px solid var(--line)}
+  .ingtable td{display:flex;flex-direction:column;align-items:flex-start;gap:2px;border:0;padding:0;min-width:0;text-align:left}
+  .ingtable td.c-name{grid-column:1/-1;min-width:0}
+  .ingtable td[data-l]::before{content:attr(data-l);font:600 .68rem var(--mono);text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+  .ingtable input{width:100%}
+  .ingtable td.c-act{grid-column:span 2;justify-content:flex-end;align-self:end}
+}

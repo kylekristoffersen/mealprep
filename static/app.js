@@ -48,7 +48,7 @@ setInterval(poll,15000);document.addEventListener("visibilitychange",()=>{if(!do
 
 /* ---------- navigation ---------- */
 function renderTabs(){$("#tabs").innerHTML=TABS.map(([k,l])=>`<button role="tab" aria-selected="${k===tab}" data-tabgo="${k}">${l}</button>`).join("")}
-function render(){reconcile();renderTabs();const v=$("#view");
+function render(){reconcile();renderTabs();document.body.dataset.tab=tab;const v=$("#view");
   if(tab==="plan")planView(v);else if(tab==="shop")shopView(v);else if(tab==="cook")cookView(v);
   else if(tab==="recipes")recipesView(v);else if(tab==="ingredients")ingView(v);else if(tab==="targets")targetsView(v);else settingsView(v)}
 function go(t){tab=t;try{history.replaceState(null,"","#"+t)}catch(_){}render();window.scrollTo({top:0})}
