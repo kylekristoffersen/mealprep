@@ -135,7 +135,7 @@ function shoppingData(){const reg={},b2={},spice={};
     spices:Object.entries(spice).map(([id,a])=>({id,name:ING[id].name,amt:a})).sort(byName),removed:removed.sort(byName)}}
 
 // Plain-text list for the Tesco skill or for pasting into a chat. One line per item: name, amount, unit.
-function listText(){const{reg,b2,lidl,kaufland}=shoppingData();const line=x=>`${x.name}\t${fmtPlain(x.amt,x.unit)}\t${x.unit==="ks"?"ks":"g"}`;let t="";
+function listText(){const{reg,b2,lidl,kaufland}=shoppingData();const line=x=>`${x.name}${x.b2?" (Block 2, buy fresh)":""}\t${fmtPlain(x.amt,x.unit)}\t${x.unit==="ks"?"ks":"g"}`;let t="";
   const sec=(title,a)=>{if(a.length)t+=(t?"\n":"")+title+"\n"+a.map(line).join("\n")+"\n"};
   sec("ONLINE (Rohlík / Košík / Tesco)",reg);sec("ONLINE, BLOCK 2 BAKERY (buy fresh)",b2);sec("LIDL",lidl);sec("KAUFLAND",kaufland);return t.trim()}
 function planText(){let t="";for(const[s,label] of SLOTS){const f=b=>{const m=MEALS[PLAN[b][s].meal];return`${label}: ${m?m.name:"None"} (${PLAN[b][s].n})`};t+=`${f("block1")}\t\t${f("block2")}\n`}return t.trim()}
