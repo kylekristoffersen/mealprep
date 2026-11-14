@@ -72,18 +72,21 @@ function totalsHTML(b){if(!TARGETS)return"";const p=PLAN[b];const get=s=>macros(
   const mains=add(get("breakfast"),get("lunch"),get("dinner"));const kyle=add(mains,get("snack1"),get("snack2"));
   const line=(t,tg)=>`<div class="bars"><span class="${rangeStatus(t.kcal,tg.kcal[0],tg.kcal[1])}">${Math.round(t.kcal)}/${tg.kcal[1]} kcal</span>${["p","c","f"].map(k=>`<span class="${rangeStatus(t[k],tg[k]*.95,tg[k]*1.05)}">${k.toUpperCase()} ${Math.round(t[k])}/${tg[k]}</span>`).join("")}<span class="${t.fib>=tg.fib?"on":"near"}">Fibre ${Math.round(t.fib)}/${tg.fib}</span></div>`;
   return`<div class="totals"><div class="tot"><b>Annie</b>${line(mains,TARGETS.anna)}</div><div class="tot"><b>Kyle</b>${line(kyle,TARGETS.kyle)}</div></div>`}
+let UU_UNDO=[]; // session-only snapshots of USEUP, newest last
+function uuSnap(){UU_UNDO.push(JSON.parse(JSON.stringify(USEUP)));if(UU_UNDO.length>20)UU_UNDO.shift()}
+function uuUndo(){if(!UU_UNDO.length)return;USEUP=UU_UNDO.pop();savePlan();render();toast("Undone")}
 function useupHTML(){const ings=Object.entries(ING).sort((a,b)=>a[1].name.localeCompare(b[1].name,"cs"));
   const chips=USEUP.filter(u=>ING[u.id]).map(u=>{const st=uuStatus(u);const x=ING[u.id];
     const s=st.done?`all used: ${st.names.join(", ")} ✓`:st.names.length?`in ${st.names.join(", ")}${u.amt>0?` (${fmtAmt(st.t,x.unit)} of ${fmtAmt(u.amt,x.unit)})`:""}`:"not in the plan yet";
-    return`<span class="row" style="gap:2px;flex-wrap:nowrap"><span class="chip ${st.names.length?"on":"near"}" style="white-space:normal">${esc(x.name)}${u.amt>0?` · ${fmtAmt(u.amt,x.unit)}`:""}: ${esc(s)}</span><button class="icon" data-uudel="${esc(u.id)}" title="Remove from Use up" aria-label="Remove ${esc(x.name)}" style="width:26px;height:26px">×</button></span>`}).join("");
-  return`<details class="panel" style="margin-bottom:12px" ${USEUP.length?"open":""}><summary style="cursor:pointer"><b>Use up</b> <span class="muted small">Open packs and leftovers. Suggest favours meals that use them.</span></summary>
+    return`<span class="row" style="gap:2px;flex-wrap:nowrap"><span class="chip ${st.names.length?"on":"near"}" data-uuedit="${esc(u.id)}" title="Tap to edit the amount" style="white-space:normal;cursor:pointer">${esc(x.name)}${u.amt>0?` · ${fmtAmt(u.amt,x.unit)}`:""}: ${esc(s)}</span><button class="icon" data-uudel="${esc(u.id)}" title="Remove from Use up" aria-label="Remove ${esc(x.name)}" style="width:26px;height:26px">×</button></span>`}).join("");
+  return`<details class="panel" style="margin-bottom:12px" ${USEUP.length||UU_UNDO.length?"open":""}><summary style="cursor:pointer"><b>Use up</b> <span class="muted small">Open packs and leftovers. Suggest favours meals that use them. Tap an item to edit its amount.</span></summary>
     <div class="row" style="margin:10px 0;gap:8px">${chips||`<span class="muted small">Nothing listed. Add the open packs you want to finish this week.</span>`}</div>
-    <div class="row" style="gap:6px"><input id="uu-name" list="uu-ings" placeholder="Ingredient, e.g. mozzarella" autocomplete="off" style="flex:1 1 220px"><input id="uu-amt" inputmode="decimal" placeholder="Amount (optional)" style="width:160px" title="Grams, or pieces for things counted in pieces. Fills in 'At home' on the shopping list."><button class="btn" data-act="uuAdd">Add</button></div>
+    <div class="row" style="gap:6px"><input id="uu-name" list="uu-ings" placeholder="Ingredient, e.g. mozzarella" autocomplete="off" style="flex:1 1 220px"><input id="uu-amt" inputmode="decimal" placeholder="Amount (optional)" style="width:160px" title="Grams, or pieces for things counted in pieces. Fills in 'At home' on the shopping list."><button class="btn" data-act="uuAdd">Add</button>${UU_UNDO.length?`<button class="btn" data-act="uuUndo">↶ Undo</button>`:""}</div>
     <datalist id="uu-ings">${ings.map(([,x])=>`<option value="${esc(x.name)}">`).join("")}</datalist></details>`}
 function uuAdd(){const i=$("#uu-name"),a=$("#uu-amt");const q=fold(i.value.trim());if(!q)return;const all=Object.entries(ING);
   let hit=all.find(([,x])=>fold(x.name)===q);
   if(!hit){const c=all.filter(([,x])=>fold(x.name).includes(q));if(c.length===1)hit=c[0];else{toast(c.length?`${c.length} ingredients match. Pick one from the list.`:"No ingredient by that name in your library.");return}}
-  const amt=czNum(a.value)||0;USEUP=[...USEUP.filter(u=>u.id!==hit[0]),{id:hit[0],...(amt>0?{amt}:{})}];savePlan();render();toast(`${hit[1].name} added to Use up`)}
+  const amt=czNum(a.value)||0;uuSnap();const row={id:hit[0],...(amt>0?{amt}:{})};const ix=USEUP.findIndex(u=>u.id===hit[0]);if(ix>=0)USEUP[ix]=row;else USEUP.push(row);savePlan();render();toast(ix>=0?`${hit[1].name} updated`:`${hit[1].name} added to Use up`)}
 function planView(v){
   if(!Object.keys(MEALS).length){v.innerHTML=`<div class="empty">No meals yet. Add recipes on the <button class="linkbtn" data-tabgo="recipes">Recipes</button> tab (Import box), then come back to plan your week.</div>`;return}
   v.innerHTML=`${useupHTML()}<div class="actions" style="margin-top:0"><button class="btn primary" data-act="randAll">Suggest my week</button><button class="btn" data-act="rand:block1">Re-suggest Block 1</button><button class="btn" data-act="rand:block2">Re-suggest Block 2</button><button class="btn" data-act="reset">Reset planner</button></div>
@@ -164,6 +167,8 @@ async function importAll(file){const msg=$("#imp-msg");if(!file)return;
 
 /* ---------- events ---------- */
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.target.id==="uu-name"||e.target.id==="uu-amt")){e.preventDefault();uuAdd()}});
+document.addEventListener("click",e=>{const c=e.target.closest("[data-uuedit]");if(!c||e.target.closest("button"))return;const u=USEUP.find(x=>x.id===c.dataset.uuedit),x=u&&ING[u.id];if(!x)return;
+  const n=$("#uu-name"),a=$("#uu-amt");n.value=x.name;a.value=u.amt>0?u.amt:"";a.focus();a.select();toast(`${x.name} loaded. Change the amount, then press Add`)});
 document.addEventListener("change",e=>{const t=e.target;
   if(t.id==="has-thermo"){SAFETY={...(SAFETY||{}),thermometer:t.checked};render();putDoc("settings/safety",SAFETY);return}
   if(t.dataset.b&&t.dataset.s){const sl=PLAN[t.dataset.b][t.dataset.s];sl.meal=t.value;sl.fresh=false;reconcile();sl.fresh=!!(t.value&&FRESH&&CARRY_SLOTS.includes(t.dataset.s)&&isFreezerFit(MEALS[t.value])&&slotServ(t.dataset.b+"|"+t.dataset.s)!==PACK_SERV);savePlan();render();return}
@@ -176,7 +181,8 @@ document.addEventListener("click",e=>{const t=e.target.closest("button,[data-ope
   else if(d.rand){const[b,s]=d.rand.split("|");if(PLAN[b][s].locked)return;const cat=SLOTS.find(x=>x[0]===s)[2];assignMeal(b,s,randomPick(cat,[PLAN[b][s].meal],d.rand,FRESH&&(cat==="lunch"||cat==="dinner")&&!planFresh(d.rand)));savePlan();render()}
   else if(d.slotfresh){const[b,s,on]=d.slotfresh.split("|");PLAN[b][s].fresh=on==="1";savePlan();render()}
   else if(d.nocarry){const[s,on]=d.nocarry.split("|");PLAN.block2[s].noCarry=on==="1";savePlan();render()}
-  else if(d.uudel){USEUP=USEUP.filter(u=>u.id!==d.uudel);savePlan();render()}
+  else if(d.uudel){uuSnap();USEUP=USEUP.filter(u=>u.id!==d.uudel);savePlan();render();toast("Removed. Tap Undo to bring it back")}
+  else if(d.act==="uuUndo")uuUndo();
   else if(d.act==="uuAdd")uuAdd();
   else if(d.inc||d.dec){const[b,s]=(d.inc||d.dec).split("|");PLAN[b][s].need=Math.max(1,needOf(PLAN[b][s])+(d.inc?1:-1));savePlan();render()}
   else if(d.act==="randAll"){randBlocks(["block1","block2"]);savePlan();render();toast("Suggested your week")}
