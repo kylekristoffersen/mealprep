@@ -89,7 +89,7 @@ function uuAdd(){const i=$("#uu-name"),a=$("#uu-amt");const q=fold(i.value.trim(
   const amt=czNum(a.value)||0;uuSnap();const row={id:hit[0],...(amt>0?{amt}:{})};const ix=USEUP.findIndex(u=>u.id===hit[0]);if(ix>=0)USEUP[ix]=row;else USEUP.push(row);savePlan();render();toast(ix>=0?`${hit[1].name} updated`:`${hit[1].name} added to Use up`)}
 function planView(v){
   if(!Object.keys(MEALS).length){v.innerHTML=`<div class="empty">No meals yet. Add recipes on the <button class="linkbtn" data-tabgo="recipes">Recipes</button> tab (Import box), then come back to plan your week.</div>`;return}
-  v.innerHTML=`${useupHTML()}<div class="actions" style="margin-top:0"><button class="btn primary" data-act="randAll">Suggest my week</button><button class="btn" data-act="rand:block1">Re-suggest Block 1</button><button class="btn" data-act="rand:block2">Re-suggest Block 2</button><button class="btn" data-act="reset">Reset planner</button></div>
+  v.innerHTML=`${useupHTML()}<div class="actions" style="margin-top:0"><button class="btn primary" data-act="randAll">Suggest my week</button><button class="btn" data-act="rand:block1">Re-suggest Block 1</button><button class="btn" data-act="rand:block2">Re-suggest Block 2</button><button class="btn" data-act="reset">Reset planner</button><button class="btn" data-act="letaky" title="Opens this week's leták page of each shop in its own tab">Open letáky</button></div>
   <div class="panel" style="margin-bottom:16px"><div class="row" style="gap:16px">
     <span class="row"><b class="small">Ground beef this week</b><span class="filters" style="margin:0"><button data-mince="8020" aria-pressed="${minceMode()==="8020"}">80/20</button><button data-mince="lean" aria-pressed="${minceMode()==="lean"}">Lean (5 %)</button></span></span>
     <span class="row"><b class="small">Chicken</b><span class="filters" style="margin:0"><button data-fresh="0" aria-pressed="${!FRESH}">Freezer packs</button><button data-fresh="1" aria-pressed="${FRESH}">Buying fresh</button></span></span></div></div>
@@ -102,6 +102,11 @@ function planView(v){
     ${m?`<span class="prep ${m.prep}">${m.prep}</span>${chipFor(m)}${isFresh(m)?`<span class="chip" title="Made with fresh chicken, not a freezer pack">fresh chicken</span>`:""}${mealUses(m).map(id=>`<span class="chip on">uses: ${esc(ING[id]?.name||id)}</span>`).join("")}${portionHTML(b,s,m)}`:""}</div></div>`}).join("")}
   ${totalsHTML(b)}</section>`).join("")}</div>
   <p class="muted small" style="max-width:65ch">Suggest favours meals that use your Use-up items. <b>Eating</b> is how many portions you need in that block; the planner works out how many to cook. A freezer pack always cooks 6, and any spare in Block 1 carries to the same meal in Block 2. Locked slots stay put when you suggest or reset. Totals are per person per day: Annie eats breakfast, lunch and dinner; Kyle eats the same plus both snacks. Green hits the nutritionist's range, amber is within 10%, red is further off.</p>`}
+
+/* ---------- LETÁKY: one button opens every shop's leták page in its own tab. Edit the URLs here if a shop moves its page. ---------- */
+const LETAKY=[["Kaufland","https://www.kaufland.cz/letak.html"],["Tesco","https://itesco.cz/akcni-nabidky/letaky-a-katalogy/"],["Albert","https://www.albert.cz/akce-a-slevy/letaky"],["Lidl","https://www.lidl.cz/c/letaky/s10008614"],["Billa","https://www.billa.cz/letak"]];
+function openLetaky(){let n=0;for(const[,u] of LETAKY){const w=window.open(u,"_blank");if(w){n++;try{w.opener=null}catch(_){}}}
+  toast(n===LETAKY.length?"Opened "+n+" letáky in new tabs":"Your browser blocked "+(LETAKY.length-n)+" of "+LETAKY.length+" tabs. Allow pop-ups for this site and press the button again.")}
 
 /* ---------- SHOP ---------- */
 function shopView(v){const{reg,b2,lidl,kaufland,removed,spices}=shoppingData();const c=CHECKED;
@@ -196,6 +201,7 @@ document.addEventListener("click",e=>{const t=e.target.closest("button,[data-ope
   else if(d.lrestore){delete EDITS[d.lrestore];ui.editHome=null;savePlan();render()}
   else if(d.lcancel){ui.editHome=null;render()}
   else if(d.store){const[id,w]=d.store.split("|");setStore(id,w)}
+  else if(d.act==="letaky")openLetaky();
   else if(d.act==="copyList")copyText(listText(),"List copied: paste it into the chat with Claude");
   else if(d.act==="copyPlan")copyText(planText()+"\n\n"+listText(),"Plan and list copied");
   else if(d.act==="showList"){ui.list=!ui.list;render()}
