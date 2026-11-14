@@ -10,6 +10,7 @@ const FREEZER_PACKS={"kureci-prsa":[900,600]};
 const LEAN_MINCE="hovezi-mlete-libove-5", FAT_MINCE="hovezi-mlete-maso-vyberove";
 
 let ING={}, MEALS={}, TARGETS=null, SAFETY=null, SHOPSET=null;
+let DEALS=[], DEALPICK={};
 let PLAN=emptyPlan(), SWAPS={}, DISMISSED={}, EDITS={}, CHECKED={}, USEUP=[], MINCE="8020", FRESH=false, LISTWEEK=null, CARRY={};
 
 /* ---------- small helpers ---------- */
@@ -98,6 +99,30 @@ function uuStatus(u){let t=0;const names=[];for(const[b] of BLOCKS)for(const[s] 
 function mealUses(m,open){if(!m)return[];return USEUP.filter(u=>(m.items||[]).some(([i])=>i===u.id)&&!(open&&uuStatus(u).done)).map(u=>u.id)}
 function editFor(pre,id,reg){const e=EDITS[pre+id];if(e)return e;const u=USEUP.find(x=>x.id===id&&x.amt>0);if(!u)return null;return pre==="r:"||!(id in reg)?{home:u.amt,useup:true}:null}
 
+/* ---------- deals found in the letáky ----------
+   A deal = {id: ingredient id, store, price (Kč), amt + u (what the price is for: 1 kg, 500 g, 6 ks), was (normal price, optional), until (ISO date), note}.
+   Deals never change a plan by themselves: they nudge Suggest, show up on slots and the shopping list, and can be put in the plan with one tap. */
+const STORES=["Albert","Billa","Kaufland","Lidl","Tesco","Rohlík","Košík"];
+const ONLINE_STORES=["Tesco","Rohlík","Košík"];   // ordered online: a deal there stays on the main list as a price tag
+const kc=n=>(+n).toFixed(2).replace(".",",").replace(/,00$/,"");
+const fmtDate=iso=>{if(!iso)return"";const d=new Date(iso+"T12:00:00");return`${d.toLocaleDateString("en-GB",{weekday:"short"})} ${d.getDate()}.${d.getMonth()+1}.`};
+const dealActive=d=>!!ING[d.id]&&(!d.until||d.until>=todayISO());
+const activeDeals=()=>DEALS.filter(dealActive);
+function dealUnit(d){const x=ING[d.id];if(!x)return null;const a=d.amt>0?d.amt:1;let base;
+  if(x.unit==="ks"){if(d.u!=="ks")return null;base=a}else{if(d.u==="kg")base=a;else if(d.u==="g")base=a/1000;else return null}
+  return{price:d.price/base,was:d.was>0?d.was/base:null}}
+const dealsFor=id=>activeDeals().filter(d=>d.id===id).sort((a,b)=>(dealUnit(a)?.price??1e9)-(dealUnit(b)?.price??1e9));
+function dealCost(d,amt){const u=dealUnit(d);if(!u)return 0;return u.price*(ING[d.id].unit==="ks"?amt:amt/1000)}
+const dealPct=d=>d.was>d.price?Math.round(100*(1-d.price/d.was)):0;
+function dealPriceText(d){const per=ING[d.id]?.unit==="ks"?"ks":"kg",one=!(d.amt>0)||d.amt===1;
+  if(one&&d.u===per)return`${kc(d.price)} Kč/${per}`;
+  const u=dealUnit(d);return`${kc(d.price)} Kč / ${kc(d.amt>0?d.amt:1)} ${d.u}`+(u?` (${kc(u.price)} Kč/${per})`:"")}
+const dealLabel=d=>`${d.store} ${dealPriceText(d)}`;
+const mealDeals=m=>{const on=new Set(activeDeals().map(d=>d.id));return[...new Set((m?.items||[]).map(i=>i[0]).filter(i=>on.has(i)))]};
+function dealPickStore(id){const st=DEALPICK[id];return st&&!ONLINE_STORES.includes(st)&&dealsFor(id).some(d=>d.store===st)?st:null}
+function dealPlanMeals(id){const out=[];for(const[b,bn] of BLOCKS)for(const[s,sn] of SLOTS){const sl=PLAN[b][s],m=PM(sl.meal);if(m&&(m.items||[]).some(i=>i[0]===id))out.push({meal:sl.meal,name:m.name,where:`${bn} ${sn.toLowerCase()}`})}return out}
+function dealMeals(id){return Object.keys(MEALS).filter(mid=>(PM(mid)?.items||[]).some(i=>i[0]===id)).sort((a,b)=>MEALS[a].name.localeCompare(MEALS[b].name,"cs"))}
+
 /* ---------- suggest (randomise) ---------- */
 const mealsFor=cat=>Object.entries(MEALS).filter(([,m])=>m.cat===cat).sort((a,b)=>a[1].name.localeCompare(b[1].name,"cs"));
 const planFresh=skip=>{let n=0;for(const[b] of BLOCKS)for(const[s] of SLOTS){if(skip===b+"|"+s)continue;if(isFresh(MEALS[PLAN[b][s].meal]))n++}return n};
@@ -106,7 +131,7 @@ function randomPick(cat,avoid,slotKey,wantFresh){const all=mealsFor(cat).map(e=>
   if(!FRESH){const nf=pool.filter(id=>!isFresh(MEALS[id]));if(nf.length)pool=nf}
   // a slot that isn't 6 servings skips freezer-pack recipes, so no pack is left part-used
   if(slotServ(slotKey)!==PACK_SERV&&!FRESH){const np=pool.filter(id=>!isFreezerFit(MEALS[id]));if(np.length)pool=np}
-  const weighted=[];for(const id of pool){const n=1+4*Math.min(2,mealUses(MEALS[id],true).length);for(let i=0;i<n;i++)weighted.push(id)}
+  const weighted=[];for(const id of pool){const n=1+4*Math.min(2,mealUses(MEALS[id],true).length+mealDeals(PM(id)).length);for(let i=0;i<n;i++)weighted.push(id)}
   return weighted[Math.floor(Math.random()*weighted.length)]||""}
 function assignMeal(b,s,id){const sl=PLAN[b][s];sl.meal=id||"";sl.fresh=!!(id&&FRESH&&CARRY_SLOTS.includes(s)&&isFreezerFit(MEALS[id])&&slotServ(b+"|"+s)!==PACK_SERV);reconcile()}
 function randBlocks(bl){for(const b of bl)for(const[s] of SLOTS)if(!PLAN[b][s].locked){PLAN[b][s].meal="";PLAN[b][s].fresh=false}reconcile();
@@ -128,16 +153,18 @@ function shoppingData(){const reg={},b2={},spice={};
   const byName=(x,y)=>x.name.localeCompare(y.name,"cs");
   const toList=(o,pre,src)=>Object.entries(o).map(([id,a])=>({id,key:pre+id,name:ING[id].name,amt:a,orig:src[id],home:editFor(pre,id,orig.reg)?src[id]-a:0,edited:!!EDITS[pre+id],unit:ING[id].unit,b2:pre==="b:"})).sort(byName);
   const all=[...toList(reg,"r:",orig.reg),...toList(b2,"b:",orig.b2)];
-  const kaufland=all.filter(x=>isKauflandPick(x.id)).sort(byName);
-  const lidl=all.filter(x=>isLidlPick(x.id)&&!isKauflandPick(x.id)).sort(byName);
-  const away=id=>isLidlPick(id)||isKauflandPick(id);
-  return{reg:toList(reg,"r:",orig.reg).filter(x=>!away(x.id)),b2:toList(b2,"b:",orig.b2).filter(x=>!away(x.id)),lidl,kaufland,
+  const kaufland=all.filter(x=>isKauflandPick(x.id)&&!dealPickStore(x.id)).sort(byName);
+  const lidl=all.filter(x=>isLidlPick(x.id)&&!isKauflandPick(x.id)&&!dealPickStore(x.id)).sort(byName);
+  const away=id=>isLidlPick(id)||isKauflandPick(id)||!!dealPickStore(id);
+  const groups={};for(const x of all){const st=dealPickStore(x.id);if(st)(groups[st]=groups[st]||[]).push(x)}
+  const dealGroups=Object.keys(groups).sort((a,b)=>a.localeCompare(b,"cs")).map(store=>({store,items:groups[store].sort(byName)}));
+  return{reg:toList(reg,"r:",orig.reg).filter(x=>!away(x.id)),b2:toList(b2,"b:",orig.b2).filter(x=>!away(x.id)),lidl,kaufland,dealGroups,
     spices:Object.entries(spice).map(([id,a])=>({id,name:ING[id].name,amt:a})).sort(byName),removed:removed.sort(byName)}}
 
 // Plain-text list for the Tesco skill or for pasting into a chat. One line per item: name, amount, unit.
-function listText(){const{reg,b2,lidl,kaufland}=shoppingData();const line=x=>`${x.name}${x.b2?" (Block 2, buy fresh)":""}\t${fmtPlain(x.amt,x.unit)}\t${x.unit==="ks"?"ks":"g"}`;let t="";
+function listText(){const{reg,b2,lidl,kaufland,dealGroups}=shoppingData();const line=x=>`${x.name}${x.b2?" (Block 2, buy fresh)":""}\t${fmtPlain(x.amt,x.unit)}\t${x.unit==="ks"?"ks":"g"}`;let t="";
   const sec=(title,a)=>{if(a.length)t+=(t?"\n":"")+title+"\n"+a.map(line).join("\n")+"\n"};
-  sec("ONLINE (Rohlík / Košík / Tesco)",reg);sec("ONLINE, BLOCK 2 BAKERY (buy fresh)",b2);sec("LIDL",lidl);sec("KAUFLAND",kaufland);return t.trim()}
+  sec("ONLINE (Rohlík / Košík / Tesco)",reg);sec("ONLINE, BLOCK 2 BAKERY (buy fresh)",b2);sec("LIDL",lidl);sec("KAUFLAND",kaufland);for(const g of dealGroups)sec(g.store.toUpperCase()+" (THIS WEEK'S DEAL)",g.items);return t.trim()}
 function planText(){let t="";for(const[s,label] of SLOTS){const f=b=>{const m=MEALS[PLAN[b][s].meal];return`${label}: ${m?m.name:"None"} (${PLAN[b][s].n})`};t+=`${f("block1")}\t\t${f("block2")}\n`}return t.trim()}
 
 /* ---------- loading from the server's documents ---------- */
@@ -145,6 +172,7 @@ function loadDocs(docs){ING=docs["lib/ingredients"]?.data?.items||{};MEALS={};
   for(const[p,d] of Object.entries(docs))if(p.startsWith("meals/"))MEALS[p.slice(6)]=d.data;
   TARGETS=docs["settings/targets"]?.data||null;SAFETY=docs["settings/safety"]?.data||null;SHOPSET=docs["settings/shopping"]?.data||null;
   const d=docs["state/plan"]?.data;const cl=o=>JSON.parse(JSON.stringify(o||{}));
+  const dd=docs["state/deals"]?.data;DEALS=Array.isArray(dd?.deals)?cl(dd.deals):[];DEALPICK=cl(dd?.pick);
   if(d){PLAN=mergePlan(d.plan);SWAPS=cl(d.swaps);DISMISSED=cl(d.dismissed);EDITS=cl(d.edits);CHECKED=cl(d.checked);MINCE=d.mince==="lean"?"lean":"8020";FRESH=!!d.freshChicken;USEUP=Array.isArray(d.useup)?cl(d.useup):[];LISTWEEK=d.listWeek||null}
   else{PLAN=emptyPlan();SWAPS={};DISMISSED={};EDITS={};CHECKED={};MINCE="8020";FRESH=false;USEUP=[];LISTWEEK=null}
   reconcile()}

@@ -1,10 +1,10 @@
 /* Meal Prep Planner: the main app (Plan, Shop, Cook, Settings, storage). Library screens are in library.js. */
 "use strict";
 const $=s=>document.querySelector(s);
-const TABS=[["plan","Plan"],["shop","Shop"],["cook","Cook"],["recipes","Recipes"],["ingredients","Ingredients"],["targets","Targets"],["settings","Settings"]];
+const TABS=[["deals","Deals"],["plan","Plan"],["shop","Shop"],["cook","Cook"],["recipes","Recipes"],["ingredients","Ingredients"],["targets","Targets"],["settings","Settings"]];
 let DOCS={}, tab=(location.hash||"").slice(1), ME="", APPV="";
 if(!TABS.some(t=>t[0]===tab))tab="plan";
-const ui={cookMode:"prep",confirmClear:false,editHome:null,list:false,cat:"all",q:"",open:null,edit:null,servings:6,estOnly:false,mui:null,imp:null,backups:null,link:null,pw:false};
+const ui={cookMode:"prep",confirmClear:false,editHome:null,list:false,cat:"all",q:"",open:null,edit:null,servings:6,estOnly:false,mui:null,imp:null,backups:null,link:null,pw:false,deal:null,dealMore:{}};
 
 function toast(t){const el=$("#toast");el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2600)}
 const jhead={"Content-Type":"application/json"};
@@ -30,7 +30,11 @@ let planTimer=null, planWriting=false, planPending=false;
 function savePlan(){reconcile();clearTimeout(planTimer);planTimer=setTimeout(flushPlan,600)}
 async function flushPlan(){planTimer=null;if(planWriting){planPending=true;return}planWriting=true;
   const ok=await putDoc("state/plan",planDoc());planWriting=false;if(ok&&planPending){planPending=false;flushPlan()}}
-const dirty=()=>planTimer!==null||planWriting||pending>0;
+let dealsTimer=null, dealsWriting=false, dealsPending=false;
+function saveDeals(){clearTimeout(dealsTimer);dealsTimer=setTimeout(flushDeals,500)}
+async function flushDeals(){dealsTimer=null;if(dealsWriting){dealsPending=true;return}dealsWriting=true;
+  const ok=await putDoc("state/deals",{deals:DEALS,pick:DEALPICK});dealsWriting=false;if(ok&&dealsPending){dealsPending=false;flushDeals()}}
+const dirty=()=>planTimer!==null||planWriting||dealsTimer!==null||dealsWriting||pending>0;
 function maybeNewWeek(){const wk=weekKey();
   if(LISTWEEK&&LISTWEEK<wk){const n=Object.keys(EDITS).length+Object.keys(CHECKED).filter(k=>CHECKED[k]).length;SWAPS={};DISMISSED={};EDITS={};CHECKED={};LISTWEEK=wk;savePlan();if(n)setTimeout(()=>toast("New week: last week's ticks and At home amounts were cleared."),800)}
   else if(!LISTWEEK&&DOCS["state/plan"]){LISTWEEK=wk;savePlan()}}
@@ -49,7 +53,7 @@ setInterval(poll,15000);document.addEventListener("visibilitychange",()=>{if(!do
 /* ---------- navigation ---------- */
 function renderTabs(){$("#tabs").innerHTML=TABS.map(([k,l])=>`<button role="tab" aria-selected="${k===tab}" data-tabgo="${k}">${l}</button>`).join("")}
 function render(){reconcile();renderTabs();document.body.dataset.tab=tab;const v=$("#view");
-  if(tab==="plan")planView(v);else if(tab==="shop")shopView(v);else if(tab==="cook")cookView(v);
+  if(tab==="deals")dealsView(v);else if(tab==="plan")planView(v);else if(tab==="shop")shopView(v);else if(tab==="cook")cookView(v);
   else if(tab==="recipes")recipesView(v);else if(tab==="ingredients")ingView(v);else if(tab==="targets")targetsView(v);else settingsView(v)}
 function go(t){tab=t;try{history.replaceState(null,"","#"+t)}catch(_){}render();window.scrollTo({top:0})}
 
@@ -89,19 +93,82 @@ function uuAdd(){const i=$("#uu-name"),a=$("#uu-amt");const q=fold(i.value.trim(
   const amt=czNum(a.value)||0;uuSnap();const row={id:hit[0],...(amt>0?{amt}:{})};const ix=USEUP.findIndex(u=>u.id===hit[0]);if(ix>=0)USEUP[ix]=row;else USEUP.push(row);savePlan();render();toast(ix>=0?`${hit[1].name} updated`:`${hit[1].name} added to Use up`)}
 function planView(v){
   if(!Object.keys(MEALS).length){v.innerHTML=`<div class="empty">No meals yet. Add recipes on the <button class="linkbtn" data-tabgo="recipes">Recipes</button> tab (Import box), then come back to plan your week.</div>`;return}
-  v.innerHTML=`${useupHTML()}${ui.letaky?letakyHTML():""}<div class="actions" style="margin-top:0"><button class="btn primary" data-act="randAll">Suggest my week</button><button class="btn" data-act="rand:block1">Re-suggest Block 1</button><button class="btn" data-act="rand:block2">Re-suggest Block 2</button><button class="btn" data-act="reset">Reset planner</button><button class="btn" data-act="letaky" title="Opens this week's leták page of each shop in its own tab">Open letáky</button></div>
+  v.innerHTML=`${useupHTML()}${dealsStripHTML()}${ui.letaky?letakyHTML():""}<div class="actions" style="margin-top:0"><button class="btn primary" data-act="randAll">Suggest my week</button><button class="btn" data-act="rand:block1">Re-suggest Block 1</button><button class="btn" data-act="rand:block2">Re-suggest Block 2</button><button class="btn" data-act="reset">Reset planner</button><button class="btn" data-act="letaky" title="Opens this week's leták page of each shop in its own tab">Open letáky</button></div>
   <div class="panel" style="margin-bottom:16px"><div class="row" style="gap:16px">
     <span class="row"><b class="small">Ground beef this week</b><span class="filters" style="margin:0"><button data-mince="8020" aria-pressed="${minceMode()==="8020"}">80/20</button><button data-mince="lean" aria-pressed="${minceMode()==="lean"}">Lean (5 %)</button></span></span>
     <span class="row"><b class="small">Chicken</b><span class="filters" style="margin:0"><button data-fresh="0" aria-pressed="${!FRESH}">Freezer packs</button><button data-fresh="1" aria-pressed="${FRESH}">Buying fresh</button></span></span></div></div>
   <div class="grid2">${BLOCKS.map(([b,name,days])=>`<section class="panel"><div class="row" style="justify-content:space-between;margin-bottom:6px"><h2>${name}</h2><span class="tape">${days}</span></div>
   ${SLOTS.map(([s,label,cat])=>{const sel=PLAN[b][s];const m=PM(sel.meal);
-    return`<div class="slot"><label for="${b}-${s}">${label}</label><select id="${b}-${s}" data-b="${b}" data-s="${s}"><option value="">Choose…</option>${mealsFor(cat).map(([id,mm])=>`<option value="${esc(id)}" ${id===sel.meal?"selected":""}>${esc(mm.name)}${isFresh(mm)?" · fresh chicken":""}${CARRY_SLOTS.includes(s)&&isFreezerFit(mm)&&slotServ(b+"|"+s)!==PACK_SERV?` · freezer pack makes ${PACK_SERV}`:""}${mealUses(mm,true).length?" · uses leftovers":""}</option>`).join("")}</select>
+    return`<div class="slot"><label for="${b}-${s}">${label}</label><select id="${b}-${s}" data-b="${b}" data-s="${s}"><option value="">Choose…</option>${mealsFor(cat).map(([id,mm])=>`<option value="${esc(id)}" ${id===sel.meal?"selected":""}>${esc(mm.name)}${isFresh(mm)?" · fresh chicken":""}${CARRY_SLOTS.includes(s)&&isFreezerFit(mm)&&slotServ(b+"|"+s)!==PACK_SERV?` · freezer pack makes ${PACK_SERV}`:""}${mealUses(mm,true).length?" · uses leftovers":""}${mealDeals(PM(id)).length?" · on deal":""}</option>`).join("")}</select>
     <button class="icon" title="${sel.locked?"Unlock to change this slot":`Suggest a different ${label.toLowerCase()}`}" data-rand="${b}|${s}" aria-label="Random ${label}" ${sel.locked?"disabled style=\"opacity:.4;cursor:not-allowed\"":""}>⟳</button>
     <div class="meta"><div class="step"><button data-dec="${b}|${s}" aria-label="Fewer servings">−</button><input id="${b}-${s}-n" type="number" inputmode="numeric" min="1" value="${sel.need??sel.n}" data-n="${b}|${s}" aria-label="${label} portions eaten"><button data-inc="${b}|${s}" aria-label="More servings">+</button></div><span class="muted small" title="Portions eaten in this block. The planner works out how many to cook.">eating</span>
     <button class="btn tiny${sel.locked?" on":""}" data-lock="${b}|${s}" aria-pressed="${!!sel.locked}" title="${sel.locked?"Locked: Suggest leaves this slot alone. Tap to unlock.":"Lock this slot so Suggest leaves it alone"}">${sel.locked?"Locked":"Lock"}</button>
-    ${m?`<span class="prep ${m.prep}">${m.prep}</span>${chipFor(m)}${isFresh(m)?`<span class="chip" title="Made with fresh chicken, not a freezer pack">fresh chicken</span>`:""}${mealUses(m).map(id=>`<span class="chip on">uses: ${esc(ING[id]?.name||id)}</span>`).join("")}${portionHTML(b,s,m)}`:""}</div></div>`}).join("")}
+    ${m?`<span class="prep ${m.prep}">${m.prep}</span>${chipFor(m)}${isFresh(m)?`<span class="chip" title="Made with fresh chicken, not a freezer pack">fresh chicken</span>`:""}${mealUses(m).map(id=>`<span class="chip on">uses: ${esc(ING[id]?.name||id)}</span>`).join("")}${mealDeals(m).map(id=>`<span class="chip on wrap" title="Deal from the leták">deal: ${esc(ING[id]?.name||id)} · ${esc(dealLabel(dealsFor(id)[0]))}</span>`).join("")}${portionHTML(b,s,m)}`:""}</div></div>`}).join("")}
   ${totalsHTML(b)}</section>`).join("")}</div>
   <p class="muted small" style="max-width:65ch">Suggest favours meals that use your Use-up items. <b>Eating</b> is how many portions you need in that block; the planner works out how many to cook. A freezer pack always cooks 6, and any spare in Block 1 carries to the same meal in Block 2. Locked slots stay put when you suggest or reset. Totals are per person per day: Annie eats breakfast, lunch and dinner; Kyle eats the same plus both snacks. Green hits the nutritionist's range, amber is within 10%, red is further off.</p>`}
+
+/* ---------- DEALS: what the letáky have this week, and how it feeds the plan ---------- */
+const newDeal=()=>({name:"",store:"Albert",price:"",amt:"1",u:"kg",was:"",until:addDays(weekKey(),7),note:"",edit:null});
+let DEAL_UNDO=[]; // session-only snapshots, newest last
+function dealSnap(){DEAL_UNDO.push(JSON.parse(JSON.stringify({deals:DEALS,pick:DEALPICK})));if(DEAL_UNDO.length>20)DEAL_UNDO.shift()}
+function dealUndo(){if(!DEAL_UNDO.length)return;const x=DEAL_UNDO.pop();DEALS=x.deals;DEALPICK=x.pick;ui.deal&&(ui.deal.edit=null);saveDeals();render();toast("Undone")}
+function dealsStripHTML(){const act=activeDeals();
+  if(!act.length)return`<div class="panel" style="margin-bottom:12px"><span class="small"><b>Deals</b> <span class="muted">None added for this week.</span> <button class="linkbtn" data-tabgo="deals">Add this week's finds</button> <span class="muted">and Suggest will favour meals that use them.</span></span></div>`;
+  const ids=[...new Set(act.map(d=>d.id))].sort((a,b)=>ING[a].name.localeCompare(ING[b].name,"cs"));
+  const chips=ids.map(id=>{const names=[...new Set(dealPlanMeals(id).map(x=>x.name))];
+    return`<span class="chip ${names.length?"on":"near"}" style="white-space:normal">${esc(ING[id].name)} · ${esc(dealLabel(dealsFor(id)[0]))}: ${names.length?esc(names.join(", ")):"not in the plan yet"}</span>`}).join("");
+  return`<details class="panel" style="margin-bottom:12px" open><summary style="cursor:pointer"><b>Deals this week</b> <span class="muted small">${ids.filter(id=>dealPlanMeals(id).length).length} of ${ids.length} are in the plan</span></summary>
+    <div class="row" style="margin:10px 0 6px;gap:8px">${chips}</div><p class="muted small" style="margin:0">Suggest favours meals that use these. <button class="linkbtn" data-tabgo="deals">Manage deals and add meals that use them</button></p></details>`}
+function dealRow(d,i){const x=ING[d.id],name=x?x.name:d.id,p=dealPct(d);
+  const inPlan=dealPlanMeals(d.id),planned=new Set(inPlan.map(y=>y.meal));
+  const ms=dealMeals(d.id).sort((a,b)=>(planned.has(b)?1:0)-(planned.has(a)?1:0));const more=ui.dealMore[d.id],shown=more?ms:ms.slice(0,6);
+  const chip=mid=>planned.has(mid)?`<button class="chipbtn on" data-dealrm="${esc(mid)}" title="In the plan. Tap to take it out again">✓ ${esc(MEALS[mid].name)} · ${esc(inPlan.find(y=>y.meal===mid).where)}</button>`:`<button class="chipbtn" data-dealadd="${esc(mid)}" title="Put this meal in the plan">+ ${esc(MEALS[mid].name)}</button>`;
+  const hint=d.id===LEAN_MINCE&&MINCE!=="lean"?`Ground beef is set to 80/20 this week, so recipes don't use this one. <button class="btn tiny" data-mince="lean">Switch to Lean (5 %)</button>`
+    :d.id===FAT_MINCE&&MINCE==="lean"?`Ground beef is set to Lean (5 %) this week, so recipes don't use this one. <button class="btn tiny" data-mince="8020">Switch to 80/20</button>`:"";
+  return`<li class="deal"><div class="row" style="justify-content:space-between;align-items:flex-start;gap:8px"><div class="row" style="gap:6px 8px"><b>${esc(name)}</b><span class="chip">${esc(d.store)}</span><b class="mono">${esc(dealPriceText(d))}</b>${p?`<span class="chip on" title="Normal price ${esc(kc(d.was))} Kč">−${p} %</span>`:""}<span class="muted small">to ${esc(fmtDate(d.until))}${d.note?" · "+esc(d.note):""}${ONLINE_STORES.includes(d.store)?" · ordered online":""}</span></div>
+    <span class="row" style="gap:4px;flex-wrap:nowrap"><button class="btn tiny" data-dealedit="${i}">Edit</button><button class="btn tiny" data-dealdel="${i}" aria-label="Remove ${esc(name)} deal">Remove</button></span></div>
+    ${hint?`<p class="small" style="margin:6px 0 0">${hint}</p>`:""}
+    <div class="row" style="gap:6px;margin-top:8px"><span class="muted small">Meals:</span>${ms.length?shown.map(chip).join(""):`<span class="muted small">No meal in your library uses this yet.</span>`}${ms.length>6?`<button class="linkbtn" data-dealmore="${esc(d.id)}">${more?"Show fewer":"+"+(ms.length-6)+" more"}</button>`:""}</div></li>`}
+function dealsView(v){const f=ui.deal||(ui.deal=newDeal());const ed=f.edit!=null;
+  const rows=DEALS.map((d,i)=>({d,i}));
+  const act=rows.filter(r=>dealActive(r.d)).sort((a,b)=>ING[a.d.id].name.localeCompare(ING[b.d.id].name,"cs")||(dealUnit(a.d)?.price??0)-(dealUnit(b.d)?.price??0));
+  const old=rows.filter(r=>!dealActive(r.d));
+  v.innerHTML=`${ui.letaky?letakyHTML():""}<section class="panel" id="dealform" style="margin-bottom:16px"><div class="row" style="justify-content:space-between"><h2>${ed?"Edit deal":"Add a deal"}</h2><button class="btn" data-act="letaky" title="Opens this week's leták page of each shop in its own tab">Open letáky</button></div>
+    <p class="muted small" style="margin:4px 0 12px;max-width:65ch">Read the letáky, then add what's worth planning around. Each deal shows which of your meals use it, and Suggest favours those meals.</p>
+    <div class="form-grid"><label>Ingredient<input data-df="name" list="df-ings" value="${esc(f.name)}" autocomplete="off" placeholder="e.g. Kuřecí prsa"></label>
+    <label>Store<select data-df="store">${STORES.map(s=>`<option ${s===f.store?"selected":""}>${s}</option>`).join("")}</select></label>
+    <label>Price (Kč)<input data-df="price" inputmode="decimal" value="${esc(f.price)}" placeholder="89,90"></label>
+    <label>…for<span class="row" style="flex-wrap:nowrap;gap:6px"><input data-df="amt" inputmode="decimal" value="${esc(f.amt)}" style="width:72px"><select data-df="u">${["kg","g","ks"].map(u=>`<option ${u===f.u?"selected":""}>${u}</option>`).join("")}</select></span></label>
+    <label>Valid until<input type="date" data-df="until" value="${esc(f.until)}"></label></div>
+    <datalist id="df-ings">${Object.values(ING).sort((a,b)=>a.name.localeCompare(b.name,"cs")).map(x=>`<option value="${esc(x.name)}">`).join("")}</datalist>
+    <details style="margin-top:10px" ${f.was||f.note?"open":""}><summary class="small" style="cursor:pointer">Optional: normal price and note</summary><div class="form-grid" style="margin-top:8px"><label>Normal price (Kč, for the same amount)<input data-df="was" inputmode="decimal" value="${esc(f.was)}" placeholder="119,90"></label><label>Note<input data-df="note" value="${esc(f.note)}" placeholder="e.g. with Clubcard, max 3 pcs"></label></div></details>
+    <div class="actions" style="margin-bottom:0"><button class="btn primary" data-act="dealAdd">${ed?"Save changes":"Add deal"}</button>${ed?`<button class="btn" data-act="dealCancel">Cancel</button>`:""}${DEAL_UNDO.length?`<button class="btn" data-act="dealUndo">↶ Undo</button>`:""}</div></section>
+  ${act.length?`<section class="panel"><div class="row" style="justify-content:space-between;margin-bottom:4px"><h2>This week's deals</h2><span class="tape">${act.length} deals</span></div><ul class="dealist">${act.map(r=>dealRow(r.d,r.i)).join("")}</ul>
+    <p class="muted small" style="margin:12px 0 0;max-width:65ch">Tap <b>+ meal</b> to put it in the plan (it takes an empty slot, or one that has no deal or leftover use). Prices appear on the Plan and Shop tabs; on Shop you can send an item to the store that has it on offer.</p></section>`
+    :`<div class="empty">No deals for this week yet. Open the letáky, then add what you find above.</div>`}
+  ${old.length?`<details class="panel" style="margin-top:16px"><summary style="cursor:pointer"><b>Expired</b> <span class="muted small">${old.length} past deal${old.length===1?"":"s"}</span></summary><ul class="plain">${old.map(r=>`<li>${esc(ING[r.d.id]?.name||r.d.id)} · ${esc(r.d.store)} · ${ING[r.d.id]?esc(dealPriceText(r.d)):kc(r.d.price)+" Kč"} <span class="muted">(ended ${esc(fmtDate(r.d.until))})</span></li>`).join("")}</ul><button class="btn" data-act="dealClearOld">Clear expired</button></details>`:""}`}
+function dealAdd(){const f=ui.deal;if(!f)return;
+  const q=fold(f.name.trim());if(!q){toast("Type the ingredient first.");return}
+  const all=Object.entries(ING);let hit=all.find(([,x])=>fold(x.name)===q);
+  if(!hit){const c=all.filter(([,x])=>fold(x.name).includes(q));if(c.length===1)hit=c[0];else{toast(c.length?`${c.length} ingredients match. Pick one from the list.`:"No ingredient by that name in your library. Add it on the Ingredients tab first.");return}}
+  const price=czNum(f.price),amt=czNum(f.amt)||1,was=czNum(f.was)||0,ks=hit[1].unit==="ks";
+  if(!(price>0)){toast("Enter the price in Kč.");return}
+  if(ks!==(f.u==="ks")){toast(`${hit[1].name} is counted ${ks?"in pieces (ks)":"by weight: use kg or g"}.`);return}
+  if(!/^\d{4}-\d\d-\d\d$/.test(f.until||"")){toast("Enter the date the deal ends. It's on the leták.");return}
+  if(f.until<todayISO()){toast("That end date has already passed.");return}
+  if(was&&was<=price){toast("The normal price should be higher than the deal price. Leave it empty if you're not sure.");return}
+  const row={id:hit[0],store:f.store,price,amt,u:f.u,until:f.until,...(was?{was}:{}),...(f.note.trim()?{note:f.note.trim()}:{})};
+  dealSnap();const edit=f.edit!=null&&DEALS[f.edit];if(edit)DEALS[f.edit]=row;else DEALS.push(row);
+  ui.deal={...newDeal(),store:f.store,until:f.until};saveDeals();render();toast(`${hit[1].name}: ${dealLabel(row)} ${edit?"updated":"added"}`);
+  const n=document.querySelector('[data-df="name"]');if(n)n.focus()}
+function dealPlace(mid){const m=MEALS[mid];if(!m)return;
+  const cands=[];for(const[b,bn] of BLOCKS)for(const[s,sn,cat] of SLOTS)if(cat===m.cat&&!PLAN[b][s].locked)cands.push([b,s,bn,sn]);
+  if(!cands.length){toast(`Every ${m.cat} slot is locked. Unlock one on the Plan tab.`);return}
+  const free=([b,s])=>!PLAN[b][s].meal,plain=([b,s])=>{const x=PM(PLAN[b][s].meal);return!mealDeals(x).length&&!mealUses(x).length};
+  const[b,s,bn,sn]=cands.find(free)||cands.find(plain)||cands[cands.length-1];
+  const prev=MEALS[PLAN[b][s].meal]?.name;assignMeal(b,s,mid);savePlan();render();toast(`${m.name} is now ${bn} ${sn.toLowerCase()}${prev?` (replaced ${prev})`:""}`)}
+function dealUnplace(mid){let n=0,locked=0;for(const[b] of BLOCKS)for(const[s] of SLOTS)if(PLAN[b][s].meal===mid){if(PLAN[b][s].locked)locked++;else{assignMeal(b,s,"");n++}}
+  savePlan();render();toast(locked?"That slot is locked. Unlock it on the Plan tab first.":`${MEALS[mid]?.name||"Meal"} taken out of the plan`)}
 
 /* ---------- LETÁKY: one button opens every shop's leták page in its own tab. Edit the URLs here if a shop moves its page. ---------- */
 const LETAKY=[["Kaufland","https://www.kaufland.cz/letak.html"],["Tesco","https://www.itesco.cz/akcni-nabidky/letaky-a-katalogy/tesco-hypermarket-brno-kralovo-pole"],["Albert","https://www.albert.cz/aktualni-letaky"],["Lidl","https://www.lidl.cz/c/akcni-letak/s10008644"],["Billa","https://www.billa.cz/letaky-billa?tab=letaky-billa/velky-letak-nasledujici"]];
@@ -111,8 +178,8 @@ function openLetaky(){for(const[,u] of LETAKY){const a=document.createElement("a
   ui.letaky=true;render()}  // no Referer is sent, so shops can't reject us; the links panel stays as a backup if the browser blocks extra tabs
 
 /* ---------- SHOP ---------- */
-function shopView(v){const{reg,b2,lidl,kaufland,removed,spices}=shoppingData();const c=CHECKED;
-  if(!reg.length&&!b2.length&&!lidl.length&&!kaufland.length&&!removed.length){v.innerHTML=`<div class="empty">Pick meals on the Plan tab and the shopping list fills in here.</div>`;return}
+function shopView(v){const{reg,b2,lidl,kaufland,dealGroups,removed,spices}=shoppingData();const c=CHECKED;
+  if(!reg.length&&!b2.length&&!lidl.length&&!kaufland.length&&!dealGroups.length&&!removed.length){v.innerHTML=`<div class="empty">Pick meals on the Plan tab and the shopping list fills in here.</div>`;return}
   const r1=(x,i)=>i.unit==="ks"?+x.toFixed(1):Math.round(x);
   const li=x=>{const k=x.key;
     if(ui.editHome===k)return`<li style="flex-wrap:wrap"><span>${esc(x.name)} <span class="muted small">· plan needs ${fmtAmt(x.orig,x.unit)}</span></span><span class="row" style="gap:4px"><button class="btn primary tiny" data-lremove="${k}" title="You have the full amount the plan needs, so it comes off the list">Have all ${fmtAmt(x.orig,x.unit)}</button><label class="muted small" for="le-home">or some:</label><input id="le-home" inputmode="decimal" data-orig="${x.orig}" value="${x.home>0?cz(r1(x.home,x)):""}" placeholder="0" style="width:80px;text-align:right"><span class="muted">${x.unit==="ks"?"ks":"g"}</span>
@@ -120,8 +187,13 @@ function shopView(v){const{reg,b2,lidl,kaufland,removed,spices}=shoppingData();c
     const hc=x.home>0.05?` <span class="chip near" title="The plan needs ${fmtAmt(x.orig,x.unit)}; you have ${fmtAmt(x.home,x.unit)} at home">${fmtAmt(x.home,x.unit)} at home</span>`:"";
     const tips={"kureci-prsa":(()=>{const s=chickenSplit();return[s.fz?`From the freezer: ${fmtAmt(s.fz,"g")}${packNote("kureci-prsa",s.fz)}`:"",s.fr?`buy fresh: ${fmtAmt(s.fr,"g")}`:""].filter(Boolean).join(" · ")})()};
     const tip=tips[x.id];
-    const store=isKauflandPick(x.id)||isLidlPick(x.id)?`<button class="btn tiny" data-store="${x.id}|online" title="Buy this online instead">Online</button>`:`<button class="btn tiny" data-store="${x.id}|lidl">Lidl</button><button class="btn tiny" data-store="${x.id}|kaufland">Kaufland</button>`;
-    return`<li data-key="${k}" class="${c[k]?"done":""}"><span>${esc(x.name)}${x.b2&&(isLidlPick(x.id)||isKauflandPick(x.id))?` <span class="chip">Block 2, buy fresh</span>`:""}${hc}${tip?`<span class="muted small" style="display:block">${esc(tip)}</span>`:""}</span><span class="amt">${fmtAmt(x.amt,x.unit)}</span><button class="btn tiny" data-ledit="${k}" title="Enter how much you already have at home">At home</button>${store}</li>`};
+    const dl=dealsFor(x.id),dp=dealPickStore(x.id);
+    const dchips=dl.slice(0,2).map(d=>{const cost=dealCost(d,x.amt),p=dealPct(d);return`<span class="chip on wrap">${esc(dealLabel(d))}${p?` · −${p} %`:""} · to ${esc(fmtDate(d.until))}${cost?` · ≈ ${Math.round(cost)} Kč for ${fmtAmt(x.amt,x.unit)}`:""}${d.note?" · "+esc(d.note):""}</span>`}).join(" ");
+    const bd=dl.find(d=>!ONLINE_STORES.includes(d.store));
+    const dealBtn=dp?`<button class="btn tiny" data-dealpick="${esc(x.id)}|" title="Put it back on the online list">Back online</button>`
+      :bd&&!(bd.store==="Lidl"&&isLidlPick(x.id))&&!(bd.store==="Kaufland"&&isKauflandPick(x.id))?`<button class="btn tiny" data-dealpick="${esc(x.id)}|${esc(bd.store)}" title="Buy this one at ${esc(bd.store)} this week">Buy at ${esc(bd.store)}</button>`:"";
+    const store=dp?"":isKauflandPick(x.id)||isLidlPick(x.id)?`<button class="btn tiny" data-store="${x.id}|online" title="Buy this online instead">Online</button>`:`<button class="btn tiny" data-store="${x.id}|lidl">Lidl</button><button class="btn tiny" data-store="${x.id}|kaufland">Kaufland</button>`;
+    return`<li data-key="${k}" class="${c[k]?"done":""}"><span>${esc(x.name)}${x.b2&&(isLidlPick(x.id)||isKauflandPick(x.id))?` <span class="chip">Block 2, buy fresh</span>`:""}${hc}${tip?`<span class="muted small" style="display:block">${esc(tip)}</span>`:""}${dchips?`<span style="display:block;margin-top:4px">${dchips}</span>`:""}</span><span class="amt">${fmtAmt(x.amt,x.unit)}</span><button class="btn tiny" data-ledit="${k}" title="Enter how much you already have at home">At home</button>${dealBtn}${store}</li>`};
   v.innerHTML=`<div class="actions"><button class="btn primary" data-act="copyList">Copy list (for Tesco)</button><button class="btn" data-act="copyPlan">Copy plan + list</button><button class="btn" data-act="showList">${ui.list?"Hide text":"Show text"}</button><button class="btn" data-act="clearChecks">Clear ticks</button>${ui.confirmClear?`<span class="confirm">Clear ticks and At home amounts? <button class="btn danger" data-act="clearDecisionsYes">Clear</button><button class="btn" data-act="clearDecisionsNo">Cancel</button></span>`:`<button class="btn" data-act="clearDecisions" title="Ticks and At home amounts. Also happens on its own each Sunday.">Clear list decisions</button>`}</div>
   ${ui.list?`<pre class="out" id="list-out">${esc(listText())}</pre>`:""}
   <p class="muted small" style="margin:-4px 0 14px">Ticks and At home amounts clear on their own when a new week starts on Sunday. Tick marks are shared between you and Annie.</p>
@@ -129,6 +201,7 @@ function shopView(v){const{reg,b2,lidl,kaufland,removed,spices}=shoppingData();c
   <section class="panel shop"><div class="row" style="justify-content:space-between;margin-bottom:8px"><h2>Block 2 bakery</h2><span class="tape">Buy fresh</span></div>${b2.length?`<ul>${b2.map(li).join("")}</ul>`:`<p class="muted">No fresh bakery items in Block 2.</p>`}
   <p class="muted small">Bread and rolls for days 4–6, bought separately so they're fresh. Mark which items count as bakery on the Ingredients tab.</p></section></div>
   ${[["Lidl pick-up",lidl],["Kaufland pick-up",kaufland]].map(([t,a])=>`<section class="panel shop" style="margin-top:16px"><div class="row" style="justify-content:space-between;margin-bottom:8px"><h2>${t}</h2><span class="tape">${a.length} items</span></div>${a.length?`<ul>${a.map(li).join("")}</ul>`:`<p class="muted" style="margin:0">Nothing marked yet. Press <b>${t.split(" ")[0]}</b> next to an item to pick it up there instead. Your choice is remembered for future plans.</p>`}</section>`).join("")}
+  ${dealGroups.map(g=>{const tot=g.items.reduce((sum,x)=>{const d=dealsFor(x.id).find(y=>y.store===g.store);return sum+(d?dealCost(d,x.amt):0)},0);return`<section class="panel shop" style="margin-top:16px"><div class="row" style="justify-content:space-between;margin-bottom:8px"><h2>${esc(g.store)} · this week's deals</h2><span class="tape">${g.items.length} items · ≈ ${Math.round(tot)} Kč</span></div><ul>${g.items.map(li).join("")}</ul></section>`}).join("")}
   ${removed.length?`<section class="panel shop" style="margin-top:16px"><div class="row" style="justify-content:space-between;margin-bottom:8px"><h2>Have it all at home</h2><span class="tape">Not bought</span></div><ul>${removed.map(x=>`<li><span class="muted">${esc(x.name)}</span><span class="amt muted">${fmtAmt(x.amt,x.unit)}</span>${x.useup?`<span class="muted small">on your Use-up list</span>`:`<button class="btn tiny" data-lrestore="${x.key}">Restore</button>`}</li>`).join("")}</ul></section>`:""}
   ${spices.length?`<details class="panel" style="margin-top:16px;padding:12px"><summary style="cursor:pointer"><b>Spices and herbs this week</b> <span class="muted small">· ${spices.length} from the cupboard, not on the shopping list</span></summary><p class="small" style="margin:8px 0 0;line-height:1.7">${spices.map(x=>`${esc(x.name)} <span style="font-family:var(--mono)">${fmtAmt(x.amt,"g")}</span>`).join(" · ")}</p></details>`:""}
   <p class="muted small">Tap an item to tick it off. Use <b>At home</b> to enter how much of something you already have; the list buys only the rest.</p>`}
@@ -173,7 +246,11 @@ async function importAll(file){const msg=$("#imp-msg");if(!file)return;
   catch(e){msg.innerHTML=`<span class="err">${esc(e.message||e)}</span>`}}
 
 /* ---------- events ---------- */
-document.addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.target.id==="uu-name"||e.target.id==="uu-amt")){e.preventDefault();uuAdd()}});
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.target.id==="uu-name"||e.target.id==="uu-amt")){e.preventDefault();uuAdd()}
+  else if(e.key==="Enter"&&e.target.dataset?.df&&e.target.tagName==="INPUT"){e.preventDefault();dealAdd()}});
+document.addEventListener("input",e=>{const t=e.target,k=t.dataset?.df;if(!k||!ui.deal)return;ui.deal[k]=t.value;
+  if(k==="name"){const hit=Object.values(ING).find(x=>fold(x.name)===fold(t.value.trim()));if(hit){const want=hit.unit==="ks"?"ks":(ui.deal.u==="ks"?"kg":ui.deal.u);
+    if(want!==ui.deal.u){ui.deal.u=want;const sel=document.querySelector('[data-df="u"]');if(sel)sel.value=want}}}});
 document.addEventListener("click",e=>{const c=e.target.closest("[data-uuedit]");if(!c||e.target.closest("button"))return;const u=USEUP.find(x=>x.id===c.dataset.uuedit),x=u&&ING[u.id];if(!x)return;
   const n=$("#uu-name"),a=$("#uu-amt");n.value=x.name;a.value=u.amt>0?u.amt:"";a.focus();a.select();toast(`${x.name} loaded. Change the amount, then press Add`)});
 document.addEventListener("change",e=>{const t=e.target;
@@ -192,7 +269,7 @@ document.addEventListener("click",e=>{const t=e.target.closest("button,[data-ope
   else if(d.act==="uuUndo")uuUndo();
   else if(d.act==="uuAdd")uuAdd();
   else if(d.inc||d.dec){const[b,s]=(d.inc||d.dec).split("|");PLAN[b][s].need=Math.max(1,needOf(PLAN[b][s])+(d.inc?1:-1));savePlan();render()}
-  else if(d.act==="randAll"){randBlocks(["block1","block2"]);savePlan();render();toast("Suggested your week")}
+  else if(d.act==="randAll"){randBlocks(["block1","block2"]);savePlan();render();const ids=[...new Set(activeDeals().map(x=>x.id))];toast("Suggested your week"+(ids.length?` · ${ids.filter(id=>dealPlanMeals(id).length).length} of ${ids.length} deals are in it`:""))}
   else if(d.act?.startsWith("rand:")){randBlocks([d.act.slice(5)]);savePlan();render()}
   else if(d.act==="reset"){const keep=PLAN;PLAN=emptyPlan();for(const[b] of BLOCKS)for(const[s] of SLOTS)if(keep[b][s].locked)PLAN[b][s]={...keep[b][s]};EDITS={};CHECKED={};SWAPS={};DISMISSED={};MINCE="8020";FRESH=false;savePlan();render()}
   else if(d.mince){MINCE=d.mince;savePlan();render();toast(MINCE==="lean"?"Lean (5 %) ground beef this week":"80/20 ground beef: the recipes say when to drain it")}
@@ -205,6 +282,17 @@ document.addEventListener("click",e=>{const t=e.target.closest("button,[data-ope
   else if(d.store){const[id,w]=d.store.split("|");setStore(id,w)}
   else if(d.act==="letaky")openLetaky();
   else if(d.act==="letakyHide"){ui.letaky=false;render()}
+  else if(d.act==="dealAdd")dealAdd();
+  else if(d.act==="dealCancel"){ui.deal=newDeal();render()}
+  else if(d.act==="dealUndo")dealUndo();
+  else if(d.act==="dealClearOld"){dealSnap();DEALS=DEALS.filter(dealActive);ui.deal&&(ui.deal.edit=null);saveDeals();render();toast("Expired deals cleared")}
+  else if(d.dealadd)dealPlace(d.dealadd);
+  else if(d.dealrm)dealUnplace(d.dealrm);
+  else if(d.dealmore){ui.dealMore[d.dealmore]=!ui.dealMore[d.dealmore];render()}
+  else if(d.dealdel!==undefined){dealSnap();DEALS.splice(+d.dealdel,1);ui.deal&&(ui.deal.edit=null);saveDeals();render();toast("Removed. Tap Undo to bring it back")}
+  else if(d.dealedit!==undefined){const x=DEALS[+d.dealedit];if(!x)return;const n=v=>v?String(v).replace(".",","):"";
+    ui.deal={name:ING[x.id]?.name||x.id,store:x.store,price:n(x.price),amt:n(x.amt)||"1",u:x.u,was:n(x.was),until:x.until,note:x.note||"",edit:+d.dealedit};render();window.scrollTo({top:0})}
+  else if(d.dealpick!==undefined){const[id,st]=d.dealpick.split("|");if(st)DEALPICK[id]=st;else delete DEALPICK[id];saveDeals();render();toast(st?`${ING[id]?.name||id} will be bought at ${st}`:`${ING[id]?.name||id} is back on the online list`)}
   else if(d.act==="copyList")copyText(listText(),"List copied: paste it into the chat with Claude");
   else if(d.act==="copyPlan")copyText(planText()+"\n\n"+listText(),"Plan and list copied");
   else if(d.act==="showList"){ui.list=!ui.list;render()}

@@ -156,3 +156,15 @@ body[data-tab="ingredients"] .wrap{max-width:1400px}
   .ingtable input{width:100%}
   .ingtable td.c-act{grid-column:span 2;justify-content:flex-end;align-self:end}
 }
+
+/* Deals tab */
+.chipbtn{font:500 .78rem/1.2 var(--mono);padding:5px 9px;border-radius:999px;background:var(--bg);color:var(--ink);border:1px solid var(--line);cursor:pointer;text-align:left}
+.chipbtn:hover{border-color:var(--muted)}
+.chipbtn.on{background:var(--on-bg);color:var(--on);border-color:transparent}
+.chipbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+ul.dealist{list-style:none;margin:0;padding:0}
+ul.dealist li.deal{padding:12px 0;border-top:1px solid var(--line)}
+ul.dealist li.deal:first-child{border-top:0}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+@media (max-width:700px){.chipbtn{padding:8px 11px}}
+.chip.wrap{white-space:normal;line-height:1.35;border-radius:10px}

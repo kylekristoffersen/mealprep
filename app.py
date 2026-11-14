@@ -6,7 +6,7 @@ The only page open without a login is the read-only Cook page behind a secret li
 import json, os, secrets, sqlite3, subprocess, threading, time, datetime, re, shutil
 from flask import Flask, request, jsonify, send_from_directory, abort, Response
 
-APP_VERSION = "0.1.2"
+APP_VERSION = "0.2.0"
 DATA_DIR = os.environ.get("MEALPREP_DATA_DIR", os.path.join(os.path.dirname(os.path.abspath(__file__)), "_data"))
 PORT = int(os.environ.get("MEALPREP_PORT", "5020"))
 HTPASSWD = os.environ.get("MEALPREP_HTPASSWD", "/etc/nginx/.mealprep-htpasswd")
