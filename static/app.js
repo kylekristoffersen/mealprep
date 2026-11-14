@@ -104,7 +104,7 @@ function planView(v){
   <p class="muted small" style="max-width:65ch">Suggest favours meals that use your Use-up items. <b>Eating</b> is how many portions you need in that block; the planner works out how many to cook. A freezer pack always cooks 6, and any spare in Block 1 carries to the same meal in Block 2. Locked slots stay put when you suggest or reset. Totals are per person per day: Annie eats breakfast, lunch and dinner; Kyle eats the same plus both snacks. Green hits the nutritionist's range, amber is within 10%, red is further off.</p>`}
 
 /* ---------- LETÁKY: one button opens every shop's leták page in its own tab. Edit the URLs here if a shop moves its page. ---------- */
-const LETAKY=[["Kaufland","https://www.kaufland.cz/letak.html"],["Tesco","https://itesco.cz/akcni-nabidky/letaky-a-katalogy/"],["Albert","https://www.albert.cz/akce-a-slevy/letaky"],["Lidl","https://www.lidl.cz/c/letaky/s10008614"],["Billa","https://www.billa.cz/letak"]];
+const LETAKY=[["Kaufland","https://www.kaufland.cz/letak.html"],["Tesco","https://www.itesco.cz/akcni-nabidky/letaky-a-katalogy/tesco-hypermarket-brno-kralovo-pole"],["Albert","https://www.albert.cz/aktualni-letaky"],["Lidl","https://www.lidl.cz/c/akcni-letak/s10008644"],["Billa","https://www.billa.cz/letaky-billa?tab=letaky-billa/velky-letak-nasledujici"]];
 function openLetaky(){let n=0;for(const[,u] of LETAKY){const w=window.open(u,"_blank");if(w){n++;try{w.opener=null}catch(_){}}}
   toast(n===LETAKY.length?"Opened "+n+" letáky in new tabs":"Your browser blocked "+(LETAKY.length-n)+" of "+LETAKY.length+" tabs. Allow pop-ups for this site and press the button again.")}
 
