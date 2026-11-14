@@ -105,10 +105,10 @@ function planView(v){
 
 /* ---------- LETÁKY: one button opens every shop's leták page in its own tab. Edit the URLs here if a shop moves its page. ---------- */
 const LETAKY=[["Kaufland","https://www.kaufland.cz/letak.html"],["Tesco","https://www.itesco.cz/akcni-nabidky/letaky-a-katalogy/tesco-hypermarket-brno-kralovo-pole"],["Albert","https://www.albert.cz/aktualni-letaky"],["Lidl","https://www.lidl.cz/c/akcni-letak/s10008644"],["Billa","https://www.billa.cz/letaky-billa?tab=letaky-billa/velky-letak-nasledujici"]];
-function letakyHTML(){return`<div class="panel" style="margin-bottom:12px"><div class="row" style="gap:8px"><b class="small">Letáky</b>${LETAKY.map(([n,u])=>`<a class="btn" href="${esc(u)}" target="_blank" rel="noopener">${esc(n)}</a>`).join("")}<button class="btn tiny" data-act="letakyHide">Hide</button></div>
-  <p class="muted small" style="margin:8px 0 0">Your browser only lets one tab open per click. Tap each shop here, or allow pop-ups for this site (icon in the address bar) and press Open letáky again to get all five at once.</p></div>`}
-function openLetaky(){let n=0;for(const[,u] of LETAKY){const w=window.open(u,"_blank");if(w){n++;try{w.opener=null}catch(_){}}}
-  ui.letaky=n<LETAKY.length;if(ui.letaky)render();else toast("Opened "+n+" letáky in new tabs")}
+function letakyHTML(){return`<div class="panel" style="margin-bottom:12px"><div class="row" style="gap:8px"><b class="small">Letáky</b>${LETAKY.map(([n,u])=>`<a class="btn" href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(n)}</a>`).join("")}<button class="btn tiny" data-act="letakyHide">Hide</button></div>
+  <p class="muted small" style="margin:8px 0 0">If a shop didn't open (browsers often allow only one tab per click), tap it here. Or allow pop-ups for this site (icon in the address bar) and press Open letáky again to get all five at once.</p></div>`}
+function openLetaky(){for(const[,u] of LETAKY){const a=document.createElement("a");a.href=u;a.target="_blank";a.rel="noopener noreferrer";a.style.display="none";document.body.appendChild(a);a.click();a.remove()}
+  ui.letaky=true;render()}  // no Referer is sent, so shops can't reject us; the links panel stays as a backup if the browser blocks extra tabs
 
 /* ---------- SHOP ---------- */
 function shopView(v){const{reg,b2,lidl,kaufland,removed,spices}=shoppingData();const c=CHECKED;
