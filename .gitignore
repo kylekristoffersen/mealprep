@@ -1,0 +1,11 @@
+# Personal data and backups: never commit
+*.db
+*.db-*
+backups/
+exports/
+_backup_*/
+__pycache__/
+*.pyc
+*.tmp
+.env
+_data/

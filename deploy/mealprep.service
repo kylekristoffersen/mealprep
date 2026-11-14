@@ -1,0 +1,19 @@
+[Unit]
+Description=Meal Prep Planner (Flask app behind nginx)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/mealprep
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=MEALPREP_DATA_DIR=/var/lib/mealprep
+Environment=MEALPREP_PORT=5020
+Environment=MEALPREP_HTPASSWD=/etc/nginx/.mealprep-htpasswd
+ExecStart=/opt/mealprep-venv/bin/python /opt/mealprep/app.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

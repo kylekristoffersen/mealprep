@@ -1,0 +1,32 @@
+# Meal Prep Planner: Kyle and Annie log in (two users in the password file).
+# Exception: the read-only Cook page behind a secret link, which the app itself checks.
+server {
+  listen 80;
+  server_name __DOMAIN__;
+  client_max_body_size 20m;
+
+  auth_basic "Meal Prep";
+  auth_basic_user_file /etc/nginx/.mealprep-htpasswd;
+
+  # Open without a password: the secret-link Cook page, its data, and the page's own scripts/styles (no personal data in those)
+  location ~ ^/(cook|api/cook)/[A-Za-z0-9_-]+$ {
+    auth_basic off;
+    proxy_pass http://127.0.0.1:__PORT__;
+    proxy_set_header Host $host;
+  }
+  location /static/ {
+    auth_basic off;
+    add_header Cache-Control "no-cache";
+    proxy_pass http://127.0.0.1:__PORT__;
+    proxy_set_header Host $host;
+  }
+
+  location / {
+    add_header Cache-Control "no-cache";
+    proxy_pass http://127.0.0.1:__PORT__;
+    proxy_set_header Host $host;
+    proxy_set_header X-Remote-User $remote_user;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_read_timeout 60s;
+  }
+}

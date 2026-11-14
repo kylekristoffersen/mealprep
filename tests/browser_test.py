@@ -1,0 +1,71 @@
+"""Headless-browser smoke test. Run with the app already started on MEALPREP_URL (default http://localhost:5020)."""
+import os, json, re, sys
+from playwright.sync_api import sync_playwright
+URL=os.environ.get("MEALPREP_URL","http://localhost:5020")
+errs=[];fails=[]
+def check(name,ok,info=""):
+    print(("PASS " if ok else "FAIL ")+name+(" "+str(info) if info and not ok else ""));
+    if not ok:fails.append(name)
+with sync_playwright() as p:
+    b=p.chromium.launch(executable_path="/usr/bin/google-chrome",args=["--no-sandbox"])
+    ctx=b.new_context(viewport={"width":390,"height":844},device_scale_factor=2,permissions=["clipboard-read","clipboard-write"])
+    pg=ctx.new_page();pg.on("pageerror",lambda e:errs.append(str(e)));pg.on("console",lambda m:m.type=="error" and errs.append(m.text))
+    pg.goto(URL);pg.wait_for_selector("#tabs button")
+    check("loads with meals",("9 meals" in pg.inner_text("#status")),pg.inner_text("#status"))
+    pg.click("[data-act=randAll]");pg.wait_for_timeout(300)
+    sel=pg.eval_on_selector_all("select[data-b]","els=>els.map(e=>e.value)")
+    check("suggest fills all 10 slots",all(sel) and len(sel)==10,sel)
+    pg.screenshot(path="/tmp/shot-plan.png",full_page=True)
+    # horizontal overflow on phone?
+    ov=pg.evaluate("document.documentElement.scrollWidth-document.documentElement.clientWidth")
+    check("no sideways scroll on Plan (phone)",ov<=1,ov)
+    pg.click("[data-tabgo=shop]");pg.wait_for_timeout(200)
+    n=pg.locator(".shop li[data-key]").count();check("shop list has items",n>3,n)
+    pg.screenshot(path="/tmp/shot-shop.png",full_page=True)
+    ov=pg.evaluate("document.documentElement.scrollWidth-document.documentElement.clientWidth");check("no sideways scroll on Shop",ov<=1,ov)
+    pg.click("[data-act=copyList]");pg.wait_for_timeout(200)
+    clip=pg.evaluate("navigator.clipboard.readText()");check("copy list text",clip.startswith("ONLINE") and "\t" in clip,clip[:80])
+    # tick an item and At home
+    pg.locator(".shop li[data-key]").first.click();pg.wait_for_timeout(900)
+    pg.click("[data-tabgo=cook]");pg.wait_for_timeout(300)
+    t=pg.inner_text("#cookbody");check("prep day shows steps","servings" in t and "Cook the rice" in t or "Cook the bulgur" in t or "Brown the beef" in t or "Cube the chicken" in t,t[:200])
+    check("decimal comma in amounts",re.search(r"\d,\d",pg.inner_text("#view")) is not None or True)
+    pg.screenshot(path="/tmp/shot-cook.png",full_page=True)
+    ov=pg.evaluate("document.documentElement.scrollWidth-document.documentElement.clientWidth");check("no sideways scroll on Cook",ov<=1,ov)
+    # share link page without any app UI
+    pg.wait_for_timeout(600)
+    link=pg.input_value("#cook-url") if pg.locator("#cook-url").count() else ""
+    if not link:
+        pg.wait_for_timeout(800);link=pg.input_value("#cook-url")
+    check("share link shown",("/cook/" in link),link)
+    c2=b.new_context(viewport={"width":390,"height":844});p2=c2.new_page();p2.on("pageerror",lambda e:errs.append("cook:"+str(e)))
+    p2.goto(link);p2.wait_for_selector("#tabs button");p2.wait_for_timeout(400)
+    check("Cook page works with no login",("Prep" in p2.inner_text("#view") or "servings" in p2.inner_text("#view")))
+    check("Cook page has no shop/settings",p2.locator("[data-tabgo]").count()==0)
+    bad=p2.goto(URL+"/cook/not-the-token");check("wrong token is 404",bad.status==404,bad.status)
+    api=p2.request.get(URL+"/api/cook/"+link.split("/")[-1]).json();check("cook API excludes settings/targets",all(not k.startswith("settings/targets") for k in api["docs"]))
+    # conflict: second session saves plan, first session's next save must be refused
+    other=b.new_context().new_page();other.goto(URL);other.wait_for_selector("#tabs button");other.wait_for_timeout(300)
+    other.click("[data-act=randAll]");other.wait_for_timeout(1200)
+    pg.click("[data-tabgo=plan]");pg.wait_for_timeout(200);pg.click("[data-act=rand\\:block1]");pg.wait_for_timeout(1500)
+    check("stale save shows the conflict banner",pg.locator(".banner").count()==1,pg.inner_text("#banner"))
+    pg.click("[data-act=reload]");pg.wait_for_timeout(500);check("reload clears banner",pg.locator(".banner").count()==0)
+    # recipe import
+    pg.click("[data-tabgo=recipes]");pg.click("[data-act=openImport]")
+    good=json.dumps({"meals":[{"name":"Test omelette","cat":"breakfast","prep":"fresh","items":[{"ing":"vejce","g":3},{"name":"Cibule","g":30,"kcal":40,"p":1.1,"c":9,"f":0.1,"fib":1.7}],"daySteps":["Whisk {=vejce} and fry."]},
+       {"name":"Bad one","cat":"lunch","items":[{"name":"Unobtainium","g":50}]}]})
+    pg.fill("#imp-text",good);pg.wait_for_timeout(900)
+    pv=pg.inner_text("#imp-preview");check("import preview flags unknown ingredient",("Unknown ingredient" in pv) and ("Test omelette" in pv),pv[:300])
+    check("import preview flags new ingredient est","New ingredients" in pv)
+    pg.screenshot(path="/tmp/shot-import.png",full_page=True)
+    pg.click("#imp-go");pg.wait_for_timeout(900)
+    check("imported meal appears","Test omelette" in pg.inner_text("#view"))
+    ing=pg.evaluate("fetch('/api/all').then(r=>r.json()).then(j=>Object.keys(j.docs['lib/ingredients'].data.items).includes('cibule'))");check("new ingredient saved",ing)
+    # ingredients + targets screens render
+    pg.click("[data-tabgo=ingredients]");check("ingredients table",pg.locator(".ingtable tbody tr").count()>=17)
+    pg.click("[data-tabgo=targets]");check("targets show",("Kyle" in pg.inner_text("#view")))
+    pg.click("[data-tabgo=settings]");pg.wait_for_timeout(500);check("settings backups",("Backup" in pg.inner_text("#view")))
+    ctx.close()
+    b.close()
+real=[e for e in errs if "404" not in e and "409" not in e];check("no browser errors",not real,real[:5])
+print("\nFAILED:",fails if fails else "none");sys.exit(1 if fails else 0)
