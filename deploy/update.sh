@@ -3,6 +3,7 @@
 exec 9>/var/lock/mealprep-update.lock
 flock -n 9 || exit 0
 cd /opt/mealprep || exit 1
+sh deploy/apply-nginx.sh   # no-op once nginx no longer asks for a password
 OLD=$(git rev-parse HEAD)
 git pull -q --ff-only || exit 1
 NEW=$(git rev-parse HEAD)

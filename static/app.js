@@ -8,6 +8,9 @@ const ui={cookMode:"prep",confirmClear:false,editHome:null,list:false,cat:"all",
 
 function toast(t){const el=$("#toast");el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2600)}
 const jhead={"Content-Type":"application/json"};
+/* a session that ran out (or was signed out elsewhere) sends you to the sign-in page instead of showing errors */
+const _fetch=window.fetch.bind(window);
+window.fetch=async(...a)=>{const r=await _fetch(...a);if(r.status===401){location.href="/login"}return r};
 
 /* ---------- storage: every save carries the version it started from; a stale save is refused, not overwritten ---------- */
 let conflict=false, pending=0;
@@ -233,7 +236,7 @@ function settingsView(v){if(ui.backups===null||ui.backups===undefined){loadBacku
   <section class="panel"><h2>Bring in your data</h2><p class="muted small">Use this once to move everything over from the old planner, or to restore a downloaded backup. A backup of what's here is taken first.</p>
     <input type="file" id="imp-file" accept=".json,application/json"><div id="imp-msg" class="small" style="margin-top:8px"></div></section>
   <section class="panel"><h2>Password</h2><p class="muted small">Change the password for ${esc(ME&&ME!=="dev"?ME:"your login")}. Your browser will ask you to sign in again.</p>
-    ${ui.pw?`<div class="row"><input id="pw1" type="password" autocomplete="new-password" placeholder="New password (8+ characters)" style="flex:1 1 220px"><button class="btn primary" data-act="pwSave">Save</button><button class="btn" data-act="pwCancel">Cancel</button></div>`:`<button class="btn" data-act="pwOpen">Change my password</button>`}</section>
+    ${ui.pw?`<div class="row"><input id="pw1" type="password" autocomplete="new-password" placeholder="New password (8+ characters)" style="flex:1 1 220px"><button class="btn primary" data-act="pwSave">Save</button><button class="btn" data-act="pwCancel">Cancel</button></div>`:`<button class="btn" data-act="pwOpen">Change my password</button> <form method="post" action="/logout" style="display:inline"><button class="btn" type="submit">Sign out</button></form>`}</section>
   <section class="panel"><h2>About</h2><p class="small">Meal Prep Planner v${esc(APPV)}. Two logins (Kyle and Annie) share one plan. The Cook page can also be opened without a password through the link on the Cook tab.</p></section></div>`;
   const f=$("#imp-file");if(f)f.onchange=()=>importAll(f.files[0])}
 async function importAll(file){const msg=$("#imp-msg");if(!file)return;
@@ -308,7 +311,7 @@ document.addEventListener("click",e=>{const t=e.target.closest("button,[data-ope
   else if(d.restoreyes){fetch("/api/restore/"+d.restoreyes,{method:"POST"}).then(async r=>{if(!r.ok){toast("Restore failed");return}ui.backups=null;await reloadAll();toast("Restored")})}
   else if(d.act==="pwOpen"){ui.pw=true;render()}
   else if(d.act==="pwCancel"){ui.pw=false;render()}
-  else if(d.act==="pwSave"){const pw=$("#pw1").value;fetch("/api/password",{method:"POST",headers:jhead,body:JSON.stringify({password:pw})}).then(async r=>{const j=await r.json();if(!r.ok){toast(j.error||"Couldn't change the password");return}ui.pw=false;render();toast("Password changed. Sign in again when asked.")})}
+  else if(d.act==="pwSave"){const pw=$("#pw1").value;fetch("/api/password",{method:"POST",headers:jhead,body:JSON.stringify({password:pw})}).then(async r=>{const j=await r.json();if(!r.ok){toast(j.error||"Couldn't change the password");return}ui.pw=false;render();toast("Password changed. Your other devices will need to sign in again.")})}
   else if(d.key){const k=d.key;CHECKED={...CHECKED};if(CHECKED[k])delete CHECKED[k];else CHECKED[k]=true;t.classList.toggle("done",!!CHECKED[k]);savePlan()}
   else libClick(t,d)});
 

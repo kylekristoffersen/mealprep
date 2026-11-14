@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex">
+<title>Sign in · Meal Prep Planner</title>
+<link rel="stylesheet" href="/static/style.css">
+<style>
+.login{max-width:360px;margin:12vh auto 0;padding:0 16px}
+.login .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px}
+.login h1{margin:0 0 4px;font:700 1.35rem var(--display)}
+.login p.sub{margin:0 0 16px;color:var(--muted)}
+.login label{display:block;font-size:.85rem;color:var(--muted);margin:12px 0 4px}
+.login input{width:100%;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+.login input:focus{outline:2px solid var(--accent);outline-offset:1px}
+.login button{width:100%;margin-top:18px;padding:11px;font:inherit;font-weight:600;border:0;border-radius:8px;background:var(--accent);color:var(--accent-ink);cursor:pointer}
+.login .err{margin:14px 0 0;padding:9px 12px;border-radius:8px;background:var(--off-bg);color:var(--off);font-size:.9rem}
+</style>
+</head>
+<body>
+<main class="login">
+  <form class="card" method="post" action="/login">
+    <h1>Meal Prep Planner</h1>
+    <p class="sub">Sign in to continue</p>
+    <div id="err" class="err" role="alert" hidden></div>
+    <label for="username">Name</label>
+    <input id="username" name="username" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required autofocus>
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" autocomplete="current-password" required>
+    <button type="submit">Sign in</button>
+  </form>
+</main>
+<script>
+(function(){
+  var e=new URLSearchParams(location.search).get("e"), box=document.getElementById("err");
+  if(e){box.textContent=e==="wait"?"Too many tries. Wait a few minutes and try again.":"That name or password isn't right.";box.hidden=false}
+})();
+</script>
+</body>
+</html>

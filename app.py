@@ -1,12 +1,20 @@
 """Meal Prep Planner: small Flask app. Stores everything as JSON documents in one SQLite file.
 
-Logins are handled by nginx (basic auth, two users). nginx passes the user name in X-Remote-User.
-The only page open without a login is the read-only Cook page behind a secret link (/cook/<token>).
+Logins are handled by the app itself: an in-page sign-in form (/login) checked against the nginx-style
+password file (two users), then a signed session cookie. nginx no longer asks for a password.
+The only pages open without a login are the sign-in page, the static files and the read-only Cook page
+behind a secret link (/cook/<token>).
+When the password file does not exist (local development) the login is switched off and the user is "dev".
 """
-import json, os, secrets, sqlite3, subprocess, threading, time, datetime, re, shutil
-from flask import Flask, request, jsonify, send_from_directory, abort, Response
+import json, os, secrets, sqlite3, subprocess, threading, time, datetime, re, shutil, hashlib
+from flask import Flask, request, jsonify, send_from_directory, abort, Response, redirect, g
+from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
+try:
+    import bcrypt
+except ImportError:  # falls back to the htpasswd program
+    bcrypt = None
 
-APP_VERSION = "0.2.0"
+APP_VERSION = "0.3.0"
 DATA_DIR = os.environ.get("MEALPREP_DATA_DIR", os.path.join(os.path.dirname(os.path.abspath(__file__)), "_data"))
 PORT = int(os.environ.get("MEALPREP_PORT", "5020"))
 HTPASSWD = os.environ.get("MEALPREP_HTPASSWD", "/etc/nginx/.mealprep-htpasswd")
@@ -14,6 +22,9 @@ STATIC = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
 DB_PATH = os.path.join(DATA_DIR, "mealprep.db")
 BACKUP_DIR = os.path.join(DATA_DIR, "backups")
 BACKUP_KEEP = 14
+COOKIE = "mp_session"
+SESSION_DAYS = 30
+USER_RE = re.compile(r"^[a-z0-9_-]{1,32}$")
 
 app = Flask(__name__, static_folder=None)
 _lock = threading.Lock()
@@ -40,8 +51,142 @@ def now():
     return datetime.datetime.utcnow().isoformat(timespec="seconds") + "Z"
 
 
+def auth_on():
+    return os.environ.get("MEALPREP_AUTH") != "off" and os.path.exists(HTPASSWD)
+
+
 def user():
-    return request.headers.get("X-Remote-User") or os.environ.get("MEALPREP_DEV_USER", "dev")
+    if auth_on():
+        return getattr(g, "user", None) or ""
+    return os.environ.get("MEALPREP_DEV_USER", "dev")
+
+
+# ---- sign-in: password file check, signed session cookie, small brute-force brake ----
+def htpasswd_line(u):
+    try:
+        with open(HTPASSWD, encoding="utf-8") as f:
+            for line in f:
+                name, _, h = line.rstrip("\n").partition(":")
+                if name == u:
+                    return h
+    except OSError:
+        pass
+    return None
+
+
+def check_password(u, pw):
+    h = htpasswd_line(u)
+    if not h or not pw:
+        return False
+    if bcrypt and h[:4] in ("$2y$", "$2a$", "$2b$"):
+        try:
+            return bcrypt.checkpw(pw.encode()[:72], h.encode())
+        except ValueError:
+            return False
+    try:  # other hash types: ask the htpasswd program
+        return subprocess.run(["htpasswd", "-v", "-i", HTPASSWD, u], input=pw.encode(), capture_output=True, timeout=20).returncode == 0
+    except Exception:
+        return False
+
+
+def session_secret():
+    with db() as c:
+        r = c.execute("SELECT v FROM kv WHERE k='session_secret'").fetchone()
+        if r:
+            return r[0]
+        v = secrets.token_hex(32)
+        c.execute("INSERT INTO kv VALUES('session_secret',?)", (v,))
+        return v
+
+
+def _serializer():
+    return URLSafeTimedSerializer(session_secret(), salt="mealprep-session")
+
+
+def pw_stamp(u):  # changes when the person's password changes, which signs out their other devices
+    return hashlib.sha256((htpasswd_line(u) or "").encode()).hexdigest()[:12]
+
+
+def make_cookie_value(u):
+    return _serializer().dumps({"u": u, "p": pw_stamp(u)})
+
+
+def session_user():
+    tok = request.cookies.get(COOKIE)
+    if not tok:
+        return None
+    try:
+        d = _serializer().loads(tok, max_age=SESSION_DAYS * 86400)
+    except (BadSignature, SignatureExpired):
+        return None
+    u = d.get("u", "")
+    if USER_RE.match(u) and htpasswd_line(u) is not None and d.get("p") == pw_stamp(u):
+        return u
+    return None
+
+
+def set_session(resp, u):
+    resp.set_cookie(COOKIE, make_cookie_value(u), max_age=SESSION_DAYS * 86400, httponly=True, samesite="Lax",
+                    secure=request.headers.get("X-Forwarded-Proto", request.scheme) == "https", path="/")
+    return resp
+
+
+_fails = {}  # client address -> recent failure times
+def client_ip():
+    return request.headers.get("X-Real-IP") or request.remote_addr or "?"
+
+
+def too_many_fails(ip):
+    t = time.time()
+    _fails[ip] = [x for x in _fails.get(ip, []) if t - x < 600]
+    return len(_fails[ip]) >= 8
+
+
+PUBLIC_RE = re.compile(r"^/(login|logout|api/health|static/.+|cook/[A-Za-z0-9_-]+|api/cook/[A-Za-z0-9_-]+)$")
+
+
+@app.before_request
+def gate():
+    if not auth_on():
+        return None
+    if PUBLIC_RE.match(request.path):
+        return None
+    u = session_user()
+    if u:
+        g.user = u
+        return None
+    if request.path.startswith("/api/"):
+        return jsonify({"error": "Please sign in again."}), 401
+    return redirect("/login")
+
+
+@app.get("/login")
+def login_page():
+    if not auth_on() or session_user():
+        return redirect("/")
+    return send_from_directory(STATIC, "login.html")
+
+
+@app.post("/login")
+def login_submit():
+    ip = client_ip()
+    if too_many_fails(ip):
+        return redirect("/login?e=wait")
+    u = (request.form.get("username") or "").strip().lower()
+    pw = request.form.get("password") or ""
+    if auth_on() and USER_RE.match(u) and check_password(u, pw):
+        _fails.pop(ip, None)
+        return set_session(redirect("/"), u)
+    _fails.setdefault(ip, []).append(time.time())
+    time.sleep(0.6)
+    return redirect("/login?e=bad")
+
+
+@app.post("/logout")
+def logout():
+    resp = redirect("/login")
+    resp.delete_cookie(COOKIE, path="/")
+    return resp
 
 
 def all_docs():
@@ -240,7 +385,7 @@ def api_password():
         subprocess.run(["htpasswd", "-i", "-B", HTPASSWD, u], input=pw.encode(), check=True, capture_output=True, timeout=20)
     except Exception as e:
         return jsonify({"error": "Couldn't change the password on this server."}), 500
-    return jsonify({"ok": True})
+    return set_session(jsonify({"ok": True}), u)  # keep this device signed in; other devices must sign in again
 
 
 @app.get("/api/health")
