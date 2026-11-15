@@ -1,0 +1,1703 @@
+{
+ "id": "2026-11-15-light-butter-to-butter",
+ "note": "Lurpak Lighter (máslo light, 60 % fat) isn't sold in CZ: replaced by regular butter (82 %) at 73 % of the weight, so fat and calories stay the same. Biryani chicken now browned on medium-high so the butter doesn't burn.",
+ "docs": {
+  "meals/cheesy-bbq-chicken-crispy-potatoes-dinner": {
+   "base": 2,
+   "data": {
+    "cat": "dinner",
+    "chicken": "freezer",
+    "daySteps": [
+     "Reheat in the oven at 180 °C for about 10 min to keep the potatoes crisp, or in the microwave 2–3 min. Make sure it is steaming hot all the way through (stir halfway), and reheat only the portion you will eat."
+    ],
+    "items": [
+     [
+      "kureci-prsa",
+      100
+     ],
+     [
+      "brambory",
+      230
+     ],
+     [
+      "mrazena-zeleninova-smes",
+      100
+     ],
+     [
+      "bbq-omacka",
+      22
+     ],
+     [
+      "mozzarella-light",
+      14
+     ],
+     [
+      "maslo",
+      9
+     ],
+     [
+      "olivovy-olej",
+      4.5
+     ],
+     [
+      "cesnek",
+      4
+     ],
+     [
+      "sul",
+      1.9
+     ],
+     [
+      "oregano",
+      0.37
+     ],
+     [
+      "chilli-vlocky",
+      0.23
+     ],
+     [
+      "cibule-susena",
+      0.6
+     ],
+     [
+      "paprika-sladka",
+      0.86
+     ],
+     [
+      "cesnek-suseny",
+      0.39
+     ]
+    ],
+    "keeps": "4 days",
+    "name": "Cheesy BBQ Chicken & Crispy Potatoes",
+    "note": "From Jalal Sam Fit (card: 484 kcal, P 47 · C 39 · F 15 for ¼ of the batch). Portions rescaled to the nutritionist's dinner target. Chicken is 100 g per serving, so one 600 g freezer pack makes 6 dinners. Spices and herbs are in the ingredient list in grams (converted from the spoon amounts) and count towards the nutrition. Spice amounts in the steps follow the servings you cook. Frozen mixed veg (100 g per portion) added for fibre. Regular butter replaces light butter (not sold in CZ), cut to about 73 % of the weight so fat and calories stay the same.",
+    "prep": "batch",
+    "prepSteps": [
+     "Thaw the chicken pack in the fridge the night before (about 24 hours for a 900 g pack). Pat the pieces dry before seasoning, since wet chicken steams instead of browning.",
+     "Cube the chicken ({=kureci-prsa}) and season with {q:1½ tsp} salt, {q:2 tsp} oregano, {q:1 tsp} chilli flakes, {q:2 tsp} onion powder, {q:2 tsp} paprika and three-quarters of the oil ({=olivovy-olej:75%|spoon}). Mix well.",
+     "Heat the oven to 200 °C. Wash the potatoes ({=brambory}) and cube them unpeeled (extra fibre). Season with {q:1 tsp} each of salt, garlic powder, paprika and oregano and the rest of the oil ({=olivovy-olej:rest|spoon}), and bake about 20–25 min until crispy.",
+     "Cook the chicken in three-quarters of the butter ({=maslo:75%|spoon}) over medium heat for 6–8 min. Keep the heat moderate so it stays juicy.",
+     "Lower the heat, add the rest of the butter ({=maslo:rest|spoon}), the minced garlic ({=cesnek}), some chopped parsley and three-quarters of the BBQ sauce ({=bbq-omacka:75%|spoon}). Toss until the chicken is coated and sticky.",
+     "Add the potatoes, top with the mozzarella ({=mozzarella-light}, grated from a block or torn), cover on low heat until melted (a splash of water helps it steam). Finish with the rest of the BBQ sauce ({=bbq-omacka:rest|spoon}) and parsley.",
+     "Cook the frozen mixed veg ({=mrazena-zeleninova-smes}, a mix without onion) in the microwave or a steamer and divide everything into boxes. Keep the boxes open with the food no more than about 4 cm deep and leave it until it stops steaming, about 30 min. Refrigerate within 2 hours of cooking and close the lids once cool, not while warm."
+    ],
+    "stepBatch": 4,
+    "stepScale": 0.5
+   }
+  },
+  "meals/cheesy-bbq-chicken-crispy-potatoes-lunch": {
+   "base": 2,
+   "data": {
+    "cat": "lunch",
+    "chicken": "freezer",
+    "daySteps": [
+     "Reheat in the oven at 180 °C for about 10 min to keep the potatoes crisp, or in the microwave 2–3 min. Make sure it is steaming hot all the way through (stir halfway), and reheat only the portion you will eat."
+    ],
+    "items": [
+     [
+      "kureci-prsa",
+      150
+     ],
+     [
+      "brambory",
+      285
+     ],
+     [
+      "mrazena-zeleninova-smes",
+      100
+     ],
+     [
+      "bbq-omacka",
+      20
+     ],
+     [
+      "maslo",
+      10
+     ],
+     [
+      "mozzarella-light",
+      14
+     ],
+     [
+      "olivovy-olej",
+      5
+     ],
+     [
+      "cesnek",
+      3.5
+     ],
+     [
+      "sul",
+      2.8
+     ],
+     [
+      "oregano",
+      0.57
+     ],
+     [
+      "chilli-vlocky",
+      0.33
+     ],
+     [
+      "cibule-susena",
+      0.9
+     ],
+     [
+      "paprika-sladka",
+      1.3
+     ],
+     [
+      "cesnek-suseny",
+      0.58
+     ]
+    ],
+    "keeps": "4 days",
+    "name": "Cheesy BBQ Chicken & Crispy Potatoes",
+    "note": "From Jalal Sam Fit (card: 484 kcal, P 47 · C 39 · F 15 for ¼ of the batch). Portions rescaled to the nutritionist's lunch target. Chicken is 150 g per serving, so one 900 g freezer pack makes 6 lunches. Spices and herbs are in the ingredient list in grams (converted from the spoon amounts) and count towards the nutrition. Spice amounts in the steps follow the servings you cook. Frozen mixed veg (100 g per portion) added for fibre. Regular butter replaces light butter (not sold in CZ), cut to about 73 % of the weight so fat and calories stay the same.",
+    "prep": "batch",
+    "prepSteps": [
+     "Thaw the chicken pack in the fridge the night before (about 24 hours for a 900 g pack). Pat the pieces dry before seasoning, since wet chicken steams instead of browning.",
+     "Cube the chicken ({=kureci-prsa}) and season with {q:1½ tsp} salt, {q:2 tsp} oregano, {q:1 tsp} chilli flakes, {q:2 tsp} onion powder, {q:2 tsp} paprika and three-quarters of the oil ({=olivovy-olej:75%|spoon}). Mix well.",
+     "Heat the oven to 200 °C. Wash the potatoes ({=brambory}) and cube them unpeeled (extra fibre). Season with {q:1 tsp} each of salt, garlic powder, paprika and oregano and the rest of the oil ({=olivovy-olej:rest|spoon}), and bake about 20–25 min until crispy.",
+     "Cook the chicken in three-quarters of the butter ({=maslo:75%|spoon}) over medium heat for 6–8 min. Keep the heat moderate so it stays juicy.",
+     "Lower the heat, add the rest of the butter ({=maslo:rest|spoon}), the minced garlic ({=cesnek}), some chopped parsley and three-quarters of the BBQ sauce ({=bbq-omacka:75%|spoon}). Toss until the chicken is coated and sticky.",
+     "Add the potatoes, top with the mozzarella ({=mozzarella-light}, grated from a block or torn), cover on low heat until melted (a splash of water helps it steam). Finish with the rest of the BBQ sauce ({=bbq-omacka:rest|spoon}) and parsley.",
+     "Cook the frozen mixed veg ({=mrazena-zeleninova-smes}, a mix without onion) in the microwave or a steamer and divide everything into boxes. Keep the boxes open with the food no more than about 4 cm deep and leave it until it stops steaming, about 30 min. Refrigerate within 2 hours of cooking and close the lids once cool, not while warm."
+    ],
+    "stepBatch": 4,
+    "stepScale": 0.75
+   }
+  },
+  "meals/chicken-biryani-dinner": {
+   "base": 2,
+   "data": {
+    "cat": "dinner",
+    "chicken": "freezer",
+    "daySteps": [
+     "Reheat covered, with 1–2 tbsp of water sprinkled over the rice, until hot all the way through. Make sure it is steaming hot all the way through (stir halfway), and reheat only the portion you will eat."
+    ],
+    "items": [
+     [
+      "kureci-prsa",
+      100
+     ],
+     [
+      "ryze",
+      45
+     ],
+     [
+      "mrazena-zeleninova-smes",
+      150
+     ],
+     [
+      "rajcata",
+      60
+     ],
+     [
+      "paprika",
+      50
+     ],
+     [
+      "recky-jogurt-milko-0-3",
+      22
+     ],
+     [
+      "olivovy-olej",
+      8
+     ],
+     [
+      "maslo",
+      5
+     ],
+     [
+      "citronova-stava",
+      6
+     ],
+     [
+      "cesnek",
+      4
+     ],
+     [
+      "koriandr",
+      4
+     ],
+     [
+      "zazvor",
+      3
+     ],
+     [
+      "garam-masala",
+      0.75
+     ],
+     [
+      "sul",
+      1.9
+     ],
+     [
+      "paprika-sladka",
+      0.57
+     ],
+     [
+      "kmin-rimsky",
+      0.53
+     ],
+     [
+      "kurkuma",
+      0.37
+     ]
+    ],
+    "keeps": "4 days",
+    "name": "Chicken Biryani",
+    "note": "From Jalal Sam Fit (card: 508 kcal, P 47 · C 49 · F 13 for ¼ of the batch). Portions rescaled to the nutritionist's dinner target. Chicken is 100 g per serving, so one 600 g freezer pack makes 6 dinners. Spices and herbs are in the ingredient list in grams (converted from the spoon amounts) and count towards the nutrition. Spice amounts in the steps follow the servings you cook. Onion and green onion swapped for extra bell pepper (Anna). Chicken thighs (stehenní řízek) work just as well as breast here. Frozen mixed veg (150 g per portion) added for fibre. Regular butter replaces light butter (not sold in CZ), cut to about 73 % of the weight so fat and calories stay the same.",
+    "prep": "batch",
+    "prepSteps": [
+     "Thaw the chicken pack in the fridge the night before (about 24 hours for a 900 g pack). Pat the pieces dry before seasoning, since wet chicken steams instead of browning.",
+     "Cut the chicken ({=kureci-prsa}) into medium cubes. Mix with the yogurt ({=recky-jogurt-milko-0-3}), {q:5 cloves} minced garlic, {q:1 tbsp} grated ginger, {q:2 tsp} garam masala, {q:2 tsp} salt, {q:2 tsp} paprika, {q:2 tsp} ground cumin, {q:1 tsp} turmeric, three-quarters of the lemon juice ({=citronova-stava:75%|spoon}) and half the oil ({=olivovy-olej:50%|spoon}). Marinate 30 min, or overnight in the fridge for the best flavour.",
+     "Instead of crispy onion: slice the peppers ({=paprika}) thinly, toss with the rest of the oil ({=olivovy-olej:rest|spoon}) and roast at 190 °C for 10–12 min until charred at the edges. Watch they don't burn.",
+     "Rinse the rice ({=ryze}) until the water runs clear and cook it in salted water until just tender (about 12 min for basmati or long-grain). Drain.",
+     "Pan plan: {=kureci-prsa} of chicken is more than one pan can brown. Cook it in rounds of about 300 g in a single layer, or use two pans, and keep each finished round on a plate until the next step. If the browned bits on the pan turn dark brown or burn between rounds, deglaze with a splash of water or wipe the pan. To check, cut the thickest piece open: no pink, clear juices, firm all the way through.",
+     "Heat a pan over medium-high heat with the butter ({=maslo}) and cook the chicken about 4 min a side until golden.",
+     "Lower the heat. Add half the roasted pepper ({=paprika:50%}), the chopped tomatoes ({=rajcata}), half the coriander ({=koriandr:50%}), {q:½ tsp} salt and {q:1 tsp} garam masala. Cover and cook 10 min on low, breaking the tomatoes down with a spatula into a thick sauce.",
+     "Layer in the pan: the chicken mix, rice, the rest of the lemon juice ({=citronova-stava:rest|spoon}), the rest of the roasted pepper ({=paprika:rest}) and the rest of the coriander ({=koriandr:rest}). Repeat once more. Cover on low for 5–10 min so the flavours mix.",
+     "Cook the frozen mixed veg ({=mrazena-zeleninova-smes}, a mix without onion) in the microwave or a steamer and divide everything into boxes. Keep the boxes open with the food no more than about 4 cm deep and leave it until it stops steaming, about 30 min. Rice must be in the fridge within 1 hour of cooking. Refrigerate within 2 hours of cooking and close the lids once cool, not while warm."
+    ],
+    "stepBatch": 4,
+    "stepScale": 0.5
+   }
+  },
+  "meals/chicken-biryani-lunch": {
+   "base": 2,
+   "data": {
+    "cat": "lunch",
+    "chicken": "freezer",
+    "daySteps": [
+     "Reheat covered, with 1–2 tbsp of water sprinkled over the rice, until hot all the way through. Make sure it is steaming hot all the way through (stir halfway), and reheat only the portion you will eat."
+    ],
+    "items": [
+     [
+      "kureci-prsa",
+      150
+     ],
+     [
+      "ryze",
+      56
+     ],
+     [
+      "mrazena-zeleninova-smes",
+      150
+     ],
+     [
+      "rajcata",
+      70
+     ],
+     [
+      "paprika",
+      55
+     ],
+     [
+      "recky-jogurt-milko-0-3",
+      16
+     ],
+     [
+      "olivovy-olej",
+      10
+     ],
+     [
+      "maslo",
+      6
+     ],
+     [
+      "citronova-stava",
+      7
+     ],
+     [
+      "cesnek",
+      4.5
+     ],
+     [
+      "koriandr",
+      4.5
+     ],
+     [
+      "zazvor",
+      3.5
+     ],
+     [
+      "garam-masala",
+      1.1
+     ],
+     [
+      "sul",
+      2.8
+     ],
+     [
+      "paprika-sladka",
+      0.87
+     ],
+     [
+      "kmin-rimsky",
+      0.78
+     ],
+     [
+      "kurkuma",
+      0.57
+     ]
+    ],
+    "keeps": "4 days",
+    "name": "Chicken Biryani",
+    "note": "From Jalal Sam Fit (card: 508 kcal, P 47 · C 49 · F 13 for ¼ of the batch). Portions rescaled to the nutritionist's lunch target. Chicken is 150 g per serving, so one 900 g freezer pack makes 6 lunches. Spices and herbs are in the ingredient list in grams (converted from the spoon amounts) and count towards the nutrition. Spice amounts in the steps follow the servings you cook. Onion and green onion swapped for extra bell pepper (Anna). Chicken thighs (stehenní řízek) work just as well as breast here. Frozen mixed veg (150 g per portion) added for fibre. Regular butter replaces light butter (not sold in CZ), cut to about 73 % of the weight so fat and calories stay the same.",
+    "prep": "batch",
+    "prepSteps": [
+     "Thaw the chicken pack in the fridge the night before (about 24 hours for a 900 g pack). Pat the pieces dry before seasoning, since wet chicken steams instead of browning.",
+     "Cut the chicken ({=kureci-prsa}) into medium cubes. Mix with the yogurt ({=recky-jogurt-milko-0-3}), {q:5 cloves} minced garlic, {q:1 tbsp} grated ginger, {q:2 tsp} garam masala, {q:2 tsp} salt, {q:2 tsp} paprika, {q:2 tsp} ground cumin, {q:1 tsp} turmeric, three-quarters of the lemon juice ({=citronova-stava:75%|spoon}) and half the oil ({=olivovy-olej:50%|spoon}). Marinate 30 min, or overnight in the fridge for the best flavour.",
+     "Instead of crispy onion: slice the peppers ({=paprika}) thinly, toss with the rest of the oil ({=olivovy-olej:rest|spoon}) and roast at 190 °C for 10–12 min until charred at the edges. Watch they don't burn.",
+     "Rinse the rice ({=ryze}) until the water runs clear and cook it in salted water until just tender (about 12 min for basmati or long-grain). Drain.",
+     "Pan plan: {=kureci-prsa} of chicken is more than one pan can brown. Cook it in rounds of about 300 g in a single layer, or use two pans, and keep each finished round on a plate until the next step. If the browned bits on the pan turn dark brown or burn between rounds, deglaze with a splash of water or wipe the pan. To check, cut the thickest piece open: no pink, clear juices, firm all the way through.",
+     "Heat a pan over medium-high heat with the butter ({=maslo}) and cook the chicken about 4 min a side until golden.",
+     "Lower the heat. Add half the roasted pepper ({=paprika:50%}), the chopped tomatoes ({=rajcata}), half the coriander ({=koriandr:50%}), {q:½ tsp} salt and {q:1 tsp} garam masala. Cover and cook 10 min on low, breaking the tomatoes down with a spatula into a thick sauce.",
+     "Layer in the pan: the chicken mix, rice, the rest of the lemon juice ({=citronova-stava:rest|spoon}), the rest of the roasted pepper ({=paprika:rest}) and the rest of the coriander ({=koriandr:rest}). Repeat once more. Cover on low for 5–10 min so the flavours mix.",
+     "Cook the frozen mixed veg ({=mrazena-zeleninova-smes}, a mix without onion) in the microwave or a steamer and divide everything into boxes. Keep the boxes open with the food no more than about 4 cm deep and leave it until it stops steaming, about 30 min. Rice must be in the fridge within 1 hour of cooking. Refrigerate within 2 hours of cooking and close the lids once cool, not while warm."
+    ],
+    "stepBatch": 4,
+    "stepScale": 0.75
+   }
+  },
+  "meals/chicken-fajita-mac-n-cheese-dinner": {
+   "base": 2,
+   "data": {
+    "cat": "dinner",
+    "chicken": "fresh",
+    "daySteps": [
+     "Reheat in the microwave or a pan with a splash of milk to make it creamy again. Make sure it is steaming hot all the way through (stir halfway), and reheat only the portion you will eat."
+    ],
+    "items": [
+     [
+      "kureci-prsa",
+      70
+     ],
+     [
+      "testoviny",
+      47.5
+     ],
+     [
+      "mrazena-zeleninova-smes",
+      150
+     ],
+     [
+      "mleko-polotucne-1-5",
+      65
+     ],
+     [
+      "paprika",
+      60
+     ],
+     [
+      "philadelphia-light",
+      38
+     ],
+     [
+      "limetkova-stava",
+      10
+     ],
+     [
+      "eidam-30",
+      9
+     ],
+     [
+      "mozzarella-light",
+      9
+     ],
+     [
+      "maslo",
+      3.5
+     ],
+     [
+      "olivovy-olej",
+      2.5
+     ],
+     [
+      "sul",
+      1.1
+     ],
+     [
+      "oregano",
+      0.19
+     ],
+     [
+      "cesnek-suseny",
+      0.58
+     ],
+     [
+      "cibule-susena",
+      0.45
+     ],
+     [
+      "paprika-sladka",
+      0.43
+     ],
+     [
+      "chilli-mlete",
+      0.5
+     ],
+     [
+      "kmin-rimsky",
+      0.39
+     ]
+    ],
+    "keeps": "4 days",
+    "name": "Chicken Fajita Mac n Cheese",
+    "note": "From Jalal Sam Fit (card: 568 kcal, P 56 · C 54 · F 13 for ¼ of the batch). Portions rescaled to the nutritionist's dinner target. Cook with fresh chicken (70 g per serving): with a full freezer pack the sauce would have to shrink too much. Spices and herbs are in the ingredient list in grams (converted from the spoon amounts) and count towards the nutrition. Spice amounts in the steps follow the servings you cook. Onion and green onion swapped for extra bell pepper (Anna). Frozen mixed veg (150 g per portion) added for fibre. Regular butter replaces light butter (not sold in CZ), cut to about 73 % of the weight so fat and calories stay the same.",
+    "prep": "batch",
+    "prepSteps": [
+     "Mix the fajita seasoning: {q:2 tsp} each of salt, oregano, garlic powder, onion powder, paprika, chilli powder and cumin. Three-quarters ({q:10½ tsp}) goes on the chicken, the rest ({q:3½ tsp}) on the peppers.",
+     "Cube the chicken ({=kureci-prsa}) and mix with three-quarters of the seasoning ({q:10½ tsp}), the oil ({=olivovy-olej}) and three-quarters of the lime juice ({=limetkova-stava:75%|spoon}). Taste a pinch of the mix: it should be well seasoned.",
+     "Boil the macaroni ({=testoviny}) for 7–8 min, drain and set aside.",
+     "Pan plan: {=kureci-prsa} of chicken is more than one pan can brown. Cook it in rounds of about 300 g in a single layer, or use two pans, and keep each finished round on a plate until the next step. If the browned bits on the pan turn dark brown or burn between rounds, deglaze with a splash of water or wipe the pan. To check, cut the thickest piece open: no pink, clear juices, firm all the way through.",
+     "In a pan on medium heat, cook the chicken in the butter ({=maslo}) for 6–8 min until golden. Set aside.",
+     "In the same pan cook the finely chopped peppers ({=paprika}, they replace the onion) with the rest of the seasoning ({q:3½ tsp}) for 5 min until soft and fragrant.",
+     "Turn the heat to LOW (so the sauce doesn't split) and add the milk ({=mleko-polotucne-1-5}), cream cheese ({=philadelphia-light}), grated Eidam ({=eidam-30}) and mozzarella ({=mozzarella-light}). Stir until melted, cheesy and creamy.",
+     "Fold in the macaroni, then the chicken and the rest of the lime juice ({=limetkova-stava:rest|spoon}), and give it a final mix.",
+     "Cook the frozen mixed veg ({=mrazena-zeleninova-smes}, a mix without onion) in the microwave or a steamer and divide everything into boxes. Keep the boxes open with the food no more than about 4 cm deep and leave it until it stops steaming, about 30 min. Refrigerate within 2 hours of cooking and close the lids once cool, not while warm."
+    ],
+    "stepBatch": 4,
+    "stepScale": 0.373
+   }
+  },
+  "meals/chicken-fajita-mac-n-cheese-lunch": {
+   "base": 2,
+   "data": {
+    "cat": "lunch",
+    "chicken": "fresh",
+    "daySteps": [
+     "Reheat in the microwave or a pan with a splash of milk to make it creamy again. Make sure it is steaming hot all the way through (stir halfway), and reheat only the portion you will eat."
+    ],
+    "items": [
+     [
+      "kureci-prsa",
+      85
+     ],
+     [
+      "testoviny",
+      70
+     ],
+     [
+      "mrazena-zeleninova-smes",
+      150
+     ],
+     [
+      "mleko-polotucne-1-5",
+      65
+     ],
+     [
+      "paprika",
+      60
+     ],
+     [
+      "philadelphia-light",
+      38
+     ],
+     [
+      "limetkova-stava",
+      10
+     ],
+     [
+      "eidam-30",
+      9
+     ],
+     [
+      "mozzarella-light",
+      9
+     ],
+     [
+      "maslo",
+      5
+     ],
+     [
+      "olivovy-olej",
+      3
+     ],
+     [
+      "sul",
+      1.4
+     ],
+     [
+      "oregano",
+      0.23
+     ],
+     [
+      "cesnek-suseny",
+      0.7
+     ],
+     [
+      "cibule-susena",
+      0.54
+     ],
+     [
+      "paprika-sladka",
+      0.52
+     ],
+     [
+      "chilli-mlete",
+      0.61
+     ],
+     [
+      "kmin-rimsky",
+      0.48
+     ]
+    ],
+    "keeps": "4 days",
+    "name": "Chicken Fajita Mac n Cheese",
+    "note": "From Jalal Sam Fit (card: 568 kcal, P 56 · C 54 · F 13 for ¼ of the batch). Portions rescaled to the nutritionist's lunch target. Cook with fresh chicken (85 g per serving): with a full freezer pack the sauce would have to shrink too much. Spices and herbs are in the ingredient list in grams (converted from the spoon amounts) and count towards the nutrition. Spice amounts in the steps follow the servings you cook. Onion and green onion swapped for extra bell pepper (Anna). Frozen mixed veg (150 g per portion) added for fibre. Regular butter replaces light butter (not sold in CZ), cut to about 73 % of the weight so fat and calories stay the same.",
+    "prep": "batch",
+    "prepSteps": [
+     "Mix the fajita seasoning: {q:2 tsp} each of salt, oregano, garlic powder, onion powder, paprika, chilli powder and cumin. Three-quarters ({q:10½ tsp}) goes on the chicken, the rest ({q:3½ tsp}) on the peppers.",
+     "Cube the chicken ({=kureci-prsa}) and mix with three-quarters of the seasoning ({q:10½ tsp}), the oil ({=olivovy-olej}) and three-quarters of the lime juice ({=limetkova-stava:75%|spoon}). Taste a pinch of the mix: it should be well seasoned.",
+     "Boil the macaroni ({=testoviny}) for 7–8 min, drain and set aside.",
+     "Pan plan: {=kureci-prsa} of chicken is more than one pan can brown. Cook it in rounds of about 300 g in a single layer, or use two pans, and keep each finished round on a plate until the next step. If the browned bits on the pan turn dark brown or burn between rounds, deglaze with a splash of water or wipe the pan. To check, cut the thickest piece open: no pink, clear juices, firm all the way through.",
+     "In a pan on medium heat, cook the chicken in the butter ({=maslo}) for 6–8 min until golden. Set aside.",
+     "In the same pan cook the finely chopped peppers ({=paprika}, they replace the onion) with the rest of the seasoning ({q:3½ tsp}) for 5 min until soft and fragrant.",
+     "Turn the heat to LOW (so the sauce doesn't split) and add the milk ({=mleko-polotucne-1-5}), cream cheese ({=philadelphia-light}), grated Eidam ({=eidam-30}) and mozzarella ({=mozzarella-light}). Stir until melted, cheesy and creamy.",
+     "Fold in the macaroni, then the chicken and the rest of the lime juice ({=limetkova-stava:rest|spoon}), and give it a final mix.",
+     "Cook the frozen mixed veg ({=mrazena-zeleninova-smes}, a mix without onion) in the microwave or a steamer and divide everything into boxes. Keep the boxes open with the food no more than about 4 cm deep and leave it until it stops steaming, about 30 min. Refrigerate within 2 hours of cooking and close the lids once cool, not while warm."
+    ],
+    "stepBatch": 4,
+    "stepScale": 0.453
+   }
+  },
+  "meals/chicken-shawarma-rice-bowls-dinner": {
+   "base": 2,
+   "data": {
+    "cat": "dinner",
+    "chicken": "fresh",
+    "daySteps": [
+     "Reheat the rice and chicken (microwave 2–3 min with a sprinkle of water), then add the cold cucumber yogurt and samurai sauce. Make sure it is steaming hot all the way through (stir halfway), and reheat only the portion you will eat."
+    ],
+    "items": [
+     [
+      "kureci-prsa",
+      85
+     ],
+     [
+      "mrazena-zeleninova-smes",
+      150
+     ],
+     [
+      "recky-jogurt-milko-0-3",
+      75
+     ],
+     [
+      "ryze-natural",
+      45
+     ],
+     [
+      "okurka-salatova",
+      25
+     ],
+     [
+      "rajcata",
+      25
+     ],
+     [
+      "majoneza-light-hellmann-s",
+      22
+     ],
+     [
+      "citronova-stava",
+      11
+     ],
+     [
+      "maslo",
+      7.5
+     ],
+     [
+      "palive-omacka",
+      7
+     ],
+     [
+      "cesnek",
+      5
+     ],
+     [
+      "petrzel-nat",
+      2.5
+     ],
+     [
+      "kurkuma",
+      0.34
+     ],
+     [
+      "paprika-sladka",
+      0.39
+     ],
+     [
+      "sul",
+      2
+     ],
+     [
+      "kmin-rimsky",
+      0.71
+     ],
+     [
+      "cibule-susena",
+      0.68
+     ],
+     [
+      "petrzel-susena",
+      0.11
+     ],
+     [
+      "paprika-uzena",
+      0.52
+     ],
+     [
+      "pepr-cerny",
+      0.52
+     ],
+     [
+      "cesnek-suseny",
+      0.18
+     ]
+    ],
+    "keeps": "3 days",
+    "name": "Chicken Shawarma Rice Bowls",
+    "note": "From Jalal Sam Fit (card: 488 kcal, P 45 · C 42 · F 14 for ¼ of the batch). Portions rescaled to the nutritionist's dinner target. Cook with fresh chicken (85 g per serving): with a full freezer pack the sauce would have to shrink too much. Spices and herbs are in the ingredient list in grams (converted from the spoon amounts) and count towards the nutrition. Spice amounts in the steps follow the servings you cook. Frozen mixed veg (150 g per portion) added for fibre. Made with brown rice for extra fibre (white works too, with about 2 g less fibre). Regular butter replaces light butter (not sold in CZ), cut to about 73 % of the weight so fat and calories stay the same.",
+    "prep": "batch",
+    "prepSteps": [
+     "Golden rice first: wash the brown rice ({=ryze-natural}) and put it in a pot with {q:1 tsp} each of turmeric, paprika, salt and cumin and about 2½ times its weight in water. Bring to a light bubble, cover and simmer on low for 25–30 min until cooked.",
+     "Slice the chicken breasts ({=kureci-prsa}) into thinner fillets. Mix with the minced garlic ({=cesnek}), {q:2 tsp} onion powder, {q:2 tsp} dried parsley, {q:2 tsp} smoked paprika, {q:1½ tsp} salt, {q:1½ tsp} pepper, {q:2 tsp} cumin and two-thirds of the lemon juice ({=citronova-stava:2/3|spoon}).",
+     "Pan plan: {=kureci-prsa} of chicken is more than one pan can brown. Cook it in rounds of about 300 g in a single layer, or use two pans, and keep each finished round on a plate until the next step. If the browned bits on the pan turn dark brown or burn between rounds, deglaze with a splash of water or wipe the pan. To check, cut the thickest piece open: no pink, clear juices, firm all the way through.",
+     "In a pan on medium-high heat melt the butter ({=maslo}) and cook the chicken 3–4 min a side until golden brown.",
+     "Cucumber yogurt: mix a third of the yogurt ({=recky-jogurt-milko-0-3:1/3}) with the chopped cucumber ({=okurka-salatova}), tomato ({=rajcata}) and parsley ({=petrzel-nat}); season to taste with salt, garlic powder and cumin.",
+     "Spicy samurai sauce: mix the rest of the yogurt ({=recky-jogurt-milko-0-3:rest}) with the light mayo ({=majoneza-light-hellmann-s}), the hot sauce ({=palive-omacka}), the rest of the lemon juice ({=citronova-stava:rest|spoon}) and {q:½ tsp} each of salt, pepper, garlic powder, onion powder and paprika.",
+     "Divide the rice and chicken into boxes. Keep both sauces in separate pots and add them only when eating.",
+     "Cook the frozen mixed veg ({=mrazena-zeleninova-smes}, a mix without onion) in the microwave or a steamer and add it to the boxes. Keep the boxes open with the food no more than about 4 cm deep and leave it until it stops steaming, about 30 min. Rice must be in the fridge within 1 hour of cooking. Refrigerate within 2 hours of cooking and close the lids once cool, not while warm."
+    ],
+    "stepBatch": 4,
+    "stepScale": 0.453
+   }
+  },
+  "meals/chicken-shawarma-rice-bowls-lunch": {
+   "base": 2,
+   "data": {
+    "cat": "lunch",
+    "chicken": "fresh",
+    "daySteps": [
+     "Reheat the rice and chicken (microwave 2–3 min with a sprinkle of water), then add the cold cucumber yogurt and samurai sauce. Make sure it is steaming hot all the way through (stir halfway), and reheat only the portion you will eat."
+    ],
+    "items": [
+     [
+      "kureci-prsa",
+      110
+     ],
+     [
+      "mrazena-zeleninova-smes",
+      150
+     ],
+     [
+      "recky-jogurt-milko-0-3",
+      75
+     ],
+     [
+      "ryze-natural",
+      65
+     ],
+     [
+      "majoneza-light-hellmann-s",
+      25
+     ],
+     [
+      "okurka-salatova",
+      25
+     ],
+     [
+      "rajcata",
+      25
+     ],
+     [
+      "maslo",
+      9
+     ],
+     [
+      "citronova-stava",
+      11
+     ],
+     [
+      "palive-omacka",
+      7
+     ],
+     [
+      "cesnek",
+      5
+     ],
+     [
+      "petrzel-nat",
+      2.5
+     ],
+     [
+      "kurkuma",
+      0.44
+     ],
+     [
+      "paprika-sladka",
+      0.51
+     ],
+     [
+      "sul",
+      2.6
+     ],
+     [
+      "kmin-rimsky",
+      0.92
+     ],
+     [
+      "cibule-susena",
+      0.88
+     ],
+     [
+      "petrzel-susena",
+      0.15
+     ],
+     [
+      "paprika-uzena",
+      0.68
+     ],
+     [
+      "pepr-cerny",
+      0.68
+     ],
+     [
+      "cesnek-suseny",
+      0.23
+     ]
+    ],
+    "keeps": "3 days",
+    "name": "Chicken Shawarma Rice Bowls",
+    "note": "From Jalal Sam Fit (card: 488 kcal, P 45 · C 42 · F 14 for ¼ of the batch). Portions rescaled to the nutritionist's lunch target. Cook with fresh chicken (110 g per serving): with a full freezer pack the sauce would have to shrink too much. Spices and herbs are in the ingredient list in grams (converted from the spoon amounts) and count towards the nutrition. Spice amounts in the steps follow the servings you cook. Frozen mixed veg (150 g per portion) added for fibre. Made with brown rice for extra fibre (white works too, with about 2 g less fibre). Regular butter replaces light butter (not sold in CZ), cut to about 73 % of the weight so fat and calories stay the same.",
+    "prep": "batch",
+    "prepSteps": [
+     "Golden rice first: wash the brown rice ({=ryze-natural}) and put it in a pot with {q:1 tsp} each of turmeric, paprika, salt and cumin and about 2½ times its weight in water. Bring to a light bubble, cover and simmer on low for 25–30 min until cooked.",
+     "Slice the chicken breasts ({=kureci-prsa}) into thinner fillets. Mix with the minced garlic ({=cesnek}), {q:2 tsp} onion powder, {q:2 tsp} dried parsley, {q:2 tsp} smoked paprika, {q:1½ tsp} salt, {q:1½ tsp} pepper, {q:2 tsp} cumin and two-thirds of the lemon juice ({=citronova-stava:2/3|spoon}).",
+     "Pan plan: {=kureci-prsa} of chicken is more than one pan can brown. Cook it in rounds of about 300 g in a single layer, or use two pans, and keep each finished round on a plate until the next step. If the browned bits on the pan turn dark brown or burn between rounds, deglaze with a splash of water or wipe the pan. To check, cut the thickest piece open: no pink, clear juices, firm all the way through.",
+     "In a pan on medium-high heat melt the butter ({=maslo}) and cook the chicken 3–4 min a side until golden brown.",
+     "Cucumber yogurt: mix a third of the yogurt ({=recky-jogurt-milko-0-3:1/3}) with the chopped cucumber ({=okurka-salatova}), tomato ({=rajcata}) and parsley ({=petrzel-nat}); season to taste with salt, garlic powder and cumin.",
+     "Spicy samurai sauce: mix the rest of the yogurt ({=recky-jogurt-milko-0-3:rest}) with the light mayo ({=majoneza-light-hellmann-s}), the hot sauce ({=palive-omacka}), the rest of the lemon juice ({=citronova-stava:rest|spoon}) and {q:½ tsp} each of salt, pepper, garlic powder, onion powder and paprika.",
+     "Divide the rice and chicken into boxes. Keep both sauces in separate pots and add them only when eating.",
+     "Cook the frozen mixed veg ({=mrazena-zeleninova-smes}, a mix without onion) in the microwave or a steamer and add it to the boxes. Keep the boxes open with the food no more than about 4 cm deep and leave it until it stops steaming, about 30 min. Rice must be in the fridge within 1 hour of cooking. Refrigerate within 2 hours of cooking and close the lids once cool, not while warm."
+    ],
+    "stepBatch": 4,
+    "stepScale": 0.587
+   }
+  },
+  "meals/creamy-steak-fajita-pasta-dinner": {
+   "base": 1,
+   "data": {
+    "cat": "dinner",
+    "daySteps": [
+     "Reheat in a pan or microwave with a splash of milk; heat just until hot so the steak stays tender. Make sure it is steaming hot all the way through (stir halfway), and reheat only the portion you will eat."
+    ],
+    "items": [
+     [
+      "hovezi-maso",
+      85
+     ],
+     [
+      "testoviny",
+      47.5
+     ],
+     [
+      "mrazena-zeleninova-smes",
+      150
+     ],
+     [
+      "mleko-polotucne-1-5",
+      70
+     ],
+     [
+      "paprika",
+      70
+     ],
+     [
+      "philadelphia-light",
+      34
+     ],
+     [
+      "parmazan-gran-moravia",
+      9
+     ],
+     [
+      "maslo",
+      1.5
+     ],
+     [
+      "olivovy-olej",
+      0.5
+     ],
+     [
+      "cesnek-suseny",
+      0.75
+     ],
+     [
+      "chilli-mlete",
+      0.33
+     ],
+     [
+      "sul",
+      1.5
+     ],
+     [
+      "pepr-cerny",
+      0.28
+     ],
+     [
+      "oregano",
+      0.12
+     ]
+    ],
+    "keeps": "4 days",
+    "name": "Creamy Steak Fajita Pasta",
+    "note": "From Jalal Sam Fit (card: 545 kcal, P 57 · C 46 · F 13 for ¼ of the batch). Portions rescaled to the nutritionist's dinner target. Spices and herbs are in the ingredient list in grams (converted from the spoon amounts) and count towards the nutrition. Spice amounts in the steps follow the servings you cook. Onion and green onion swapped for extra bell pepper (Anna). Frozen mixed veg (150 g per portion) added for fibre. Regular butter replaces light butter (not sold in CZ), cut to about 73 % of the weight so fat and calories stay the same.",
+    "prep": "batch",
+    "prepSteps": [
+     "Trim the beef ({=hovezi-maso}) of silver skin and outer fat and cut it into steaks about 2.5 cm thick. Season both sides with {q:1 tsp} each of garlic powder, chilli powder, salt and pepper and the oil ({=olivovy-olej}) until evenly coated. The longer it marinates the better.",
+     "Cook the penne ({=testoviny}) as the pack says. Keep {q:80 ml} of the pasta water, then drain.",
+     "Creamy fajita sauce: blend the milk ({=mleko-polotucne-1-5}), light cream cheese ({=philadelphia-light}), parmesan ({=parmazan-gran-moravia}), {q:1 tsp} each of garlic powder, oregano and salt, chilli flakes to taste and the pasta water until smooth.",
+     "Pan plan: {=hovezi-maso} of beef is more than one pan can sear. Cook it in rounds of about 300 g in a single layer, or use two pans, and keep each finished round on a plate. If the browned bits on the pan turn dark brown or burn between rounds, deglaze with a splash of water or wipe the pan. Cut the thickest piece open: it should be cooked through with no raw red in the middle.",
+     "In a pan on medium-high heat with the butter ({=maslo}), cook the steaks 4–5 min a side (depending on thickness) until they have a nice crust. Set aside to rest.",
+     "In the same pan cook the thinly sliced peppers ({=paprika}, they replace the onion) for 5 min until soft. Add the sauce, let it thicken for a few minutes, then add the pasta and mix well.",
+     "Slice the steak thinly across the grain and lay it over the pasta. Garnish with parsley and add seasoning to taste.",
+     "Cook the frozen mixed veg ({=mrazena-zeleninova-smes}, a mix without onion) in the microwave or a steamer and divide everything into boxes. Keep the boxes open with the food no more than about 4 cm deep and leave it until it stops steaming, about 30 min. Refrigerate within 2 hours of cooking and close the lids once cool, not while warm."
+    ],
+    "stepBatch": 4,
+    "stepScale": 0.486
+   }
+  },
+  "meals/creamy-steak-fajita-pasta-lunch": {
+   "base": 1,
+   "data": {
+    "cat": "lunch",
+    "daySteps": [
+     "Reheat in a pan or microwave with a splash of milk; heat just until hot so the steak stays tender. Make sure it is steaming hot all the way through (stir halfway), and reheat only the portion you will eat."
+    ],
+    "items": [
+     [
+      "hovezi-maso",
+      105
+     ],
+     [
+      "testoviny",
+      67.5
+     ],
+     [
+      "mrazena-zeleninova-smes",
+      150
+     ],
+     [
+      "paprika",
+      80
+     ],
+     [
+      "mleko-polotucne-1-5",
+      75
+     ],
+     [
+      "philadelphia-light",
+      34
+     ],
+     [
+      "parmazan-gran-moravia",
+      9
+     ],
+     [
+      "maslo",
+      2.5
+     ],
+     [
+      "olivovy-olej",
+      1
+     ],
+     [
+      "cesnek-suseny",
+      0.93
+     ],
+     [
+      "chilli-mlete",
+      0.41
+     ],
+     [
+      "sul",
+      1.8
+     ],
+     [
+      "pepr-cerny",
+      0.34
+     ],
+     [
+      "oregano",
+      0.15
+     ]
+    ],
+    "keeps": "4 days",
+    "name": "Creamy Steak Fajita Pasta",
+    "note": "From Jalal Sam Fit (card: 545 kcal, P 57 · C 46 · F 13 for ¼ of the batch). Portions rescaled to the nutritionist's lunch target. Spices and herbs are in the ingredient list in grams (converted from the spoon amounts) and count towards the nutrition. Spice amounts in the steps follow the servings you cook. Onion and green onion swapped for extra bell pepper (Anna). Frozen mixed veg (150 g per portion) added for fibre. Regular butter replaces light butter (not sold in CZ), cut to about 73 % of the weight so fat and calories stay the same.",
+    "prep": "batch",
+    "prepSteps": [
+     "Trim the beef ({=hovezi-maso}) of silver skin and outer fat and cut it into steaks about 2.5 cm thick. Season both sides with {q:1 tsp} each of garlic powder, chilli powder, salt and pepper and the oil ({=olivovy-olej}) until evenly coated. The longer it marinates the better.",
+     "Cook the penne ({=testoviny}) as the pack says. Keep {q:80 ml} of the pasta water, then drain.",
+     "Creamy fajita sauce: blend the milk ({=mleko-polotucne-1-5}), light cream cheese ({=philadelphia-light}), parmesan ({=parmazan-gran-moravia}), {q:1 tsp} each of garlic powder, oregano and salt, chilli flakes to taste and the pasta water until smooth.",
+     "Pan plan: {=hovezi-maso} of beef is more than one pan can sear. Cook it in rounds of about 300 g in a single layer, or use two pans, and keep each finished round on a plate. If the browned bits on the pan turn dark brown or burn between rounds, deglaze with a splash of water or wipe the pan. Cut the thickest piece open: it should be cooked through with no raw red in the middle.",
+     "In a pan on medium-high heat with the butter ({=maslo}), cook the steaks 4–5 min a side (depending on thickness) until they have a nice crust. Set aside to rest.",
+     "In the same pan cook the thinly sliced peppers ({=paprika}, they replace the onion) for 5 min until soft. Add the sauce, let it thicken for a few minutes, then add the pasta and mix well.",
+     "Slice the steak thinly across the grain and lay it over the pasta. Garnish with parsley and add seasoning to taste.",
+     "Cook the frozen mixed veg ({=mrazena-zeleninova-smes}, a mix without onion) in the microwave or a steamer and divide everything into boxes. Keep the boxes open with the food no more than about 4 cm deep and leave it until it stops steaming, about 30 min. Refrigerate within 2 hours of cooking and close the lids once cool, not while warm."
+    ],
+    "stepBatch": 4,
+    "stepScale": 0.6
+   }
+  },
+  "meals/crispy-spicy-beef-noodles-dinner": {
+   "base": 2,
+   "data": {
+    "cat": "dinner",
+    "daySteps": [
+     "Reheat in the microwave or a pan with a splash of water. It tastes even better after a day in the fridge. Make sure it is steaming hot all the way through (stir halfway), and reheat only the portion you will eat."
+    ],
+    "items": [
+     [
+      "hovezi-mlete-libove-5",
+      120
+     ],
+     [
+      "vajecne-nudle",
+      47.5
+     ],
+     [
+      "mrazena-zeleninova-smes",
+      100
+     ],
+     [
+      "paprika",
+      65
+     ],
+     [
+      "maslo",
+      9
+     ],
+     [
+      "sojova-omacka",
+      12
+     ],
+     [
+      "chilli-cesnekova-pasta",
+      10
+     ],
+     [
+      "sladka-chilli-omacka",
+      6
+     ],
+     [
+      "med",
+      5
+     ],
+     [
+      "ryzovy-ocet",
+      4.5
+     ],
+     [
+      "cesnek",
+      2.5
+     ],
+     [
+      "zazvor",
+      2.5
+     ],
+     [
+      "sezam",
+      1
+     ],
+     [
+      "chilli-vlocky",
+      0.27
+     ]
+    ],
+    "keeps": "4 days",
+    "name": "Crispy Spicy Beef Noodles",
+    "note": "From Jalal Sam Fit (card: 521 kcal, P 54 · C 56 · F 8 for ¼ of the batch). Portions rescaled to the nutritionist's dinner target. Spices and herbs are in the ingredient list in grams (converted from the spoon amounts) and count towards the nutrition. Spice amounts in the steps follow the servings you cook. Onion and green onion swapped for extra bell pepper (Anna). Frozen mixed veg (100 g per portion) added for fibre. Regular butter replaces light butter (not sold in CZ), cut to about 73 % of the weight so fat and calories stay the same.",
+    "prep": "batch",
+    "prepSteps": [
+     "Sauce: in a bowl mix the soy sauce ({=sojova-omacka}), honey ({=med}), sweet chilli sauce ({=sladka-chilli-omacka}), rice vinegar ({=ryzovy-ocet}), chilli garlic paste ({=chilli-cesnekova-pasta}), {q:1 tsp} red pepper flakes, half the sesame seeds ({=sezam:50%|spoon}) and {q:20 ml} water.",
+     "Pan plan: {=hovezi-mlete-libove-5} of mince is more than one pan can brown. Cook it in rounds of about 500 g so the water evaporates and it browns instead of stewing, or use two pans. Tip each finished round into a bowl and bring it all back together for the next step. If the browned bits on the pan turn dark brown or burn between rounds, deglaze with a splash of water or wipe the pan. Mince is done when no pink is left.",
+     "In a pan on medium-high heat melt the butter ({=maslo}) and cook the mince ({=hovezi-mlete-libove-5}) for 6–8 min until browned and most of the liquid has evaporated.",
+     "Lower to medium, add half the sauce and a third of the diced pepper ({=paprika:1/3}, it replaces the onion and green onion) and cook 5 min more until golden and crispy. Set aside.",
+     "Put the noodles ({=vajecne-nudle}) in a bowl of boiling water for 5 min, then drain so they don't go mushy.",
+     "In the same pan cook the chopped garlic ({=cesnek}) and ginger ({=zazvor}) for 3–4 min until fragrant, add the rest of the pepper ({=paprika:rest}), sliced, and cook 5 min until soft.",
+     "On low heat add the noodles with the rest of the sauce and mix until fully coated. Fold the beef back in gently and top with the rest of the sesame seeds ({=sezam:rest|spoon}).",
+     "Cook the frozen mixed veg ({=mrazena-zeleninova-smes}, a mix without onion) in the microwave or a steamer and divide everything into boxes. Keep the boxes open with the food no more than about 4 cm deep and leave it until it stops steaming, about 30 min. Refrigerate within 2 hours of cooking and close the lids once cool, not while warm."
+    ],
+    "stepBatch": 4,
+    "stepScale": 0.6
+   }
+  },
+  "meals/crispy-spicy-beef-noodles-lunch": {
+   "base": 2,
+   "data": {
+    "cat": "lunch",
+    "daySteps": [
+     "Reheat in the microwave or a pan with a splash of water. It tastes even better after a day in the fridge. Make sure it is steaming hot all the way through (stir halfway), and reheat only the portion you will eat."
+    ],
+    "items": [
+     [
+      "hovezi-mlete-libove-5",
+      140
+     ],
+     [
+      "vajecne-nudle",
+      62.5
+     ],
+     [
+      "mrazena-zeleninova-smes",
+      100
+     ],
+     [
+      "paprika",
+      90
+     ],
+     [
+      "sojova-omacka",
+      18
+     ],
+     [
+      "chilli-cesnekova-pasta",
+      15
+     ],
+     [
+      "maslo",
+      9
+     ],
+     [
+      "sladka-chilli-omacka",
+      9
+     ],
+     [
+      "med",
+      7.5
+     ],
+     [
+      "ryzovy-ocet",
+      6
+     ],
+     [
+      "cesnek",
+      4
+     ],
+     [
+      "zazvor",
+      4
+     ],
+     [
+      "sezam",
+      1
+     ],
+     [
+      "chilli-vlocky",
+      0.32
+     ]
+    ],
+    "keeps": "4 days",
+    "name": "Crispy Spicy Beef Noodles",
+    "note": "From Jalal Sam Fit (card: 521 kcal, P 54 · C 56 · F 8 for ¼ of the batch). Portions rescaled to the nutritionist's lunch target. Spices and herbs are in the ingredient list in grams (converted from the spoon amounts) and count towards the nutrition. Spice amounts in the steps follow the servings you cook. Onion and green onion swapped for extra bell pepper (Anna). Frozen mixed veg (100 g per portion) added for fibre. Regular butter replaces light butter (not sold in CZ), cut to about 73 % of the weight so fat and calories stay the same.",
+    "prep": "batch",
+    "prepSteps": [
+     "Sauce: in a bowl mix the soy sauce ({=sojova-omacka}), honey ({=med}), sweet chilli sauce ({=sladka-chilli-omacka}), rice vinegar ({=ryzovy-ocet}), chilli garlic paste ({=chilli-cesnekova-pasta}), {q:1 tsp} red pepper flakes, half the sesame seeds ({=sezam:50%|spoon}) and {q:20 ml} water.",
+     "Pan plan: {=hovezi-mlete-libove-5} of mince is more than one pan can brown. Cook it in rounds of about 500 g so the water evaporates and it browns instead of stewing, or use two pans. Tip each finished round into a bowl and bring it all back together for the next step. If the browned bits on the pan turn dark brown or burn between rounds, deglaze with a splash of water or wipe the pan. Mince is done when no pink is left.",
+     "In a pan on medium-high heat melt the butter ({=maslo}) and cook the mince ({=hovezi-mlete-libove-5}) for 6–8 min until browned and most of the liquid has evaporated.",
+     "Lower to medium, add half the sauce and a third of the diced pepper ({=paprika:1/3}, it replaces the onion and green onion) and cook 5 min more until golden and crispy. Set aside.",
+     "Put the noodles ({=vajecne-nudle}) in a bowl of boiling water for 5 min, then drain so they don't go mushy.",
+     "In the same pan cook the chopped garlic ({=cesnek}) and ginger ({=zazvor}) for 3–4 min until fragrant, add the rest of the pepper ({=paprika:rest}), sliced, and cook 5 min until soft.",
+     "On low heat add the noodles with the rest of the sauce and mix until fully coated. Fold the beef back in gently and top with the rest of the sesame seeds ({=sezam:rest|spoon}).",
+     "Cook the frozen mixed veg ({=mrazena-zeleninova-smes}, a mix without onion) in the microwave or a steamer and divide everything into boxes. Keep the boxes open with the food no more than about 4 cm deep and leave it until it stops steaming, about 30 min. Refrigerate within 2 hours of cooking and close the lids once cool, not while warm."
+    ],
+    "stepBatch": 4,
+    "stepScale": 0.7
+   }
+  },
+  "meals/garlic-butter-steak-bites-dinner": {
+   "base": 2,
+   "data": {
+    "cat": "dinner",
+    "daySteps": [
+     "Reheat just until hot (microwave 1½–2 min, or a pan for 3–4 min) and drizzle with the spicy mayo. Make sure it is steaming hot all the way through (stir halfway), and reheat only the portion you will eat."
+    ],
+    "items": [
+     [
+      "hovezi-maso",
+      130
+     ],
+     [
+      "brambory",
+      250
+     ],
+     [
+      "mrazena-zeleninova-smes",
+      100
+     ],
+     [
+      "majoneza-light-hellmann-s",
+      7.5
+     ],
+     [
+      "maslo",
+      5
+     ],
+     [
+      "cesnek",
+      4.5
+     ],
+     [
+      "sriracha",
+      3.5
+     ],
+     [
+      "petrzel-nat",
+      2
+     ],
+     [
+      "citronova-stava",
+      2
+     ],
+     [
+      "olivovy-olej",
+      1.5
+     ],
+     [
+      "sul",
+      2.4
+     ],
+     [
+      "pepr-cerny",
+      1.1
+     ],
+     [
+      "cesnek-suseny",
+      1.5
+     ],
+     [
+      "petrzel-susena",
+      0.24
+     ],
+     [
+      "paprika-uzena",
+      0.37
+     ]
+    ],
+    "keeps": "4 days",
+    "name": "Garlic Butter Steak Bites",
+    "note": "From Jalal Sam Fit (card: 480 kcal, P 50 · C 39 · F 13 for ¼ of the batch). Portions rescaled to the nutritionist's dinner target. Spices and herbs are in the ingredient list in grams (converted from the spoon amounts) and count towards the nutrition. Spice amounts in the steps follow the servings you cook. Frozen mixed veg (100 g per portion) added for fibre. Regular butter replaces light butter (not sold in CZ), cut to about 73 % of the weight so fat and calories stay the same.",
+    "prep": "batch",
+    "prepSteps": [
+     "Trim the beef ({=hovezi-maso}) of silver skin, sinew and the outer fat and cut it across the grain into 2.5 cm cubes (bigger cubes stay juicy and get a better crust). Season with {q:1½ tsp} salt, {q:2 tsp} black pepper, {q:2 tsp} garlic powder, {q:2 tsp} parsley and the oil ({=olivovy-olej}). Marinate 30 min or more; overnight in the fridge is best.",
+     "Heat the oven to 200 °C. Wash the potatoes ({=brambory}) and cut them unpeeled into small cubes. Season with {q:1 tsp} each of salt, black pepper, smoked paprika, garlic powder and parsley (oil optional) and bake 20–25 min until crispy.",
+     "Spicy mayo: mix the light mayo ({=majoneza-light-hellmann-s}), the sriracha ({=sriracha}) and the lemon juice ({=citronova-stava}). Keep it in a small pot.",
+     "Meanwhile heat a pan on medium-high with half the butter ({=maslo:50%|spoon}) and sear the beef in batches, 2–3 min a side, until it has a good crust. Take it out once the thickest piece is just cooked through, with no raw red in the middle (reheating finishes it).",
+     "Lower the heat, return all the beef with the rest of the butter ({=maslo:rest|spoon}), the minced garlic ({=cesnek}) and the chopped parsley ({=petrzel-nat}). Toss for 1–2 min, then take off the heat.",
+     "Divide the potatoes and steak bites into boxes.",
+     "Cook the frozen mixed veg ({=mrazena-zeleninova-smes}, a mix without onion) in the microwave or a steamer and add it to the boxes. Keep the boxes open with the food no more than about 4 cm deep and leave it until it stops steaming, about 30 min. Refrigerate within 2 hours of cooking and close the lids once cool, not while warm."
+    ],
+    "stepBatch": 4,
+    "stepScale": 0.65
+   }
+  },
+  "meals/garlic-butter-steak-bites-lunch": {
+   "base": 2,
+   "data": {
+    "cat": "lunch",
+    "daySteps": [
+     "Reheat just until hot (microwave 1½–2 min, or a pan for 3–4 min) and drizzle with the spicy mayo. Make sure it is steaming hot all the way through (stir halfway), and reheat only the portion you will eat."
+    ],
+    "items": [
+     [
+      "hovezi-maso",
+      155
+     ],
+     [
+      "brambory",
+      340
+     ],
+     [
+      "mrazena-zeleninova-smes",
+      100
+     ],
+     [
+      "maslo",
+      6.5
+     ],
+     [
+      "majoneza-light-hellmann-s",
+      7
+     ],
+     [
+      "cesnek",
+      5
+     ],
+     [
+      "sriracha",
+      4
+     ],
+     [
+      "petrzel-nat",
+      2.5
+     ],
+     [
+      "citronova-stava",
+      2.5
+     ],
+     [
+      "olivovy-olej",
+      2
+     ],
+     [
+      "sul",
+      2.9
+     ],
+     [
+      "pepr-cerny",
+      1.3
+     ],
+     [
+      "cesnek-suseny",
+      1.8
+     ],
+     [
+      "petrzel-susena",
+      0.29
+     ],
+     [
+      "paprika-uzena",
+      0.45
+     ]
+    ],
+    "keeps": "4 days",
+    "name": "Garlic Butter Steak Bites",
+    "note": "From Jalal Sam Fit (card: 480 kcal, P 50 · C 39 · F 13 for ¼ of the batch). Portions rescaled to the nutritionist's lunch target. Spices and herbs are in the ingredient list in grams (converted from the spoon amounts) and count towards the nutrition. Spice amounts in the steps follow the servings you cook. Frozen mixed veg (100 g per portion) added for fibre. Regular butter replaces light butter (not sold in CZ), cut to about 73 % of the weight so fat and calories stay the same.",
+    "prep": "batch",
+    "prepSteps": [
+     "Trim the beef ({=hovezi-maso}) of silver skin, sinew and the outer fat and cut it across the grain into 2.5 cm cubes (bigger cubes stay juicy and get a better crust). Season with {q:1½ tsp} salt, {q:2 tsp} black pepper, {q:2 tsp} garlic powder, {q:2 tsp} parsley and the oil ({=olivovy-olej}). Marinate 30 min or more; overnight in the fridge is best.",
+     "Heat the oven to 200 °C. Wash the potatoes ({=brambory}) and cut them unpeeled into small cubes. Season with {q:1 tsp} each of salt, black pepper, smoked paprika, garlic powder and parsley (oil optional) and bake 20–25 min until crispy.",
+     "Spicy mayo: mix the light mayo ({=majoneza-light-hellmann-s}), the sriracha ({=sriracha}) and the lemon juice ({=citronova-stava}). Keep it in a small pot.",
+     "Meanwhile heat a pan on medium-high with half the butter ({=maslo:50%|spoon}) and sear the beef in batches, 2–3 min a side, until it has a good crust. Take it out once the thickest piece is just cooked through, with no raw red in the middle (reheating finishes it).",
+     "Lower the heat, return all the beef with the rest of the butter ({=maslo:rest|spoon}), the minced garlic ({=cesnek}) and the chopped parsley ({=petrzel-nat}). Toss for 1–2 min, then take off the heat.",
+     "Divide the potatoes and steak bites into boxes.",
+     "Cook the frozen mixed veg ({=mrazena-zeleninova-smes}, a mix without onion) in the microwave or a steamer and add it to the boxes. Keep the boxes open with the food no more than about 4 cm deep and leave it until it stops steaming, about 30 min. Refrigerate within 2 hours of cooking and close the lids once cool, not while warm."
+    ],
+    "stepBatch": 4,
+    "stepScale": 0.775
+   }
+  },
+  "meals/grilled-chicken-alfredo-pasta-dinner": {
+   "base": 2,
+   "data": {
+    "cat": "dinner",
+    "chicken": "freezer",
+    "daySteps": [
+     "Reheat chicken and pasta together in a covered pan on low for about 5 min, or in the microwave, adding a little milk if the sauce has set. Make sure it is steaming hot all the way through (stir halfway), and reheat only the portion you will eat."
+    ],
+    "items": [
+     [
+      "kureci-prsa",
+      100
+     ],
+     [
+      "testoviny",
+      47
+     ],
+     [
+      "mrazena-zeleninova-smes",
+      150
+     ],
+     [
+      "zahustene-mleko-4",
+      39
+     ],
+     [
+      "philadelphia-light",
+      17
+     ],
+     [
+      "rajcatove-pyre",
+      26
+     ],
+     [
+      "paprika",
+      14
+     ],
+     [
+      "parmazan-gran-moravia",
+      3.9
+     ],
+     [
+      "maslo",
+      4.5
+     ],
+     [
+      "cesnek",
+      3.5
+     ],
+     [
+      "olivovy-olej",
+      2.6
+     ],
+     [
+      "sul",
+      1.5
+     ],
+     [
+      "bylinky-italske",
+      0.37
+     ],
+     [
+      "petrzel-susena",
+      0.16
+     ],
+     [
+      "chilli-vlocky",
+      0.33
+     ],
+     [
+      "cesnek-suseny",
+      0.59
+     ],
+     [
+      "paprika-sladka",
+      0.72
+     ]
+    ],
+    "keeps": "4 days",
+    "name": "Grilled Chicken Alfredo Pasta",
+    "note": "From Jalal Sam Fit (card: 595 kcal, P 59 · C 50 · F 16 for ¼ of the batch). Portions rescaled to the nutritionist's dinner target. Chicken is 100 g per serving, so one 600 g freezer pack makes 6 dinners. Spices and herbs are in the ingredient list in grams (converted from the spoon amounts) and count towards the nutrition. Spice amounts in the steps follow the servings you cook. Onion and green onion swapped for extra bell pepper (Anna). Frozen mixed veg (150 g per portion) added for fibre. Regular butter replaces light butter (not sold in CZ), cut to about 73 % of the weight so fat and calories stay the same.",
+    "prep": "batch",
+    "prepSteps": [
+     "Thaw the chicken pack in the fridge the night before (about 24 hours for a 900 g pack). Pat the pieces dry before seasoning, since wet chicken steams instead of browning.",
+     "Cube the chicken ({=kureci-prsa}) and season with {q:1 tsp} salt, {q:2 tsp} Italian herbs, {q:1½ tsp} parsley, {q:1 tsp} chilli flakes (less if you don't like it spicy), {q:1½ tsp} garlic powder, {q:1½ tsp} paprika and the oil ({=olivovy-olej}). Mix until well coated.",
+     "Boil the pasta ({=testoviny}) in salted water for 8–10 min until al dente. Keep {q:60 ml} of the pasta water, then drain.",
+     "Pan plan: {=kureci-prsa} of chicken is more than one pan can brown. Cook it in rounds of about 300 g in a single layer, or use two pans, and keep each finished round on a plate until the next step. If the browned bits on the pan turn dark brown or burn between rounds, deglaze with a splash of water or wipe the pan. To check, cut the thickest piece open: no pink, clear juices, firm all the way through.",
+     "Heat a pan on medium-high with three-quarters of the butter ({=maslo:75%|spoon}) and cook the chicken 3–4 min a side for a nice golden crust. Lower the heat right down, add the rest of the butter ({=maslo:rest|spoon}), toss until coated and set aside.",
+     "In the same pan on low heat cook the chopped garlic ({=cesnek}) and the chopped pepper ({=paprika}, instead of onion) for 5 min until soft. Add {q:1 tsp} salt, {q:1 tsp} Italian herbs, {q:1 tsp} parsley, {q:½ tsp} chilli flakes and {q:1 tsp} paprika and stir for a minute.",
+     "Add the passata ({=rajcatove-pyre}) and cook on low for 5 min until it bubbles and thickens.",
+     "Stir in the light evaporated milk ({=zahustene-mleko-4}), light cream cheese ({=philadelphia-light}) and grated parmesan ({=parmazan-gran-moravia}) on low heat until creamy and smooth (add pasta water if too thick). Add the pasta and mix thoroughly. Box the pasta with the chicken on top.",
+     "Cook the frozen mixed veg ({=mrazena-zeleninova-smes}, a mix without onion) in the microwave or a steamer and divide everything into boxes. Keep the boxes open with the food no more than about 4 cm deep and leave it until it stops steaming, about 30 min. Refrigerate within 2 hours of cooking and close the lids once cool, not while warm."
+    ],
+    "stepBatch": 4,
+    "stepScale": 0.5
+   }
+  },
+  "meals/grilled-chicken-alfredo-pasta-lunch": {
+   "base": 2,
+   "data": {
+    "cat": "lunch",
+    "chicken": "fresh",
+    "daySteps": [
+     "Reheat chicken and pasta together in a covered pan on low for about 5 min, or in the microwave, adding a little milk if the sauce has set. Make sure it is steaming hot all the way through (stir halfway), and reheat only the portion you will eat."
+    ],
+    "items": [
+     [
+      "kureci-prsa",
+      85
+     ],
+     [
+      "testoviny",
+      62.5
+     ],
+     [
+      "mrazena-zeleninova-smes",
+      150
+     ],
+     [
+      "zahustene-mleko-4",
+      75
+     ],
+     [
+      "rajcatove-pyre",
+      38
+     ],
+     [
+      "philadelphia-light",
+      32
+     ],
+     [
+      "paprika",
+      20
+     ],
+     [
+      "parmazan-gran-moravia",
+      7.5
+     ],
+     [
+      "maslo",
+      4
+     ],
+     [
+      "cesnek",
+      5
+     ],
+     [
+      "olivovy-olej",
+      2.5
+     ],
+     [
+      "sul",
+      1.3
+     ],
+     [
+      "bylinky-italske",
+      0.32
+     ],
+     [
+      "petrzel-susena",
+      0.13
+     ],
+     [
+      "chilli-vlocky",
+      0.29
+     ],
+     [
+      "cesnek-suseny",
+      0.49
+     ],
+     [
+      "paprika-sladka",
+      0.61
+     ]
+    ],
+    "keeps": "4 days",
+    "name": "Grilled Chicken Alfredo Pasta",
+    "note": "From Jalal Sam Fit (card: 595 kcal, P 59 · C 50 · F 16 for ¼ of the batch). Portions rescaled to the nutritionist's lunch target. Cook with fresh chicken (85 g per serving): with a full freezer pack the sauce would have to shrink too much. Spices and herbs are in the ingredient list in grams (converted from the spoon amounts) and count towards the nutrition. Spice amounts in the steps follow the servings you cook. Onion and green onion swapped for extra bell pepper (Anna). Frozen mixed veg (150 g per portion) added for fibre. Regular butter replaces light butter (not sold in CZ), cut to about 73 % of the weight so fat and calories stay the same.",
+    "prep": "batch",
+    "prepSteps": [
+     "Cube the chicken ({=kureci-prsa}) and season with {q:1 tsp} salt, {q:2 tsp} Italian herbs, {q:1½ tsp} parsley, {q:1 tsp} chilli flakes (less if you don't like it spicy), {q:1½ tsp} garlic powder, {q:1½ tsp} paprika and the oil ({=olivovy-olej}). Mix until well coated.",
+     "Boil the pasta ({=testoviny}) in salted water for 8–10 min until al dente. Keep {q:60 ml} of the pasta water, then drain.",
+     "Pan plan: {=kureci-prsa} of chicken is more than one pan can brown. Cook it in rounds of about 300 g in a single layer, or use two pans, and keep each finished round on a plate until the next step. If the browned bits on the pan turn dark brown or burn between rounds, deglaze with a splash of water or wipe the pan. To check, cut the thickest piece open: no pink, clear juices, firm all the way through.",
+     "Heat a pan on medium-high with three-quarters of the butter ({=maslo:75%|spoon}) and cook the chicken 3–4 min a side for a nice golden crust. Lower the heat right down, add the rest of the butter ({=maslo:rest|spoon}), toss until coated and set aside.",
+     "In the same pan on low heat cook the chopped garlic ({=cesnek}) and the chopped pepper ({=paprika}, instead of onion) for 5 min until soft. Add {q:1 tsp} salt, {q:1 tsp} Italian herbs, {q:1 tsp} parsley, {q:½ tsp} chilli flakes and {q:1 tsp} paprika and stir for a minute.",
+     "Add the passata ({=rajcatove-pyre}) and cook on low for 5 min until it bubbles and thickens.",
+     "Stir in the light evaporated milk ({=zahustene-mleko-4}), light cream cheese ({=philadelphia-light}) and grated parmesan ({=parmazan-gran-moravia}) on low heat until creamy and smooth (add pasta water if too thick). Add the pasta and mix thoroughly. Box the pasta with the chicken on top.",
+     "Cook the frozen mixed veg ({=mrazena-zeleninova-smes}, a mix without onion) in the microwave or a steamer and divide everything into boxes. Keep the boxes open with the food no more than about 4 cm deep and leave it until it stops steaming, about 30 min. Refrigerate within 2 hours of cooking and close the lids once cool, not while warm."
+    ],
+    "stepBatch": 4,
+    "stepScale": 0.425
+   }
+  },
+  "meals/peri-peri-chicken-spicy-rice-dinner": {
+   "base": 1,
+   "data": {
+    "cat": "dinner",
+    "daySteps": [
+     "Reheat in the microwave or a pan for about 3–5 min, then drizzle with the perinaise. Make sure it is steaming hot all the way through (stir halfway), and reheat only the portion you will eat."
+    ],
+    "items": [
+     [
+      "kureci-stehna-bez-kuze",
+      140
+     ],
+     [
+      "ryze",
+      45
+     ],
+     [
+      "mrazena-zeleninova-smes",
+      150
+     ],
+     [
+      "paprika",
+      45
+     ],
+     [
+      "peri-peri-marinada",
+      18
+     ],
+     [
+      "majoneza-light-hellmann-s",
+      18
+     ],
+     [
+      "palive-omacka",
+      14
+     ],
+     [
+      "rajcatovy-protlak",
+      9
+     ],
+     [
+      "citronova-stava",
+      4.5
+     ],
+     [
+      "cesnek",
+      2.5
+     ],
+     [
+      "maslo",
+      1.5
+     ],
+     [
+      "petrzel-nat",
+      2
+     ],
+     [
+      "sul",
+      2.6
+     ],
+     [
+      "paprika-uzena",
+      1.2
+     ],
+     [
+      "chilli-mlete",
+      1.2
+     ],
+     [
+      "cesnek-suseny",
+      1.1
+     ],
+     [
+      "cibule-susena",
+      0.63
+     ],
+     [
+      "kmin-rimsky",
+      0.92
+     ],
+     [
+      "oregano",
+      0.26
+     ],
+     [
+      "kurkuma",
+      0.52
+     ]
+    ],
+    "keeps": "4 days",
+    "name": "Peri Peri Chicken & Spicy Rice",
+    "note": "From Jalal Sam Fit (card: 532 kcal, P 44 · C 47 · F 16 for ¼ of the batch). Portions rescaled to the nutritionist's dinner target. Spices and herbs are in the ingredient list in grams (converted from the spoon amounts) and count towards the nutrition. Spice amounts in the steps follow the servings you cook. Onion and green onion swapped for extra bell pepper (Anna). Frozen mixed veg (150 g per portion) added for fibre. Regular butter replaces light butter (not sold in CZ), cut to about 73 % of the weight so fat and calories stay the same.",
+    "prep": "batch",
+    "prepSteps": [
+     "Trim the extra fat from the boneless, skinless chicken thighs ({=kureci-stehna-bez-kuze}). Mix with {q:1½ tsp} each of salt, smoked paprika, chilli powder, garlic powder, onion powder, cumin and oregano, the peri peri marinade ({=peri-peri-marinada}) and two-thirds of the lemon juice ({=citronova-stava} in total). Marinate 30 min, or overnight in the fridge for the best flavour.",
+     "Perinaise: whisk the light mayo ({=majoneza-light-hellmann-s}), the hot sauce ({=palive-omacka}), {q:½ tsp} garlic powder, {q:½ tsp} smoked paprika and the rest of the lemon juice until smooth. Bottle it and keep it in the fridge.",
+     "Cook the rice ({=ryze}) in salted water until tender and drain.",
+     "Pan plan: {=kureci-stehna-bez-kuze} of chicken is more than one pan can brown. Cook it in rounds of about 300 g in a single layer, or use two pans, and keep each finished round on a plate until the next step. If the browned bits on the pan turn dark brown or burn between rounds, deglaze with a splash of water or wipe the pan. To check, cut the thickest piece open: no pink, clear juices, firm all the way through.",
+     "In a pan on medium-high heat melt the butter ({=maslo}) and cook the chicken 5 min a side until golden and juicy. Set aside.",
+     "In the same pan cook the chopped garlic ({=cesnek}) and chopped peppers ({=paprika}, they replace the onion) for 3–4 min until soft. Add {q:1 tsp} each of salt, cumin, smoked paprika, chilli powder and turmeric, then the tomato paste ({=rajcatovy-protlak}), and cook 3–4 min more.",
+     "Lower the heat right down, add the rice and chopped parsley ({=petrzel-nat}) and mix gently until the rice turns bright orange. Box with the chicken on top.",
+     "Cook the frozen mixed veg ({=mrazena-zeleninova-smes}, a mix without onion) in the microwave or a steamer and add it to the boxes. Keep the boxes open with the food no more than about 4 cm deep and leave it until it stops steaming, about 30 min. Rice must be in the fridge within 1 hour of cooking. Refrigerate within 2 hours of cooking and close the lids once cool, not while warm."
+    ],
+    "stepBatch": 4,
+    "stepScale": 0.7
+   }
+  },
+  "meals/peri-peri-chicken-spicy-rice-lunch": {
+   "base": 1,
+   "data": {
+    "cat": "lunch",
+    "daySteps": [
+     "Reheat in the microwave or a pan for about 3–5 min, then drizzle with the perinaise. Make sure it is steaming hot all the way through (stir halfway), and reheat only the portion you will eat."
+    ],
+    "items": [
+     [
+      "kureci-stehna-bez-kuze",
+      170
+     ],
+     [
+      "ryze",
+      60
+     ],
+     [
+      "mrazena-zeleninova-smes",
+      150
+     ],
+     [
+      "paprika",
+      65
+     ],
+     [
+      "peri-peri-marinada",
+      20
+     ],
+     [
+      "majoneza-light-hellmann-s",
+      20
+     ],
+     [
+      "palive-omacka",
+      20
+     ],
+     [
+      "rajcatovy-protlak",
+      12
+     ],
+     [
+      "citronova-stava",
+      6
+     ],
+     [
+      "cesnek",
+      4
+     ],
+     [
+      "maslo",
+      2
+     ],
+     [
+      "petrzel-nat",
+      2.5
+     ],
+     [
+      "sul",
+      3.2
+     ],
+     [
+      "paprika-uzena",
+      1.5
+     ],
+     [
+      "chilli-mlete",
+      1.4
+     ],
+     [
+      "cesnek-suseny",
+      1.3
+     ],
+     [
+      "cibule-susena",
+      0.76
+     ],
+     [
+      "kmin-rimsky",
+      1.1
+     ],
+     [
+      "oregano",
+      0.32
+     ],
+     [
+      "kurkuma",
+      0.64
+     ]
+    ],
+    "keeps": "4 days",
+    "name": "Peri Peri Chicken & Spicy Rice",
+    "note": "From Jalal Sam Fit (card: 532 kcal, P 44 · C 47 · F 16 for ¼ of the batch). Portions rescaled to the nutritionist's lunch target. Spices and herbs are in the ingredient list in grams (converted from the spoon amounts) and count towards the nutrition. Spice amounts in the steps follow the servings you cook. Onion and green onion swapped for extra bell pepper (Anna). Frozen mixed veg (150 g per portion) added for fibre. Regular butter replaces light butter (not sold in CZ), cut to about 73 % of the weight so fat and calories stay the same.",
+    "prep": "batch",
+    "prepSteps": [
+     "Trim the extra fat from the boneless, skinless chicken thighs ({=kureci-stehna-bez-kuze}). Mix with {q:1½ tsp} each of salt, smoked paprika, chilli powder, garlic powder, onion powder, cumin and oregano, the peri peri marinade ({=peri-peri-marinada}) and two-thirds of the lemon juice ({=citronova-stava} in total). Marinate 30 min, or overnight in the fridge for the best flavour.",
+     "Perinaise: whisk the light mayo ({=majoneza-light-hellmann-s}), the hot sauce ({=palive-omacka}), {q:½ tsp} garlic powder, {q:½ tsp} smoked paprika and the rest of the lemon juice until smooth. Bottle it and keep it in the fridge.",
+     "Cook the rice ({=ryze}) in salted water until tender and drain.",
+     "Pan plan: {=kureci-stehna-bez-kuze} of chicken is more than one pan can brown. Cook it in rounds of about 300 g in a single layer, or use two pans, and keep each finished round on a plate until the next step. If the browned bits on the pan turn dark brown or burn between rounds, deglaze with a splash of water or wipe the pan. To check, cut the thickest piece open: no pink, clear juices, firm all the way through.",
+     "In a pan on medium-high heat melt the butter ({=maslo}) and cook the chicken 5 min a side until golden and juicy. Set aside.",
+     "In the same pan cook the chopped garlic ({=cesnek}) and chopped peppers ({=paprika}, they replace the onion) for 3–4 min until soft. Add {q:1 tsp} each of salt, cumin, smoked paprika, chilli powder and turmeric, then the tomato paste ({=rajcatovy-protlak}), and cook 3–4 min more.",
+     "Lower the heat right down, add the rice and chopped parsley ({=petrzel-nat}) and mix gently until the rice turns bright orange. Box with the chicken on top.",
+     "Cook the frozen mixed veg ({=mrazena-zeleninova-smes}, a mix without onion) in the microwave or a steamer and add it to the boxes. Keep the boxes open with the food no more than about 4 cm deep and leave it until it stops steaming, about 30 min. Rice must be in the fridge within 1 hour of cooking. Refrigerate within 2 hours of cooking and close the lids once cool, not while warm."
+    ],
+    "stepBatch": 4,
+    "stepScale": 0.85
+   }
+  }
+ }
+}
