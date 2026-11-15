@@ -39,9 +39,13 @@ function saveDeals(){clearTimeout(dealsTimer);dealsTimer=setTimeout(flushDeals,5
 async function flushDeals(){dealsTimer=null;if(dealsWriting){dealsPending=true;return}dealsWriting=true;
   const ok=await putDoc("state/deals",{deals:DEALS,pick:DEALPICK});dealsWriting=false;if(ok&&dealsPending){dealsPending=false;flushDeals()}}
 const dirty=()=>planTimer!==null||planWriting||dealsTimer!==null||dealsWriting||pending>0;
-function maybeNewWeek(){const wk=weekKey();
-  if(LISTWEEK&&LISTWEEK<wk){const n=Object.keys(EDITS).length+Object.keys(CHECKED).filter(k=>CHECKED[k]).length;SWAPS={};DISMISSED={};EDITS={};CHECKED={};LISTWEEK=wk;savePlan();if(n)setTimeout(()=>toast("New week: last week's ticks and At home amounts were cleared."),800)}
-  else if(!LISTWEEK&&DOCS["state/plan"]){LISTWEEK=wk;savePlan()}}
+/* A week runs from its prep day to day 6. Once day 6 has passed, the next week starts by itself on the next Sunday or Monday;
+   "Plan next week" on the Plan tab starts it early (e.g. planning on Sunday after a Monday-prep week). */
+function startWeek(prep){PREP=prep;LISTWEEK=cycleKey();SWAPS={};DISMISSED={};EDITS={};CHECKED={};
+  for(const[b] of BLOCKS)for(const[s] of SLOTS){PLAN[b][s].eat=defaultEat(s);PLAN[b][s].extra=0}savePlan()}
+function maybeNewWeek(){if(!DOCS["state/plan"])return;
+  if(!PREP){PREP=prepDay();LISTWEEK=cycleKey();savePlan();return}
+  if(todayISO()>lastDay()){startWeek(defaultPrep());setTimeout(()=>toast(`New week, prep day ${fmtDate(PREP)}: ticks, At home amounts and who's eating were reset.`),800)}}
 
 // Pick up the other person's changes without a manual reload, unless something is being typed or saved here
 async function poll(){if(document.hidden||conflict)return;
@@ -95,21 +99,32 @@ function uuAdd(){const i=$("#uu-name"),a=$("#uu-amt");const q=fold(i.value.trim(
   let hit=all.find(([,x])=>fold(x.name)===q);
   if(!hit){const c=all.filter(([,x])=>fold(x.name).includes(q));if(c.length===1)hit=c[0];else{toast(c.length?`${c.length} ingredients match. Pick one from the list.`:"No ingredient by that name in your library.");return}}
   const amt=czNum(a.value)||0;uuSnap();const row={id:hit[0],...(amt>0?{amt}:{})};const ix=USEUP.findIndex(u=>u.id===hit[0]);if(ix>=0)USEUP[ix]=row;else USEUP.push(row);savePlan();render();toast(ix>=0?`${hit[1].name} updated`:`${hit[1].name} added to Use up`)}
+function prepPickHTML(){const p=prepDay(),opts=[cycleKey(),addDays(cycleKey(),1)];
+  const near=todayISO()>=dayDate(4);
+  return`<span class="row"><b class="small">Prep day</b><span class="filters" style="margin:0">${opts.map(x=>`<button data-prep="${x}" aria-pressed="${x===p}">${esc(fmtDate(x))}</button>`).join("")}</span><input type="date" data-prepdate value="${esc(p)}" aria-label="Another prep date" title="Another date" style="width:auto"><span class="muted small">eating ${esc(fmtDate(dayDate(0)))} – ${esc(fmtDate(lastDay()))}</span>${near?`<button class="btn tiny" data-act="nextWeek" title="Start the next week now: clears ticks, At home amounts and who's eating">Plan next week</button>`:""}</span>`}
+function eatGridHTML(b){const st=blockStart(b);
+  const pill=(on,attr,lbl,p)=>`<button class="eatpill ${p}${on?" on":""}" ${attr} aria-pressed="${on}" aria-label="${esc(lbl)}">${p.toUpperCase()}</button>`;
+  const dayOn=(d,p)=>SLOTS.some(([s])=>eaters(s).includes(p)&&PLAN[b][s].eat[d][PIDX[p]]);
+  return`<table class="eatgrid"><caption class="sr">Who's eating each meal</caption><thead><tr><th></th>${[0,1,2].map(d=>{const dt=fmtDate(dayDate(st+d)).split(" ");
+    return`<th scope="col"><span class="dname">${esc(dt[0])} <span class="muted">${esc(dt[1])}</span></span><span class="pp">${PEOPLE.map(([p,n])=>pill(dayOn(d,p),`data-eatday="${b}|${d}|${p}"`,`${n}, all of ${dt.join(" ")}`,p)).join("")}</span></th>`}).join("")}</tr></thead>
+  <tbody>${SLOTS.map(([s,label,cat])=>`<tr data-cat="${cat}"><th scope="row">${esc(label)}</th>${[0,1,2].map(d=>`<td>${eaters(s).map(p=>pill(!!PLAN[b][s].eat[d][PIDX[p]],`data-eat="${b}|${s}|${d}|${p}"`,`${PEOPLE[PIDX[p]][1]}, ${label}, ${fmtDate(dayDate(st+d))}`,p)).join("")}</td>`).join("")}</tr>`).join("")}</tbody></table>`}
 function planView(v){
   if(!Object.keys(MEALS).length){v.innerHTML=`<div class="empty">No meals yet. Add recipes on the <button class="linkbtn" data-tabgo="recipes">Recipes</button> tab (Import box), then come back to plan your week.</div>`;return}
   v.innerHTML=`${useupHTML()}${dealsStripHTML()}<div class="actions" style="margin-top:0"><button class="btn primary" data-act="randAll">Suggest my week</button><button class="btn" data-act="rand:block1">Re-suggest Block 1</button><button class="btn" data-act="rand:block2">Re-suggest Block 2</button><button class="btn" data-act="reset">Reset planner</button></div>
   <div class="panel" style="margin-bottom:16px"><div class="row" style="gap:16px">
+    ${prepPickHTML()}
     <span class="row"><b class="small">Ground beef this week</b><span class="filters" style="margin:0"><button data-mince="8020" aria-pressed="${minceMode()==="8020"}">80/20</button><button data-mince="lean" aria-pressed="${minceMode()==="lean"}">Lean (5 %)</button></span></span>
     <span class="row"><b class="small">Chicken</b><span class="filters" style="margin:0"><button data-fresh="0" aria-pressed="${!FRESH}">Freezer packs</button><button data-fresh="1" aria-pressed="${FRESH}">Buying fresh</button></span></span></div></div>
-  <div class="grid2">${BLOCKS.map(([b,name,days])=>`<section class="panel"><div class="row" style="justify-content:space-between;margin-bottom:6px"><h2>${name}</h2><span class="tape">${days}</span></div>
+  <div class="grid2">${BLOCKS.map(([b,name])=>`<section class="panel"><div class="row" style="justify-content:space-between;margin-bottom:6px"><h2>${name}</h2><span class="tape">${blockDays(b)}</span></div>
+  ${eatGridHTML(b)}
   ${SLOTS.map(([s,label,cat])=>{const sel=PLAN[b][s];const m=PM(sel.meal);
     return`<div class="slot"><label for="${b}-${s}">${label}</label><select id="${b}-${s}" data-b="${b}" data-s="${s}"><option value="">Choose…</option>${mealsFor(cat).map(([id,mm])=>`<option value="${esc(id)}" ${id===sel.meal?"selected":""}>${esc(mm.name)}${isFresh(mm)?" · fresh chicken":""}${CARRY_SLOTS.includes(s)&&isFreezerFit(mm)&&slotServ(b+"|"+s)!==PACK_SERV?` · freezer pack makes ${PACK_SERV}`:""}${mealUses(mm,true).length?" · uses leftovers":""}${mealDeals(PM(id)).length?" · on deal":""}</option>`).join("")}</select>
     <button class="icon" title="${sel.locked?"Unlock to change this slot":`Suggest a different ${label.toLowerCase()}`}" data-rand="${b}|${s}" aria-label="Random ${label}" ${sel.locked?"disabled style=\"opacity:.4;cursor:not-allowed\"":""}>⟳</button>
-    <div class="meta"><div class="step"><button data-dec="${b}|${s}" aria-label="Fewer servings">−</button><input id="${b}-${s}-n" type="number" inputmode="numeric" min="1" value="${sel.need??sel.n}" data-n="${b}|${s}" aria-label="${label} portions eaten"><button data-inc="${b}|${s}" aria-label="More servings">+</button></div><span class="muted small" title="Portions eaten in this block. The planner works out how many to cook.">eating</span>
+    <div class="meta"><div class="step"><button data-dec="${b}|${s}" aria-label="Fewer servings">−</button><input id="${b}-${s}-n" type="number" inputmode="numeric" min="1" value="${sel.need??sel.n}" min="0" data-n="${b}|${s}" aria-label="${label} portions eaten"><button data-inc="${b}|${s}" aria-label="More servings">+</button></div><span class="muted small" title="Portions eaten in this block: the ticks above, plus any extra. The planner works out how many to cook.">eating${sel.extra?` (${sel.extra} extra)`:""}</span>${!sel.need?`<span class="chip off" title="Nobody is ticked for this meal in this block, so it isn't cooked or bought">skipped</span>`:""}
     <button class="btn tiny${sel.locked?" on":""}" data-lock="${b}|${s}" aria-pressed="${!!sel.locked}" title="${sel.locked?"Locked: Suggest leaves this slot alone. Tap to unlock.":"Lock this slot so Suggest leaves it alone"}">${sel.locked?"Locked":"Lock"}</button>
     ${m?`<span class="prep ${m.prep}">${m.prep}</span>${chipFor(m)}${isFresh(m)?`<span class="chip" title="Made with fresh chicken, not a freezer pack">fresh chicken</span>`:""}${mealUses(m).map(id=>`<span class="chip on">uses: ${esc(ING[id]?.name||id)}</span>`).join("")}${mealDeals(m).map(id=>`<span class="chip on wrap" title="Deal from the leták">deal: ${esc(ING[id]?.name||id)} · ${esc(dealLabel(dealsFor(id)[0]))}</span>`).join("")}${portionHTML(b,s,m)}`:""}</div></div>`}).join("")}
   ${totalsHTML(b)}</section>`).join("")}</div>
-  <p class="muted small" style="max-width:65ch">Suggest favours meals that use your Use-up items. <b>Eating</b> is how many portions you need in that block; the planner works out how many to cook. A freezer pack always cooks 6, and any spare in Block 1 carries to the same meal in Block 2. Locked slots stay put when you suggest or reset. Totals are per person per day: Annie eats breakfast, lunch and dinner; Kyle eats the same plus both snacks. Green hits the nutritionist's range, amber is within 10%, red is further off.</p>`}
+  <p class="muted small" style="max-width:65ch">Suggest favours meals that use your Use-up items. Tap <b>K</b> (Kyle) or <b>A</b> (Annie) in a block's week grid to mark a meal you won't be eating; a day's header switches that person off for the whole day. <b>Eating</b> counts the ticks, and + adds extra portions (guests, a spare). The planner works out how many to cook, and a meal nobody eats is skipped. A freezer pack always cooks 6, and any spare in Block 1 carries to the same meal in Block 2. Locked slots stay put when you suggest or reset. Totals are per person per day: Annie eats breakfast, lunch and dinner; Kyle eats the same plus both snacks. Green hits the nutritionist's range, amber is within 10%, red is further off.</p>`}
 
 /* ---------- DEALS: what the letáky have this week, and how it feeds the plan ---------- */
 const newDeal=()=>({name:"",store:"Albert",price:"",amt:"1",u:"kg",was:"",until:addDays(weekKey(),7),note:"",edit:null});
@@ -197,7 +212,7 @@ function shopView(v){const{reg,b2,lidl,kaufland,dealGroups,removed,spices}=shopp
     return`<li data-key="${k}" class="${c[k]?"done":""}"><span>${esc(x.name)}${x.b2&&(isLidlPick(x.id)||isKauflandPick(x.id))?` <span class="chip">Block 2, buy fresh</span>`:""}${hc}${tip?`<span class="muted small" style="display:block">${esc(tip)}</span>`:""}${dchips?`<span style="display:block;margin-top:4px">${dchips}</span>`:""}</span><span class="amt">${fmtAmt(x.amt,x.unit)}</span><button class="btn tiny" data-ledit="${k}" title="Enter how much you already have at home">At home</button>${dealBtn}${store}</li>`};
   v.innerHTML=`<div class="actions"><button class="btn primary" data-act="copyList">Copy list (for Tesco)</button><button class="btn" data-act="copyPlan">Copy plan + list</button><button class="btn" data-act="showList">${ui.list?"Hide text":"Show text"}</button><button class="btn" data-act="clearChecks">Clear ticks</button>${ui.confirmClear?`<span class="confirm">Clear ticks and At home amounts? <button class="btn danger" data-act="clearDecisionsYes">Clear</button><button class="btn" data-act="clearDecisionsNo">Cancel</button></span>`:`<button class="btn" data-act="clearDecisions" title="Ticks and At home amounts. Also happens on its own each Sunday.">Clear list decisions</button>`}</div>
   ${ui.list?`<pre class="out" id="list-out">${esc(listText())}</pre>`:""}
-  <p class="muted small" style="margin:-4px 0 14px">Ticks and At home amounts clear on their own when a new week starts on Sunday. Tick marks are shared between you and Annie.</p>
+  <p class="muted small" style="margin:-4px 0 14px">Ticks and At home amounts clear on their own when the next week starts (after day 6), or when you press <b>Plan next week</b> on the Plan tab. Tick marks are shared between you and Annie.</p>
   <div class="grid2"><section class="panel shop"><div class="row" style="justify-content:space-between;margin-bottom:8px"><h2>Main shop</h2><span class="tape">${reg.length} items</span></div><ul>${reg.map(li).join("")}</ul></section>
   <section class="panel shop"><div class="row" style="justify-content:space-between;margin-bottom:8px"><h2>Block 2 bakery</h2><span class="tape">Buy fresh</span></div>${b2.length?`<ul>${b2.map(li).join("")}</ul>`:`<p class="muted">No fresh bakery items in Block 2.</p>`}
   <p class="muted small">Bread and rolls for days 4–6, bought separately so they're fresh. Mark which items count as bakery on the Ingredients tab.</p></section></div>
@@ -271,7 +286,8 @@ document.addEventListener("click",e=>{const c=e.target.closest("[data-uuedit]");
 document.addEventListener("change",e=>{const t=e.target;
   if(t.id==="has-thermo"){SAFETY={...(SAFETY||{}),thermometer:t.checked};render();putDoc("settings/safety",SAFETY);return}
   if(t.dataset.b&&t.dataset.s){const sl=PLAN[t.dataset.b][t.dataset.s];sl.meal=t.value;sl.fresh=false;reconcile();sl.fresh=!!(t.value&&FRESH&&CARRY_SLOTS.includes(t.dataset.s)&&isFreezerFit(MEALS[t.value])&&slotServ(t.dataset.b+"|"+t.dataset.s)!==PACK_SERV);savePlan();render();return}
-  if(t.dataset.n){const[b,s]=t.dataset.n.split("|");PLAN[b][s].need=Math.max(1,parseInt(t.value)||1);savePlan();t.blur();render();return}
+  if(t.dataset.n){const[b,s]=t.dataset.n.split("|");setNeed(PLAN[b][s],s,parseInt(t.value)||0);savePlan();t.blur();render();return}
+  if(t.dataset.prepdate!==undefined){if(/^\d{4}-\d\d-\d\d$/.test(t.value)){PREP=t.value;savePlan();render();toast(`Prep day ${fmtDate(PREP)}, eating ${fmtDate(dayDate(0))} – ${fmtDate(lastDay())}`)}return}
   libChange(t)});
 document.addEventListener("click",e=>{const t=e.target.closest("button,[data-open],li[data-key]");if(!t)return;const d=t.dataset;
   if(d.tabgo)return go(d.tabgo);
@@ -283,10 +299,15 @@ document.addEventListener("click",e=>{const t=e.target.closest("button,[data-ope
   else if(d.uudel){uuSnap();USEUP=USEUP.filter(u=>u.id!==d.uudel);savePlan();render();toast("Removed. Tap Undo to bring it back")}
   else if(d.act==="uuUndo")uuUndo();
   else if(d.act==="uuAdd")uuAdd();
-  else if(d.inc||d.dec){const[b,s]=(d.inc||d.dec).split("|");PLAN[b][s].need=Math.max(1,needOf(PLAN[b][s])+(d.inc?1:-1));savePlan();render()}
+  else if(d.inc||d.dec){const[b,s]=(d.inc||d.dec).split("|");const sl=PLAN[b][s];if(d.inc)eatInc(sl,s);else eatDec(sl,s);savePlan();render()}
+  else if(d.eat){const[b,s,dd,p]=d.eat.split("|");const e=PLAN[b][s].eat[+dd];e[PIDX[p]]=e[PIDX[p]]?0:1;savePlan();render()}
+  else if(d.eatday){const[b,dd,p]=d.eatday.split("|");const ss=SLOTS.map(x=>x[0]).filter(s=>eaters(s).includes(p));const on=ss.some(s=>PLAN[b][s].eat[+dd][PIDX[p]]);
+    for(const s of ss)PLAN[b][s].eat[+dd][PIDX[p]]=on?0:1;savePlan();render();toast(`${PEOPLE[PIDX[p]][1]} ${on?"not eating":"eating"} on ${fmtDate(dayDate(blockStart(b)+ +dd))}`)}
+  else if(d.prep){PREP=d.prep;savePlan();render();toast(`Prep day ${fmtDate(PREP)}, eating ${fmtDate(dayDate(0))} – ${fmtDate(lastDay())}`)}
+  else if(d.act==="nextWeek"){const t0=todayISO(),w=dow(t0);const nx=w===0||w===1?t0:addDays(t0,7-w);if(!confirm(`Start the next week with prep on ${fmtDate(nx)}? Ticks, At home amounts and who's eating are reset. Meals stay.`))return;startWeek(nx);render();toast(`Next week: prep ${fmtDate(nx)}`)}
   else if(d.act==="randAll"){randBlocks(["block1","block2"]);savePlan();render();const ids=[...new Set(activeDeals().map(x=>x.id))];toast("Suggested your week"+(ids.length?` · ${ids.filter(id=>dealPlanMeals(id).length).length} of ${ids.length} deals are in it`:""))}
   else if(d.act?.startsWith("rand:")){randBlocks([d.act.slice(5)]);savePlan();render()}
-  else if(d.act==="reset"){const keep=PLAN;PLAN=emptyPlan();for(const[b] of BLOCKS)for(const[s] of SLOTS)if(keep[b][s].locked)PLAN[b][s]={...keep[b][s]};EDITS={};CHECKED={};SWAPS={};DISMISSED={};MINCE="8020";FRESH=false;savePlan();render()}
+  else if(d.act==="reset"){const keep=PLAN;PLAN=emptyPlan();for(const[b] of BLOCKS)for(const[s] of SLOTS)PLAN[b][s].eat=JSON.parse(JSON.stringify(keep[b][s].eat||defaultEat(s)));for(const[b] of BLOCKS)for(const[s] of SLOTS)if(keep[b][s].locked)PLAN[b][s]={...keep[b][s]};EDITS={};CHECKED={};SWAPS={};DISMISSED={};MINCE="8020";FRESH=false;savePlan();render()}
   else if(d.mince){MINCE=d.mince;savePlan();render();toast(MINCE==="lean"?"Lean (5 %) ground beef this week":"80/20 ground beef: the recipes say when to drain it")}
   else if(d.fresh!==undefined){FRESH=d.fresh==="1";savePlan();render();toast(FRESH?"Buying fresh chicken: Suggest will include a fresh-chicken recipe":"Chicken from the freezer")}
   else if(d.ledit){ui.editHome=d.ledit;render();const i=$("#le-home");if(i){i.focus();i.select()}}

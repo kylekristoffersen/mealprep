@@ -15,6 +15,28 @@ with sync_playwright() as p:
     pg.click("[data-act=randAll]");pg.wait_for_timeout(300)
     sel=pg.eval_on_selector_all("select[data-b]","els=>els.map(e=>e.value)")
     check("suggest fills all 10 slots",all(sel) and len(sel)==10,sel)
+    # who's eating: Annie off for all of Block 1 day 1 takes one portion off each main meal there
+    val=lambda k:int(pg.input_value(f"[data-n='{k}']"))
+    before=val("block1|lunch");pg.click("[data-eatday='block1|0|a']");pg.wait_for_timeout(200)
+    check("Annie off for a day takes a portion off",val("block1|lunch")==before-1 and val("block1|breakfast")==5 and val("block1|snack1")==3,(before,val("block1|lunch")))
+    check("her pills show as not eating",pg.locator("[data-eat^='block1|dinner|0|a'].on").count()==0)
+    for d in range(3):
+        for who in "ka":pg.click(f"[data-eat='block2|dinner|{d}|{who}']");pg.wait_for_timeout(60)
+    check("dinner nobody eats is skipped",val("block2|dinner")==0 and "skipped" in pg.inner_text("#view"))
+    pg.click("[data-inc='block2|dinner']");pg.wait_for_timeout(100)
+    check("+ ticks someone back first",val("block2|dinner")==1 and pg.locator("[data-eat^='block2|dinner|'].on").count()==1)
+    pg.click("[data-dec='block2|dinner']");pg.wait_for_timeout(100)
+    pg.click("[data-prep]:nth-child(2)");pg.wait_for_timeout(200)
+    check("prep day can move to Monday",pg.locator("[data-prep][aria-pressed=true]").inner_text().startswith("Mon"),pg.locator("[data-prep][aria-pressed=true]").inner_text())
+    pg.wait_for_timeout(900)
+    sv=pg.evaluate("fetch('/api/all').then(r=>r.json()).then(j=>j.docs['state/plan'].data)")
+    check("who's eating and prep day saved",sv["prepDate"] and sv["plan"]["block2"]["dinner"]["eat"]==[[0,0],[0,0],[0,0]],sv.get("prepDate"))
+    pg.click("[data-tabgo=shop]");pg.wait_for_timeout(200);pg.click("[data-tabgo=plan]");pg.wait_for_timeout(200)
+    pg.click("[data-prep]:nth-child(1)");pg.wait_for_timeout(100)
+    for d in range(3):
+        for who in "ka":pg.click(f"[data-eat='block2|dinner|{d}|{who}']");pg.wait_for_timeout(60)
+    pg.click("[data-eatday='block1|0|a']");pg.wait_for_timeout(100)
+    check("grid back to everyone eating",pg.locator(".eatpill:not(.on)").count()==0,pg.locator(".eatpill:not(.on)").count())
     pg.screenshot(path="/tmp/shot-plan.png",full_page=True)
     # horizontal overflow on phone?
     ov=pg.evaluate("document.documentElement.scrollWidth-document.documentElement.clientWidth")

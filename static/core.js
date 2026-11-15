@@ -11,7 +11,8 @@ const LEAN_MINCE="hovezi-mlete-libove-5", FAT_MINCE="hovezi-mlete-maso-vyberove"
 
 let ING={}, MEALS={}, TARGETS=null, SAFETY=null, SHOPSET=null;
 let DEALS=[], DEALPICK={};
-let PLAN=emptyPlan(), SWAPS={}, DISMISSED={}, EDITS={}, CHECKED={}, USEUP=[], MINCE="8020", FRESH=false, LISTWEEK=null, CARRY={};
+let PREP=null; // prep day of the current week (ISO). Day 1 is the day after it.
+let PLAN={}, SWAPS={}, DISMISSED={}, EDITS={}, CHECKED={}, USEUP=[], MINCE="8020", FRESH=false, LISTWEEK=null, CARRY={};
 
 /* ---------- small helpers ---------- */
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -26,8 +27,42 @@ const fmtAmt=(a,unit)=>unit==="ks"?`${cz(a,1)} ks`:a<10?`${cz(a,1)} g`:a>=1000?`
 const fmtPlain=(a,unit)=>unit==="ks"?cz(a,1):String(Math.round(a));
 const plural=(n,one,many)=>`${n} ${n===1?one:many}`;
 
-function emptyPlan(){const p={};for(const[b] of BLOCKS){p[b]={};for(const[s] of SLOTS)p[b][s]={meal:"",n:DEFAULT_SERV[s],need:DEFAULT_SERV[s]}}return p}
-function mergePlan(p){const base=emptyPlan();for(const[b] of BLOCKS)for(const[s] of SLOTS)if(p?.[b]?.[s]){base[b][s]={...base[b][s],...p[b][s]};if(p[b][s].need==null)base[b][s].need=base[b][s].n}return base}
+/* ---------- the week: prep day and who's eating ----------
+   Prep happens on any day (usually Sunday or Monday). Days 1–6 are the six days after it: Block 1 = days 1–3, Block 2 = days 4–6.
+   Each slot keeps eat = 3 days × [Kyle, Annie] (1 = eating). Snacks are Kyle's only. Portions eaten = ticks + extra. */
+const PEOPLE=[["k","Kyle"],["a","Annie"]];
+const eaters=s=>s.startsWith("snack")?["k"]:["k","a"];
+const PIDX={k:0,a:1};
+const defaultEat=s=>[0,1,2].map(()=>[1,s.startsWith("snack")?0:1]);
+const eatCount=(sl,s)=>(sl.eat||defaultEat(s)).reduce((t,d)=>t+eaters(s).reduce((u,p)=>u+(d[PIDX[p]]?1:0),0),0);
+const dow=iso=>new Date(iso+"T12:00:00").getDay();
+const daysBetween=(a,b)=>Math.round((new Date(b+"T12:00:00")-new Date(a+"T12:00:00"))/864e5);
+/* the next prep day from today: today if it's Sunday or Monday, otherwise the coming Sunday */
+function defaultPrep(){const t=todayISO(),w=dow(t);return w===0||w===1?t:addDays(t,7-w)}
+const prepDay=()=>PREP||defaultPrep();
+const cycleKey=()=>{const p=prepDay(),w=dow(p);return addDays(p,w===1?-1:0)}; // stays the same if prep moves between Sunday and Monday
+const dayDate=i=>addDays(prepDay(),i+1);          // i = 0…5
+const blockStart=b=>b==="block2"?3:0;
+const blockDays=b=>{const i=blockStart(b);return`${fmtDate(dayDate(i))} – ${fmtDate(dayDate(i+2))}`};
+const lastDay=()=>dayDate(5);
+const todayIndex=()=>daysBetween(prepDay(),todayISO())-1; // -1 prep day, 0…5 eating days
+function eatOrder(s){const o=[];for(let d=0;d<3;d++)for(const p of eaters(s))o.push([d,PIDX[p]]);return o}
+function eatInc(sl,s){const c=eatOrder(s).find(([d,p])=>!sl.eat[d][p]);if(c)sl.eat[c[0]][c[1]]=1;else sl.extra=(sl.extra||0)+1}
+function eatDec(sl,s){if(sl.extra>0){sl.extra--;return true}const o=eatOrder(s).reverse();const c=o.find(([d,p])=>p===1&&sl.eat[d][p])||o.find(([d,p])=>sl.eat[d][p]);if(!c)return false;sl.eat[c[0]][c[1]]=0;return true}
+function setNeed(sl,s,n){n=Math.max(0,n|0);let guard=60;while(eatCount(sl,s)+(sl.extra||0)<n&&guard--)eatInc(sl,s);while(eatCount(sl,s)+(sl.extra||0)>n&&guard--&&eatDec(sl,s));}
+function whoText(b,s){const sl=PLAN[b][s],st=blockStart(b);const parts=[];
+  for(const p of eaters(s)){const name=PEOPLE[PIDX[p]][1];const off=[0,1,2].filter(d=>!sl.eat[d][PIDX[p]]);
+    if(off.length===3)continue;parts.push(off.length?`${name} (not ${off.map(d=>fmtDate(dayDate(st+d)).split(" ")[0]).join(", ")})`:name)}
+  return(parts.join(" & ")||"Nobody")+(sl.extra?` + ${sl.extra} extra`:"")}
+function whoOnDay(b,s,d){const sl=PLAN[b][s];const names=eaters(s).filter(p=>sl.eat[d][PIDX[p]]).map(p=>PEOPLE[PIDX[p]][1]);return names.length?names.join(" & "):""}
+
+function emptyPlan(){const p={};for(const[b] of BLOCKS){p[b]={};for(const[s] of SLOTS)p[b][s]={meal:"",n:DEFAULT_SERV[s],need:DEFAULT_SERV[s],eat:defaultEat(s),extra:0}}return p}
+PLAN=emptyPlan();
+function cleanEat(e,s){const d=defaultEat(s);return Array.isArray(e)&&e.length===3?e.map((x,i)=>[x?.[0]?1:0,s.startsWith("snack")?0:(x?.[1]?1:0)]):d}
+function mergePlan(p){const base=emptyPlan();for(const[b] of BLOCKS)for(const[s] of SLOTS)if(p?.[b]?.[s]){const o=p[b][s];const sl=base[b][s]={...base[b][s],...o};
+    if(Array.isArray(o.eat)){sl.eat=cleanEat(o.eat,s);sl.extra=Math.max(0,o.extra|0)}
+    else{sl.eat=defaultEat(s);sl.extra=0;setNeed(sl,s,o.need??o.n??DEFAULT_SERV[s])} // older plans: turn the portion count into ticks
+  }return base}
 
 /* ---------- nutrition ---------- */
 function macros(meal){const t={kcal:0,p:0,c:0,f:0,fib:0};if(!meal)return t;
@@ -101,13 +136,13 @@ const isFresh=m=>m?.chicken==="fresh";
 function isFreezerFit(m){if(!m||isFresh(m))return false;const a=(m.items||[]).find(x=>x[0]==="kureci-prsa");if(!a)return false;const sizes=SHOPSET?.freezerPacks?.["kureci-prsa"]||FREEZER_PACKS["kureci-prsa"];return sizes.some(v=>Math.abs(a[1]*PACK_SERV-v)<1)}
 const packBound=sl=>{const m=MEALS[sl?.meal];return!!m&&isFreezerFit(m)&&!sl.fresh};
 const needOf=sl=>sl?.need??sl?.n??PACK_SERV;
-function block1Spare(s){const a=PLAN.block1?.[s];return packBound(a)&&needOf(a)<PACK_SERV?PACK_SERV-needOf(a):0}
+function block1Spare(s){const a=PLAN.block1?.[s];return packBound(a)&&needOf(a)>0&&needOf(a)<PACK_SERV?PACK_SERV-needOf(a):0}
 function reconcile(){CARRY={};
-  for(const[b] of BLOCKS)for(const[s] of SLOTS){const sl=PLAN[b][s];if(sl.need==null)sl.need=sl.n??DEFAULT_SERV[s];sl.n=sl.need}
+  for(const[b] of BLOCKS)for(const[s] of SLOTS){const sl=PLAN[b][s];if(!Array.isArray(sl.eat))sl.eat=defaultEat(s);sl.need=eatCount(sl,s)+(sl.extra||0);sl.n=sl.need}
   for(const s of CARRY_SLOTS){const a=PLAN.block1[s],z=PLAN.block2[s];const zMeal=!!MEALS[z.meal];
     const spare=block1Spare(s);if(spare)a.n=PACK_SERV;
     let used=0;if(spare&&zMeal&&!z.noCarry&&!packBound(z)){used=Math.min(spare,z.need);z.n=z.need-used}
-    let extra2=0;if(packBound(z)&&z.need<PACK_SERV){z.n=PACK_SERV;extra2=PACK_SERV-z.need}
+    let extra2=0;if(packBound(z)&&z.need>0&&z.need<PACK_SERV){z.n=PACK_SERV;extra2=PACK_SERV-z.need}
     CARRY[s]={spare,used,toFreezer:spare-used,extra2,zEmpty:!zMeal,blocked:!!spare&&zMeal&&!z.noCarry&&packBound(z)}}}
 const packG=m=>{const a=(m?.items||[]).find(x=>x[0]==="kureci-prsa");return a?Math.round(a[1]*PACK_SERV):0};
 function spareText(b,s){const c=CARRY[s];if(!c||!CARRY_SLOTS.includes(s))return"";const sl=PLAN[b][s];
@@ -118,12 +153,12 @@ function packNote(id,total){const sizes=SHOPSET?.freezerPacks?.[id]||FREEZER_PAC
   const rec=(i,n,sum,used)=>{if(sum>=total-10){combos.push({sum,used:[...used]});return}if(n>=4)return;for(let k=i;k<sizes.length;k++){used.push(sizes[k]);rec(k,n+1,sum+sizes[k],used);used.pop()}};rec(0,0,0,[]);
   combos.sort((a,b)=>a.sum-b.sum||a.used.length-b.used.length);const c=combos[0];if(!c)return"";const cnt={};for(const v of c.used)cnt[v]=(cnt[v]||0)+1;
   const left=Math.round(c.sum-total);return` (thaw ${Object.entries(cnt).sort((a,b)=>b[0]-a[0]).map(([v,n])=>`${n} × ${v} g`).join(" + ")}${c.used.length>1?` = ${fmtAmt(c.sum,"g")}`:""}${left>10?`, ${left} g spare`:""})`}
-const slotServ=k=>{if(!k)return PACK_SERV;const[b,s]=k.split("|");const sl=PLAN[b]?.[s];if(!sl)return PACK_SERV;const need=needOf(sl);
+const slotServ=k=>{if(!k)return PACK_SERV;const[b,s]=k.split("|");const sl=PLAN[b]?.[s];if(!sl)return PACK_SERV;const need=needOf(sl);if(!need)return 0;
   if(!CARRY_SLOTS.includes(s))return need;if(b==="block1")return need<=PACK_SERV?PACK_SERV:need;
   return sl.noCarry?need:need-Math.min(block1Spare(s),need)};
 
 /* ---------- use-up list ---------- */
-function uuStatus(u){let t=0;const names=[];for(const[b] of BLOCKS)for(const[s] of SLOTS){const sl=PLAN[b][s];const m=PM(sl.meal);const a=(m?.items||[]).find(x=>x[0]===u.id);if(a){t+=a[1]*sl.n;names.push(m.name)}}
+function uuStatus(u){let t=0;const names=[];for(const[b] of BLOCKS)for(const[s] of SLOTS){const sl=PLAN[b][s];const m=PM(sl.meal);const a=(m?.items||[]).find(x=>x[0]===u.id);if(a&&sl.n){t+=a[1]*sl.n;names.push(m.name)}}
   return{t,names:[...new Set(names)],done:u.amt>0&&t>=u.amt}}
 function mealUses(m,open){if(!m)return[];return USEUP.filter(u=>(m.items||[]).some(([i])=>i===u.id)&&!(open&&uuStatus(u).done)).map(u=>u.id)}
 function editFor(pre,id,reg){const e=EDITS[pre+id];if(e)return e;const u=USEUP.find(x=>x.id===id&&x.amt>0);if(!u)return null;return pre==="r:"||!(id in reg)?{home:u.amt,useup:true}:null}
@@ -149,7 +184,7 @@ function dealPriceText(d){const per=ING[d.id]?.unit==="ks"?"ks":"kg",one=!(d.amt
 const dealLabel=d=>`${d.store} ${dealPriceText(d)}`;
 const mealDeals=m=>{const on=new Set(activeDeals().map(d=>d.id));return[...new Set((m?.items||[]).map(i=>i[0]).filter(i=>on.has(i)))]};
 function dealPickStore(id){const st=DEALPICK[id];return st&&!ONLINE_STORES.includes(st)&&dealsFor(id).some(d=>d.store===st)?st:null}
-function dealPlanMeals(id){const out=[];for(const[b,bn] of BLOCKS)for(const[s,sn] of SLOTS){const sl=PLAN[b][s],m=PM(sl.meal);if(m&&(m.items||[]).some(i=>i[0]===id))out.push({meal:sl.meal,name:m.name,where:`${bn} ${sn.toLowerCase()}`})}return out}
+function dealPlanMeals(id){const out=[];for(const[b,bn] of BLOCKS)for(const[s,sn] of SLOTS){const sl=PLAN[b][s],m=PM(sl.meal);if(m&&sl.n&&(m.items||[]).some(i=>i[0]===id))out.push({meal:sl.meal,name:m.name,where:`${bn} ${sn.toLowerCase()}`})}return out}
 function dealMeals(id){return Object.keys(MEALS).filter(mid=>(PM(mid)?.items||[]).some(i=>i[0]===id)).sort((a,b)=>MEALS[a].name.localeCompare(MEALS[b].name,"cs"))}
 
 /* ---------- suggest (randomise) ---------- */
@@ -164,15 +199,15 @@ function randomPick(cat,avoid,slotKey,wantFresh){const all=mealsFor(cat).map(e=>
   return weighted[Math.floor(Math.random()*weighted.length)]||""}
 function assignMeal(b,s,id){const sl=PLAN[b][s];sl.meal=id||"";sl.fresh=!!(id&&FRESH&&CARRY_SLOTS.includes(s)&&isFreezerFit(MEALS[id])&&slotServ(b+"|"+s)!==PACK_SERV);reconcile()}
 function randBlocks(bl){for(const b of bl)for(const[s] of SLOTS)if(!PLAN[b][s].locked){PLAN[b][s].meal="";PLAN[b][s].fresh=false}reconcile();
-  let freshSlot=null;if(FRESH&&!planFresh())for(const s of["lunch","dinner"])for(const b of bl)if(!freshSlot&&!PLAN[b][s].locked)freshSlot=b+"|"+s;
-  for(const b of bl)for(const[s,,cat] of SLOTS){if(PLAN[b][s].locked)continue;const other=BLOCKS.map(x=>x[0]).filter(x=>x!==b).map(x=>PLAN[x][s].meal);const sib=s==="snack1"?[PLAN[b].snack2.meal]:s==="snack2"?[PLAN[b].snack1.meal]:[];
+  let freshSlot=null;if(FRESH&&!planFresh())for(const s of["lunch","dinner"])for(const b of bl)if(!freshSlot&&!PLAN[b][s].locked&&PLAN[b][s].need)freshSlot=b+"|"+s;
+  for(const b of bl)for(const[s,,cat] of SLOTS){if(PLAN[b][s].locked||!PLAN[b][s].need)continue;const other=BLOCKS.map(x=>x[0]).filter(x=>x!==b).map(x=>PLAN[x][s].meal);const sib=s==="snack1"?[PLAN[b].snack2.meal]:s==="snack2"?[PLAN[b].snack1.meal]:[];
     assignMeal(b,s,randomPick(cat,[...other,...sib],b+"|"+s,freshSlot===b+"|"+s))}}
 function chickenSplit(){let fz=0,fr=0;for(const[b] of BLOCKS)for(const[s] of SLOTS){const m=PM(PLAN[b][s].meal),sl=PLAN[b][s];if(!m)continue;const a=(m.items||[]).find(x=>x[0]==="kureci-prsa");if(!a)continue;const g=a[1]*sl.n;if(isFresh(m)||sl.fresh)fr+=g;else fz+=g}return{fz,fr}}
 
 /* ---------- shopping ---------- */
 const isLidlPick=id=>!!SHOPSET?.lidlPick?.[id], isKauflandPick=id=>!!SHOPSET?.kauflandPick?.[id];
 function shoppingData(){const reg={},b2={},spice={};
-  for(const[b] of BLOCKS)for(const[s] of SLOTS){const sel=PLAN[b][s];const m=PM(sel.meal);if(!m)continue;
+  for(const[b] of BLOCKS)for(const[s] of SLOTS){const sel=PLAN[b][s];const m=PM(sel.meal);if(!m||!sel.n)continue;
     for(const[id,a] of m.items||[]){const x=ING[id];if(!x)continue;const tgt=x.spice?spice:(b==="block2"&&x.bakery)?b2:reg;tgt[id]=(tgt[id]||0)+a*sel.n}}
   const removed=[];const orig={reg:{...reg},b2:{...b2}};
   const apply=(o,pre)=>{for(const id of Object.keys(o)){const e=editFor(pre,id,orig.reg);if(!e)continue;const plan=o[id];
@@ -194,7 +229,7 @@ function shoppingData(){const reg={},b2={},spice={};
 function listText(){const{reg,b2,lidl,kaufland,dealGroups}=shoppingData();const line=x=>`${x.name}${x.b2?" (Block 2, buy fresh)":""}\t${fmtPlain(x.amt,x.unit)}\t${x.unit==="ks"?"ks":"g"}`;let t="";
   const sec=(title,a)=>{if(a.length)t+=(t?"\n":"")+title+"\n"+a.map(line).join("\n")+"\n"};
   sec("ONLINE (Rohlík / Košík / Tesco)",reg);sec("ONLINE, BLOCK 2 BAKERY (buy fresh)",b2);sec("LIDL",lidl);sec("KAUFLAND",kaufland);for(const g of dealGroups)sec(g.store.toUpperCase()+" (THIS WEEK'S DEAL)",g.items);return t.trim()}
-function planText(){let t="";for(const[s,label] of SLOTS){const f=b=>{const m=MEALS[PLAN[b][s].meal];return`${label}: ${m?m.name:"None"} (${PLAN[b][s].n})`};t+=`${f("block1")}\t\t${f("block2")}\n`}return t.trim()}
+function planText(){let t=`Prep ${fmtDate(prepDay())} · Block 1 ${blockDays("block1")} · Block 2 ${blockDays("block2")}\n`;for(const[s,label] of SLOTS){const f=b=>{const m=MEALS[PLAN[b][s].meal];return`${label}: ${m&&PLAN[b][s].n?m.name:"None"} (${PLAN[b][s].n})`};t+=`${f("block1")}\t\t${f("block2")}\n`}return t.trim()}
 
 /* ---------- loading from the server's documents ---------- */
 function loadDocs(docs){ING=docs["lib/ingredients"]?.data?.items||{};if(typeof loadPrices==="function")loadPrices(docs);MEALS={};
@@ -202,15 +237,14 @@ function loadDocs(docs){ING=docs["lib/ingredients"]?.data?.items||{};if(typeof l
   TARGETS=docs["settings/targets"]?.data||null;SAFETY=docs["settings/safety"]?.data||null;SHOPSET=docs["settings/shopping"]?.data||null;
   const d=docs["state/plan"]?.data;const cl=o=>JSON.parse(JSON.stringify(o||{}));
   const dd=docs["state/deals"]?.data;DEALS=Array.isArray(dd?.deals)?cl(dd.deals):[];DEALPICK=cl(dd?.pick);
-  if(d){PLAN=mergePlan(d.plan);SWAPS=cl(d.swaps);DISMISSED=cl(d.dismissed);EDITS=cl(d.edits);CHECKED=cl(d.checked);MINCE=d.mince==="lean"?"lean":"8020";FRESH=!!d.freshChicken;USEUP=Array.isArray(d.useup)?cl(d.useup):[];LISTWEEK=d.listWeek||null}
-  else{PLAN=emptyPlan();SWAPS={};DISMISSED={};EDITS={};CHECKED={};MINCE="8020";FRESH=false;USEUP=[];LISTWEEK=null}
+  if(d){PREP=/^\d{4}-\d\d-\d\d$/.test(d.prepDate||"")?d.prepDate:/^\d{4}-\d\d-\d\d$/.test(d.listWeek||"")?d.listWeek:null;PLAN=mergePlan(d.plan);SWAPS=cl(d.swaps);DISMISSED=cl(d.dismissed);EDITS=cl(d.edits);CHECKED=cl(d.checked);MINCE=d.mince==="lean"?"lean":"8020";FRESH=!!d.freshChicken;USEUP=Array.isArray(d.useup)?cl(d.useup):[];LISTWEEK=d.listWeek||null}
+  else{PREP=null;PLAN=emptyPlan();SWAPS={};DISMISSED={};EDITS={};CHECKED={};MINCE="8020";FRESH=false;USEUP=[];LISTWEEK=null}
   reconcile()}
-const planDoc=()=>({plan:PLAN,swaps:SWAPS,dismissed:DISMISSED,edits:EDITS,checked:CHECKED,mince:MINCE,freshChicken:FRESH,useup:USEUP,listWeek:LISTWEEK||weekKey()});
+const planDoc=()=>({plan:PLAN,swaps:SWAPS,dismissed:DISMISSED,edits:EDITS,checked:CHECKED,mince:MINCE,freshChicken:FRESH,useup:USEUP,listWeek:LISTWEEK||cycleKey(),prepDate:prepDay()});
 
 /* ---------- Cook views (shared with the read-only Cook page) ---------- */
-const who=s=>s.startsWith("snack")?"Kyle":"Kyle & Annie";
 const slotCat=s=>(SLOTS.find(x=>x[0]===s)||[])[2]||"snack";
-function slotRows(b){return SLOTS.map(([s,label])=>({s,label,cat:slotCat(s),sel:PLAN[b][s],m:PM(PLAN[b][s].meal)})).filter(x=>x.m)}
+function slotRows(b){return SLOTS.map(([s,label])=>({s,label,cat:slotCat(s),sel:PLAN[b][s],m:PM(PLAN[b][s].meal)})).filter(x=>x.m&&x.sel.n>0)}
 const mtype=x=>`<span class="mtype" data-cat="${x.cat}">${esc(x.label)}</span>`;
 const legendHTML=()=>`<div class="legend" aria-label="Meal colours">${CATS.map(([c,l])=>`<span class="mtype" data-cat="${c}">${l}</span>`).join("")}<span class="muted small">Tap a step when it's done. Its ingredients get crossed off.</span></div>`;
 
@@ -272,7 +306,7 @@ const TICK_KEY="mealprep-ticks";let TICKS=new Map();
 function tickLoad(){try{const o=JSON.parse(localStorage.getItem(TICK_KEY)||"{}");const cut=Date.now()-12*864e5;TICKS=new Map(Object.entries(o).filter(([,v])=>v&&v.t>cut))}catch(e){}}
 function tickSave(){try{localStorage.setItem(TICK_KEY,JSON.stringify(Object.fromEntries(TICKS)))}catch(e){}}
 tickLoad();
-const phaseScope=ph=>ph==="prep"?"w"+weekKey():"d"+todayISO();
+const phaseScope=ph=>ph==="prep"?"w"+cycleKey():"d"+todayISO();
 /* phases: [[phase, steps]] shown on this card; info: phases not shown, used only to say "used on the day" */
 /* An ingredient is used at the first step that names it; later mentions are the same food being handled again.
    Only when a step takes a portion ({=id:…} or words like "half", "the rest", "remaining" before it) is the ingredient split:
@@ -313,29 +347,31 @@ window.addEventListener("storage",e=>{if(e.key!==TICK_KEY)return;tickLoad();docu
 
 function prepHTML(){let html="";
   for(const[b,name,days] of BLOCKS){const ms=slotRows(b);if(!ms.length)continue;const ahead=ms.filter(x=>x.m.prep!=="fresh"),fresh=ms.filter(x=>x.m.prep==="fresh");
-    html+=`<section class="panel" style="margin-bottom:16px"><div class="row" style="justify-content:space-between"><h2>${name} prep</h2><span class="tape">${days}</span></div>
-    ${ahead.length?ahead.map(x=>{const m=x.m,mid=x.sel.meal,dk=`w${weekKey()}|${b}|${x.s}|${mid}|prep`;
+    html+=`<section class="panel" style="margin-bottom:16px"><div class="row" style="justify-content:space-between"><h2>${name} prep</h2><span class="tape">${blockDays(b)}</span></div>
+    ${ahead.length?ahead.map(x=>{const m=x.m,mid=x.sel.meal,dk=`w${cycleKey()}|${b}|${x.s}|${mid}|prep`;
       const c=tickCtx(b,x.s,mid,m,[["prep",m.prepSteps||[]]],[["day",m.daySteps||[]]]);
       return`<div class="dish" data-cat="${x.cat}" data-dk="${esc(dk)}" data-fallback="${m.prep==="hybrid"?"":esc(c.all.join(" "))}"><div class="row">${mtype(x)}<h3>${esc(m.name)}</h3><span class="prep ${m.prep}">${m.prep}</span>${resetBtn}</div>
-      <p class="muted small">${x.sel.n} servings${esc(spareText(b,x.s))}${m.keeps?` · keeps ${esc(m.keeps)}`:""} · ${who(x.s)}</p>
+      <p class="muted small">${x.sel.n} servings${esc(spareText(b,x.s))}${m.keeps?` · keeps ${esc(m.keeps)}`:""} · ${esc(whoText(b,x.s))}</p>
       <ul class="ings">${ingRowsInfo(m).map(({id,a,j,k})=>`<li${ingTick(c,dk,id,j,k)}><span>${esc(ING[id].name)}${esc((isFresh(m)||x.sel.fresh)&&id==="kureci-prsa"?" (buy fresh)":packNote(id,a*x.sel.n))}${usesSpan}</span><b>${fmtAmt(a*x.sel.n,ING[id].unit)}</b></li>`).join("")}</ul>
       ${tickSteps(c,"prep",m.prepSteps||[],m,x.sel.n)}${m.note?`<p class="note">${esc(m.note)}</p>`:""}</div>`}).join(""):`<p class="muted">Nothing to cook ahead for this block.</p>`}
     ${fresh.length?`<p class="muted" style="margin-top:14px">Made on the day: ${fresh.map(x=>esc(x.m.name+spareText(b,x.s))).join(", ")}.</p>`:""}</section>`}
-  return html?legendHTML()+html:`<div class="empty">Choose meals on the Plan tab to see what to cook on prep day.</div>`}
-function eachDayHTML(){let html="";
-  for(const[b,name,days] of BLOCKS){const ms=slotRows(b);if(!ms.length)continue;
-    html+=`<section class="panel" style="margin-bottom:16px"><div class="row" style="justify-content:space-between"><h2>${name}</h2><span class="tape">${days}</span></div>
-    ${ms.map(x=>{const m=x.m,mid=x.sel.meal,steps=m.daySteps||[],dk=`d${todayISO()}|${b}|${x.s}|${mid}|day`;const c=tickCtx(b,x.s,mid,m,[["day",steps]]);
+  return html?prepLine()+legendHTML()+html:`<div class="empty">Choose meals on the Plan tab to see what to cook on prep day.</div>`}
+function prepLine(){const ti=todayIndex(),p=prepDay();return`<p class="daynote"><b>Prep day: ${esc(fmtDate(p))}</b> <span class="muted">${ti===-1?"(today)":ti<-1?`(in ${-ti-1} day${ti===-2?"":"s"})`:""} · eating ${esc(fmtDate(dayDate(0)))} – ${esc(fmtDate(lastDay()))}</span></p>`}
+function eachDayHTML(){let html="";const ti=todayIndex();
+  for(const[b,name] of BLOCKS){const ms=slotRows(b);if(!ms.length)continue;const st=blockStart(b),d=ti-st,now=d>=0&&d<3;
+    html+=`<section class="panel${now?" today":""}" style="margin-bottom:16px"><div class="row" style="justify-content:space-between"><h2>${name}${now?` <span class="chip on">today: day ${ti+1}</span>`:""}</h2><span class="tape">${blockDays(b)}</span></div>
+    ${ms.map(x=>{const td=now?whoOnDay(b,x.s,d):null;const m=x.m,mid=x.sel.meal,steps=m.daySteps||[],dk=`d${todayISO()}|${b}|${x.s}|${mid}|day`;const c=tickCtx(b,x.s,mid,m,[["day",steps]]);
       return`<div class="dish" data-cat="${x.cat}" data-dk="${esc(dk)}" data-fallback="${esc(c.all.join(" "))}"><div class="row">${mtype(x)}<h3>${esc(m.name)}</h3><span class="prep ${m.prep}">${m.prep}</span>${resetBtn}</div>
-      <p class="muted small">${who(x.s)} · ${x.sel.n} servings${esc(spareText(b,x.s))}</p>
+      <p class="muted small">${now?(td?`<b>Today: ${esc(td)}</b>`:`<b>Nobody's eating this today</b>`)+" · ":""}${esc(whoText(b,x.s))} · ${x.sel.n} servings${esc(spareText(b,x.s))}</p>
       ${m.prep==="fresh"?`<ul class="ings">${ingRowsInfo(m).map(({id,a,j,k})=>`<li${ingTick(c,dk,id,j,k)}><span>${esc(ING[id].name)}${usesSpan}</span><b>${fmtAmt(a,ING[id].unit)}</b></li>`).join("")}</ul>`:`<p class="muted small">Cooked on prep day.</p>`}
       ${steps.length?`<h4>${m.prep==="fresh"?"Method":"Before serving"}</h4>${tickSteps(c,"day",steps,m,1)}`:""}
       ${m.prep==="fresh"&&m.note?`<p class="note">${esc(m.note)}</p>`:""}</div>`}).join("")}</section>`}
-  return html?legendHTML()+html:`<div class="empty">Choose meals on the Plan tab and each day's steps appear here.</div>`}
+  const head=ti>=0&&ti<6?`<p class="daynote"><b>Today, ${esc(fmtDate(todayISO()))}</b> <span class="muted">· day ${ti+1} of 6 · ${ti<3?"Block 1":"Block 2"}</span></p>`:ti===-1?`<p class="daynote"><b>Today is prep day.</b> <span class="muted">Day 1 is ${esc(fmtDate(dayDate(0)))}.</span></p>`:prepLine();
+  return html?head+legendHTML()+html:`<div class="empty">Choose meals on the Plan tab and each day's steps appear here.</div>`}
 function weekRecipesHTML(){let html="";
-  for(const[b,name,days] of BLOCKS){const ms=slotRows(b);if(!ms.length)continue;
-    html+=`<section class="panel" style="margin-bottom:16px"><div class="row" style="justify-content:space-between"><h2>${name}</h2><span class="tape">${days}</span></div>
-    ${ms.map(x=>{const m=x.m,per=x.sel.n,t=macros(m),mid=x.sel.meal,dk=`w${weekKey()}|${b}|${x.s}|${mid}|week`;
+  for(const[b,name] of BLOCKS){const ms=slotRows(b);if(!ms.length)continue;
+    html+=`<section class="panel" style="margin-bottom:16px"><div class="row" style="justify-content:space-between"><h2>${name}</h2><span class="tape">${blockDays(b)}</span></div>
+    ${ms.map(x=>{const m=x.m,per=x.sel.n,t=macros(m),mid=x.sel.meal,dk=`w${cycleKey()}|${b}|${x.s}|${mid}|week`;
       const c=tickCtx(b,x.s,mid,m,[["prep",m.prepSteps||[]],["day",m.daySteps||[]]]);
       return`<article class="dish" data-cat="${x.cat}" data-dk="${esc(dk)}" data-fallback="${esc(c.all.join(" "))}"><div class="row">${mtype(x)}<h3>${esc(m.name)}</h3><span class="prep ${m.prep}">${m.prep}</span>${resetBtn}</div>
       <p class="muted small">${per} servings${m.keeps?` · keeps ${esc(m.keeps)}`:""} · per serving ${Math.round(t.kcal)} kcal, P ${Math.round(t.p)} · C ${Math.round(t.c)} · F ${Math.round(t.f)}</p>

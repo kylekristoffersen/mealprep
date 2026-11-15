@@ -225,3 +225,23 @@ table.prices .deal{color:var(--accent);font-weight:600}
 .pinpanel li{margin:4px 0}
 table.prices td.num{white-space:nowrap}
 table.prices td:first-child .linkbtn{text-align:left}
+/* who's eating: a 3-day grid at the top of each block. Filled pill = eating, dashed and struck through = not eating. */
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.eatgrid{width:100%;border-collapse:collapse;margin:4px 0 8px;table-layout:fixed}
+.eatgrid th,.eatgrid td{padding:3px 2px;text-align:center;vertical-align:middle}
+.eatgrid thead th{font:600 .75rem var(--body);padding-bottom:6px;border-bottom:1px solid var(--line)}
+.eatgrid thead th:first-child,.eatgrid tbody th{width:74px}
+.eatgrid tbody th{font:600 .68rem var(--mono);text-transform:uppercase;letter-spacing:.04em;color:var(--muted);text-align:left;white-space:nowrap}
+.eatgrid tbody tr[data-cat] th{border-left:3px solid var(--line);padding-left:6px}
+.eatgrid tbody tr[data-cat="breakfast"] th{border-left-color:var(--breakfast)} .eatgrid tbody tr[data-cat="lunch"] th{border-left-color:var(--lunch)}
+.eatgrid tbody tr[data-cat="dinner"] th{border-left-color:var(--dinner)} .eatgrid tbody tr[data-cat="snack"] th{border-left-color:var(--snack)}
+.eatgrid .dname{display:block;white-space:nowrap}
+.eatgrid .pp{display:flex;gap:3px;justify-content:center;margin-top:3px}
+.eatgrid td{white-space:nowrap}
+.eatpill{--c:var(--accent);width:28px;height:26px;margin:0 1px;border-radius:999px;border:1.5px dashed var(--line);background:transparent;color:var(--muted);font:700 .72rem/1 var(--mono);cursor:pointer;text-decoration:line-through;opacity:.75}
+.eatpill.a{--c:var(--fresh)}
+.eatpill.on{background:var(--c);border:1.5px solid var(--c);color:var(--surface);text-decoration:none;opacity:1}
+.eatgrid thead .eatpill{width:24px;height:20px;font-size:.64rem}
+.eatpill:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.daynote{margin:0 0 12px}
+.panel.today{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
