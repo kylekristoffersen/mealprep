@@ -96,7 +96,11 @@ with sync_playwright() as p:
     # deals: add one, see meals that use it, put one in the plan, see it on Plan and Shop, route it to a store
     pg.click("[data-tabgo=deals]");pg.wait_for_timeout(200)
     check("deals tab has the form",pg.locator("#dealform").count()==1)
-    pg.fill("[data-df=name]","Kuřecí prsa");pg.fill("[data-df=price]","89,90")
+    pg.fill("[data-df=name]","kureci pr");pg.wait_for_timeout(100)
+    check("picker finds Kuřecí prsa without accents","Kuřecí prsa" in pg.inner_text(".ingsug"),pg.inner_text(".ingsug") if pg.locator(".ingsug").count() else "")
+    pg.keyboard.press("Enter");pg.wait_for_timeout(100)
+    check("Enter picks the suggestion",pg.input_value("[data-df=name]")=="Kuřecí prsa",pg.input_value("[data-df=name]"))
+    pg.fill("[data-df=price]","89,90")
     pg.click("#dealform summary");pg.fill("[data-df=was]","119,90")
     pg.click("[data-act=dealAdd]");pg.wait_for_timeout(300)
     t=pg.inner_text("#view");check("deal listed with price and discount","89,90 Kč/kg" in t and "−25 %" in t,t[t.find("This week"):][:300])

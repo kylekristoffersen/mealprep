@@ -245,3 +245,6 @@ table.prices td:first-child .linkbtn{text-align:left}
 .eatpill:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .daynote{margin:0 0 12px}
 .panel.today{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.ingsug{position:absolute;z-index:20;list-style:none;margin:0;padding:4px;background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.15);max-height:280px;overflow-y:auto}
+.ingsug li{padding:8px 10px;border-radius:5px;cursor:pointer}
+.ingsug li[aria-selected="true"],.ingsug li:hover{background:var(--on-bg);color:var(--on)}

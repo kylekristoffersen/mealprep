@@ -93,11 +93,9 @@ function useupHTML(){const ings=Object.entries(ING).sort((a,b)=>a[1].name.locale
     return`<span class="row" style="gap:2px;flex-wrap:nowrap"><span class="chip ${st.names.length?"on":"near"}" data-uuedit="${esc(u.id)}" title="Tap to edit the amount" style="white-space:normal;cursor:pointer">${esc(x.name)}${u.amt>0?` · ${fmtAmt(u.amt,x.unit)}`:""}: ${esc(s)}</span><button class="icon" data-uudel="${esc(u.id)}" title="Remove from Use up" aria-label="Remove ${esc(x.name)}" style="width:26px;height:26px">×</button></span>`}).join("");
   return`<details class="panel" style="margin-bottom:12px" ${USEUP.length||UU_UNDO.length?"open":""}><summary style="cursor:pointer"><b>Use up</b> <span class="muted small">Open packs and leftovers. Suggest favours meals that use them. Tap an item to edit its amount.</span></summary>
     <div class="row" style="margin:10px 0;gap:8px">${chips||`<span class="muted small">Nothing listed. Add the open packs you want to finish this week.</span>`}</div>
-    <div class="row" style="gap:6px"><input id="uu-name" list="uu-ings" placeholder="Ingredient, e.g. mozzarella" autocomplete="off" style="flex:1 1 220px"><input id="uu-amt" inputmode="decimal" placeholder="Amount (optional)" style="width:160px" title="Grams, or pieces for things counted in pieces. Fills in 'At home' on the shopping list."><button class="btn" data-act="uuAdd">Add</button>${UU_UNDO.length?`<button class="btn" data-act="uuUndo">↶ Undo</button>`:""}</div>
-    <datalist id="uu-ings">${ings.map(([,x])=>`<option value="${esc(x.name)}">`).join("")}</datalist></details>`}
-function uuAdd(){const i=$("#uu-name"),a=$("#uu-amt");const q=fold(i.value.trim());if(!q)return;const all=Object.entries(ING);
-  let hit=all.find(([,x])=>fold(x.name)===q);
-  if(!hit){const c=all.filter(([,x])=>fold(x.name).includes(q));if(c.length===1)hit=c[0];else{toast(c.length?`${c.length} ingredients match. Pick one from the list.`:"No ingredient by that name in your library.");return}}
+    <div class="row" style="gap:6px"><input id="uu-name" data-ingpick placeholder="Ingredient, e.g. mozzarella" autocomplete="off" style="flex:1 1 220px"><input id="uu-amt" inputmode="decimal" placeholder="Amount (optional)" style="width:160px" title="Grams, or pieces for things counted in pieces. Fills in 'At home' on the shopping list."><button class="btn" data-act="uuAdd">Add</button>${UU_UNDO.length?`<button class="btn" data-act="uuUndo">↶ Undo</button>`:""}</div></details>`}
+function uuAdd(){const i=$("#uu-name"),a=$("#uu-amt");if(!i.value.trim())return;const{hit,count}=resolveIng(i.value);
+  if(!hit){toast(count?`${count} ingredients match. Pick one from the list.`:"No ingredient by that name in your library.");return}
   const amt=czNum(a.value)||0;uuSnap();const row={id:hit[0],...(amt>0?{amt}:{})};const ix=USEUP.findIndex(u=>u.id===hit[0]);if(ix>=0)USEUP[ix]=row;else USEUP.push(row);savePlan();render();toast(ix>=0?`${hit[1].name} updated`:`${hit[1].name} added to Use up`)}
 function prepPickHTML(){const p=prepDay(),opts=[cycleKey(),addDays(cycleKey(),1)];
   const near=todayISO()>=dayDate(4);
@@ -154,12 +152,11 @@ function dealsView(v){const f=ui.deal||(ui.deal=newDeal());const ed=f.edit!=null
   const old=rows.filter(r=>!dealActive(r.d));
   v.innerHTML=`${letakyHTML()}<section class="panel" id="dealform" style="margin-bottom:16px"><div class="row" style="justify-content:space-between"><h2>${ed?"Edit deal":"Add a deal"}</h2></div>
     <p class="muted small" style="margin:4px 0 12px;max-width:65ch">Read the letáky, then add what's worth planning around. Each deal shows which of your meals use it, and Suggest favours those meals.</p>
-    <div class="form-grid"><label>Ingredient<input data-df="name" list="df-ings" value="${esc(f.name)}" autocomplete="off" placeholder="e.g. Kuřecí prsa"></label>
+    <div class="form-grid"><label>Ingredient<input data-df="name" data-ingpick value="${esc(f.name)}" autocomplete="off" placeholder="e.g. Kuřecí prsa"></label>
     <label>Store<select data-df="store">${STORES.map(s=>`<option ${s===f.store?"selected":""}>${s}</option>`).join("")}</select></label>
     <label>Price (Kč)<input data-df="price" inputmode="decimal" value="${esc(f.price)}" placeholder="89,90"></label>
     <label>…for<span class="row" style="flex-wrap:nowrap;gap:6px"><input data-df="amt" inputmode="decimal" value="${esc(f.amt)}" style="width:72px"><select data-df="u">${["kg","g","ks"].map(u=>`<option ${u===f.u?"selected":""}>${u}</option>`).join("")}</select></span></label>
     <label>Valid until<input type="date" data-df="until" value="${esc(f.until)}"></label></div>
-    <datalist id="df-ings">${Object.values(ING).sort((a,b)=>a.name.localeCompare(b.name,"cs")).map(x=>`<option value="${esc(x.name)}">`).join("")}</datalist>
     <details style="margin-top:10px" ${f.was||f.note?"open":""}><summary class="small" style="cursor:pointer">Optional: normal price and note</summary><div class="form-grid" style="margin-top:8px"><label>Normal price (Kč, for the same amount)<input data-df="was" inputmode="decimal" value="${esc(f.was)}" placeholder="119,90"></label><label>Note<input data-df="note" value="${esc(f.note)}" placeholder="e.g. with Clubcard, max 3 pcs"></label></div></details>
     <div class="actions" style="margin-bottom:0"><button class="btn primary" data-act="dealAdd">${ed?"Save changes":"Add deal"}</button>${ed?`<button class="btn" data-act="dealCancel">Cancel</button>`:""}${DEAL_UNDO.length?`<button class="btn" data-act="dealUndo">↶ Undo</button>`:""}</div></section>
   ${act.length?`<section class="panel"><div class="row" style="justify-content:space-between;margin-bottom:4px"><h2>This week's deals</h2><span class="tape">${act.length} deals</span></div><ul class="dealist">${act.map(r=>dealRow(r.d,r.i)).join("")}</ul>
@@ -167,9 +164,9 @@ function dealsView(v){const f=ui.deal||(ui.deal=newDeal());const ed=f.edit!=null
     :`<div class="empty">No deals for this week yet. Open the letáky, then add what you find above.</div>`}
   ${old.length?`<details class="panel" style="margin-top:16px"><summary style="cursor:pointer"><b>Expired</b> <span class="muted small">${old.length} past deal${old.length===1?"":"s"}</span></summary><ul class="plain">${old.map(r=>`<li>${esc(ING[r.d.id]?.name||r.d.id)} · ${esc(r.d.store)} · ${ING[r.d.id]?esc(dealPriceText(r.d)):kc(r.d.price)+" Kč"} <span class="muted">(ended ${esc(fmtDate(r.d.until))})</span></li>`).join("")}</ul><button class="btn" data-act="dealClearOld">Clear expired</button></details>`:""}`}
 function dealAdd(){const f=ui.deal;if(!f)return;
-  const q=fold(f.name.trim());if(!q){toast("Type the ingredient first.");return}
-  const all=Object.entries(ING);let hit=all.find(([,x])=>fold(x.name)===q);
-  if(!hit){const c=all.filter(([,x])=>fold(x.name).includes(q));if(c.length===1)hit=c[0];else{toast(c.length?`${c.length} ingredients match. Pick one from the list.`:"No ingredient by that name in your library. Add it on the Ingredients tab first.");return}}
+  if(!f.name.trim()){toast("Type the ingredient first.");return}
+  const{hit,count}=resolveIng(f.name);
+  if(!hit){toast(count?`${count} ingredients match. Pick one from the list.`:"No ingredient by that name in your library. Add it on the Ingredients tab first.");return}
   const price=czNum(f.price),amt=czNum(f.amt)||1,was=czNum(f.was)||0,ks=hit[1].unit==="ks";
   if(!(price>0)){toast("Enter the price in Kč.");return}
   if(ks!==(f.u==="ks")){toast(`${hit[1].name} is counted ${ks?"in pieces (ks)":"by weight: use kg or g"}.`);return}
@@ -279,7 +276,7 @@ async function importAll(file){const msg=$("#imp-msg");if(!file)return;
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.target.id==="uu-name"||e.target.id==="uu-amt")){e.preventDefault();uuAdd()}
   else if(e.key==="Enter"&&e.target.dataset?.df&&e.target.tagName==="INPUT"){e.preventDefault();dealAdd()}});
 document.addEventListener("input",e=>{const t=e.target,k=t.dataset?.df;if(!k||!ui.deal)return;ui.deal[k]=t.value;
-  if(k==="name"){const hit=Object.values(ING).find(x=>fold(x.name)===fold(t.value.trim()));if(hit){const want=hit.unit==="ks"?"ks":(ui.deal.u==="ks"?"kg":ui.deal.u);
+  if(k==="name"){const hit=resolveIng(t.value).hit?.[1];if(hit){const want=hit.unit==="ks"?"ks":(ui.deal.u==="ks"?"kg":ui.deal.u);
     if(want!==ui.deal.u){ui.deal.u=want;const sel=document.querySelector('[data-df="u"]');if(sel)sel.value=want}}}});
 document.addEventListener("click",e=>{const c=e.target.closest("[data-uuedit]");if(!c||e.target.closest("button"))return;const u=USEUP.find(x=>x.id===c.dataset.uuedit),x=u&&ING[u.id];if(!x)return;
   const n=$("#uu-name"),a=$("#uu-amt");n.value=x.name;a.value=u.amt>0?u.amt:"";a.focus();a.select();toast(`${x.name} loaded. Change the amount, then press Add`)});
@@ -349,3 +346,30 @@ document.addEventListener("click",e=>{const t=e.target.closest("button,[data-ope
 
 window.addEventListener("beforeunload",e=>{if(dirty()){e.preventDefault();e.returnValue=""}});
 (async()=>{renderTabs();try{await reloadAll();if(TESCO_IN){tab="prices";await takeTescoResult(TESCO_IN)}}catch(e){$("#status").textContent="Couldn't load your data. Check your connection and reload."}})();
+
+/* ---------- ingredient picker: matches without accents or word order, so "kureci prsa" and "prsa kur" both find Kuřecí prsa ---------- */
+function ingMatches(q){const ws=fold(q).trim().split(/[^a-z0-9%]+/).filter(Boolean);if(!ws.length)return[];const fq=ws.join(" ");
+  return Object.entries(ING).map(([id,x])=>{const n=fold(x.name),words=n.split(/[^a-z0-9%]+/);if(!ws.every(w=>n.includes(w)))return null;
+    const score=n===fq?0:n.startsWith(fq)?1:ws.every(w=>words.some(v=>v.startsWith(w)))?2:3;return{id,x,score}}).filter(Boolean)
+    .sort((a,b)=>a.score-b.score||a.x.name.localeCompare(b.x.name,"cs"))}
+function resolveIng(q){const m=ingMatches(q);if(!m.length)return{hit:null,count:0};
+  const exact=m.filter(r=>r.score===0);if(exact.length===1)return{hit:[exact[0].id,exact[0].x],count:1};
+  return m.length===1?{hit:[m[0].id,m[0].x],count:1}:{hit:null,count:m.length}}
+const SUG={el:null,input:null,items:[],i:-1,quiet:false};
+function sugBox(){if(!SUG.el){SUG.el=document.createElement("ul");SUG.el.className="ingsug";SUG.el.setAttribute("role","listbox");SUG.el.hidden=true;document.body.appendChild(SUG.el);
+  SUG.el.addEventListener("mousedown",e=>{const li=e.target.closest("li[data-i]");if(li){e.preventDefault();sugPick(+li.dataset.i)}})}return SUG.el}
+function sugHide(){if(SUG.el)SUG.el.hidden=true;SUG.items=[];SUG.i=-1}
+function sugShow(inp){const el=sugBox();SUG.input=inp;SUG.items=ingMatches(inp.value).slice(0,8);SUG.i=SUG.items.length?0:-1;
+  if(!SUG.items.length||(SUG.items.length===1&&fold(SUG.items[0].x.name)===fold(inp.value.trim()))){sugHide();return}
+  el.innerHTML=SUG.items.map((r,i)=>`<li role="option" data-i="${i}" aria-selected="${i===SUG.i}">${esc(r.x.name)}</li>`).join("");
+  const rc=inp.getBoundingClientRect();el.style.left=(rc.left+scrollX)+"px";el.style.top=(rc.bottom+scrollY+2)+"px";el.style.width=Math.max(rc.width,220)+"px";el.hidden=false}
+function sugMove(d){if(!SUG.items.length)return;SUG.i=(SUG.i+d+SUG.items.length)%SUG.items.length;SUG.el.querySelectorAll("li").forEach((li,i)=>li.setAttribute("aria-selected",i===SUG.i))}
+function sugPick(i){const r=SUG.items[i],inp=SUG.input;if(!r||!inp)return;inp.value=r.x.name;sugHide();SUG.quiet=true;inp.dispatchEvent(new Event("input",{bubbles:true}));SUG.quiet=false;inp.focus()}
+document.addEventListener("input",e=>{if(e.target.matches?.("[data-ingpick]")&&!SUG.quiet)sugShow(e.target)});
+document.addEventListener("focusin",e=>{if(e.target.matches?.("[data-ingpick]")&&e.target.value.trim())sugShow(e.target)});
+document.addEventListener("focusout",e=>{if(e.target.matches?.("[data-ingpick]"))setTimeout(()=>{if(document.activeElement!==SUG.input)sugHide()},120)});
+document.addEventListener("keydown",e=>{if(!e.target.matches?.("[data-ingpick]")||!SUG.el||SUG.el.hidden)return;
+  if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();sugMove(e.key==="ArrowDown"?1:-1)}
+  else if(e.key==="Enter"&&SUG.i>=0){e.preventDefault();e.stopImmediatePropagation();sugPick(SUG.i)}
+  else if(e.key==="Escape"){sugHide()}},true);
+window.addEventListener("scroll",()=>{if(SUG.el&&!SUG.el.hidden&&SUG.input)sugShow(SUG.input)},{passive:true});
