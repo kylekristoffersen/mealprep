@@ -14,7 +14,7 @@ try:
 except ImportError:  # falls back to the htpasswd program
     bcrypt = None
 
-APP_VERSION = "0.6.4"
+APP_VERSION = "0.6.5"
 DATA_DIR = os.environ.get("MEALPREP_DATA_DIR", os.path.join(os.path.dirname(os.path.abspath(__file__)), "_data"))
 PORT = int(os.environ.get("MEALPREP_PORT", "5020"))
 HTPASSWD = os.environ.get("MEALPREP_HTPASSWD", "/etc/nginx/.mealprep-htpasswd")
@@ -701,10 +701,20 @@ def api_product_search():
         return jsonify({"items": []})
     try:
         d = _get_json("https://www.rohlik.cz/services/frontend-service/search-metadata?offset=0&limit=12&companyId=1&search=" + urllib.parse.quote(q))
-        items = [{"shop": "rohlik", "id": str(x["productId"]), "url": f"https://www.rohlik.cz/{x['productId']}", "name": x.get("productName"),
-                  "amount": x.get("textualAmount"), "packG": _pack_from_text(x.get("textualAmount")), "perKg": False,
-                  "price": (x.get("price") or {}).get("full"), "perUnit": (x.get("pricePerUnit") or {}).get("full")}
-                 for x in (d.get("data") or {}).get("productList") or []]
+        items = []
+        for x in (d.get("data") or {}).get("productList") or []:
+            amt = x.get("textualAmount") or ""
+            pcs = re.match(r"\s*(\d+)\s*ks\b", amt)
+            # "1 ks" of something sold by weight: take the grams from the name, e.g. "Brokolice 1 ks (cca 500 g)"
+            if pcs:
+                gm = re.search(r"([\d.,]+)\s*(kg|g|ml|l)\b", x.get("productName") or "", re.I)
+                grams = _pack_from_text(gm.group(0)) if gm else None
+            else:
+                grams = _pack_from_text(amt)
+            items.append({"shop": "rohlik", "id": str(x["productId"]), "url": f"https://www.rohlik.cz/{x['productId']}", "name": x.get("productName"),
+                          "amount": amt, "packG": grams * int(pcs.group(1)) if pcs and grams else grams, "packKs": int(pcs.group(1)) if pcs else None,
+                          "perKg": False, "unit": x.get("unit"),
+                          "price": (x.get("price") or {}).get("full"), "perUnit": (x.get("pricePerUnit") or {}).get("full")})
         return jsonify({"items": items})
     except Exception as e:
         return jsonify({"error": "Rohlík search failed: " + str(e)[:120]}), 502

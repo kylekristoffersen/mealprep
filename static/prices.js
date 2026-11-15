@@ -67,7 +67,7 @@ function pricesView(v){const items=onlineItems();const rows=items.map(compareRow
       <label class="small"><input type="checkbox" data-prset="clubcard" ${set.clubcard?"checked":""}> Clubcard prices</label></div>
     <p class="muted small" style="margin:0">Rohlík + Košík: ${checked?`checked ${esc(fmtWhen(checked))}${old(ageDays(checked))?" · <b>out of date, check again</b>":""}`:"not checked yet"} · Tesco: ${tesco?`checked ${esc(fmtWhen(tesco))}${old(ageDays(tesco))?" · <b>out of date</b>":""}`:"not checked yet"}.
     Rohlík shows the prices of its default warehouse; if they differ from what you see signed in, tell Claude.</p>
-    ${ui.tescoHelp?tescoHelpHTML():""}</section>`;
+    ${ui.tescoHelp?tescoHelpHTML():""}</section>${pinQueueHTML(items)}${pui.open&&ING[pui.open]?`<section class="panel" id="pinrow" style="margin-top:12px">${pinPanelHTML(pui.open,items.find(x=>x.id===pui.open)?.amt)}</section>`:""}`;
   const sum=`<section class="panel" style="margin-top:12px"><h2>This week's online list</h2><div class="tot">
     ${SHOPS.map(([s,n])=>`<div class="${bestSingle&&bestSingle[0]===s?"win":""}"><span class="muted small">All at ${n}</span><b>${Math.round(tot[s])} Kč</b><span class="small ${miss[s]?"warn":"muted"}">${miss[s]?`${miss[s]} item${miss[s]>1?"s":""} not priced`:"everything priced"}</span></div>`).join("")}
     <div><span class="muted small">Cheapest of each</span><b>${Math.round(split)} Kč</b><span class="small muted">${splitMiss?`${splitMiss} not priced anywhere`:"split across shops"}</span></div></div>
@@ -82,23 +82,50 @@ function pricesView(v){const items=onlineItems();const rows=items.map(compareRow
     <label class="small"><input type="checkbox" data-pr="swaps" ${pui.swapsOnly?"checked":""}> Only items with a note or a cheaper option</label></div>
     <table class="prices"><thead><tr><th>Item</th><th class="num">Need</th>${SHOPS.map(([,n])=>`<th>${n}</th>`).join("")}</tr></thead><tbody>
     ${list.map(r=>`<tr><td><button class="linkbtn" data-pin="${esc(r.id)}">${esc(r.name)}</button>${r.spread>=20?`<span class="pn">saves ${Math.round(r.spread)} Kč at ${SHOPNAME[r.best]}</span>`:""}</td><td class="num">${fmtAmt(r.need,r.unit)}</td>${SHOPS.map(([s])=>cell(r,s)).join("")}</tr>
-      ${pui.open===r.id?`<tr><td colspan="5">${pinPanelHTML(r.id)}</td></tr>`:""}`).join("")}
+      `).join("")}
     </tbody></table>${items.length?"":`<p class="muted">The online list is empty. Plan the week first.</p>`}
     <p class="muted small">Amounts are rounded up to whole packs; weighed items are priced by weight. A sale or member price is used when it's cheaper, multi-buy offers only when you'd buy enough. Product swaps are only suggested: press <b>use this</b> to make one your usual.</p></section>`;
   v.innerHTML=head+sum+table}
 
 function fmtWhen(iso){const d=new Date(iso);return d.toLocaleString("en-GB",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}
 
-function pinPanelHTML(ing){const a=pui.add[ing]||{},sr=pui.search[ing];const rows=prodsFor(ing).sort((x,y)=>x[1].shop.localeCompare(y[1].shop)||(y[1].usual?1:0)-(x[1].usual?1:0));
-  return`<div class="pinpanel"><b>Pinned products for ${esc(ING[ing]?.name||ing)}</b>
+/* ---------- pinning: a to-do list of this week's unpinned items, a Rohlík search that runs by itself, and search links for Košík and Tesco ---------- */
+const unpinned=items=>items.filter(x=>!prodsFor(x.id).length);
+function pinQueueHTML(items){const u=unpinned(items);if(!u.length)return"";
+  return`<section class="panel" style="margin-top:12px"><div class="row" style="justify-content:space-between"><h2>To pin this week</h2><span class="tape">${u.length} item${u.length>1?"s":""}</span></div>
+  <p class="muted small" style="margin:4px 0 8px">These have no product pinned at any shop, so they can't be priced. Tap one: Rohlík is searched for you, and Košík and Tesco open with the search filled in.</p>
+  <div class="row" style="gap:6px">${u.map(x=>`<button class="chipbtn${pui.open===x.id?" on":""}" data-pin="${esc(x.id)}">${esc(x.name)}</button>`).join("")}</div></section>`}
+const shopSearchLinks=q=>[["Košík",`https://www.kosik.cz/vyhledavani?search=${encodeURIComponent(q)}`],["Tesco",`https://nakup.itesco.cz/groceries/cs-CZ/search?query=${encodeURIComponent(q)}`],["Rohlík",`https://www.rohlik.cz/hledat?q=${encodeURIComponent(q)}`]];
+function nextUnpinned(after){const u=unpinned(onlineItems());if(!u.length)return null;const i=u.findIndex(x=>x.id===after);return(u[i+1]||u.find(x=>x.id!==after)||null)?.id||null}
+function pinPanelHTML(ing,need){const a=pui.add[ing]||{},sr=pui.search[ing];const unit=ING[ing]?.unit==="ks"?"ks":"g";
+  const rows=prodsFor(ing).sort((x,y)=>x[1].shop.localeCompare(y[1].shop)||(y[1].usual?1:0)-(x[1].usual?1:0));
+  const pinnedIds=new Set(rows.map(([,x])=>shopId(x)));const q=sr?.q??ING[ing]?.name??"";
+  const packOf=it=>unit==="ks"?it.packKs:it.packG;
+  const res=(sr?.items||[]).map((it,i)=>({it,i,packs:packOf(it)&&need?Math.max(1,Math.ceil(need/packOf(it)-0.02)):null}));
+  const cheapest=res.filter(r=>r.packs).sort((x,y)=>x.packs*x.it.price-y.packs*y.it.price)[0];
+  const nx=nextUnpinned(ing);
+  return`<div class="pinpanel"><div class="row" style="justify-content:space-between"><b>${esc(ING[ing]?.name||ing)}</b><span class="row" style="gap:8px"><span class="muted small">need ${need?fmtAmt(need,unit):"–"}</span><button class="btn tiny" data-pin="${esc(ing)}">Close</button></span></div>
   ${rows.length?`<ul class="plain">${rows.map(([k,x])=>{const r=PRICES.items[k];return`<li><span class="tape">${SHOPNAME[x.shop]||x.shop}</span> ${x.usual?"★ ":""}<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.name)}</a>
-    <span class="muted small">${x.packG?fmtAmt(x.packG,ING[ing]?.unit==="ks"?"ks":"g"):x.perKg?"by weight":"pack size?"}${r?.price?` · ${kc(r.price)} Kč`:""}${r?.inStock===false?" · sold out":""}${r?.gone?" · gone":""}</span>
-    ${x.usual?"":`<button class="btn tiny" data-usual="${esc(k)}">Make usual</button>`}<input class="tiny" inputmode="numeric" placeholder="pack g" value="${x.packG??""}" data-pack="${esc(k)}" aria-label="Pack size"><button class="btn tiny" data-unpin="${esc(k)}">Remove</button></li>`}).join("")}</ul>`:`<p class="muted small">Nothing pinned yet.</p>`}
-  <div class="row" style="gap:6px;flex-wrap:wrap;margin-top:6px"><input style="flex:1;min-width:220px" placeholder="Paste a Rohlík, Košík or Tesco product link" value="${esc(a.url||"")}" data-addurl="${esc(ing)}">
-    <button class="btn" data-addgo="${esc(ing)}">Pin</button></div>
-  <div class="row" style="gap:6px;flex-wrap:wrap;margin-top:6px"><input style="flex:1;min-width:220px" placeholder="Search Rohlík" value="${esc(sr?.q||"")}" data-sq="${esc(ing)}"><button class="btn" data-sgo="${esc(ing)}">Search</button></div>
-  ${sr?.items?`<ul class="plain">${sr.items.map((it,i)=>`<li><a href="${esc(it.url)}" target="_blank" rel="noopener">${esc(it.name)}</a> <span class="muted small">${esc(it.amount||"")} · ${kc(it.price)} Kč${it.perUnit?` (${kc(it.perUnit)} Kč/${it.perKg?"kg":"unit"})`:""}</span> <button class="btn tiny" data-spin="${esc(ing)}|${i}">Pin</button></li>`).join("")||"<li class='muted'>No results.</li>"}</ul>`:""}
-  ${a.msg?`<p class="small">${esc(a.msg)}</p>`:""}</div>`}
+    <span class="muted small">${x.packG?fmtAmt(x.packG,unit):x.perKg?"by weight":"pack size?"}${r?.price?` · ${kc(r.price)} Kč`:""}${r?.inStock===false?" · sold out":""}${r?.gone?" · gone":""}</span>
+    ${x.usual?"":`<button class="btn tiny" data-usual="${esc(k)}">Make usual</button>`}<input class="tiny" inputmode="numeric" placeholder="pack g" value="${x.packG??""}" data-pack="${esc(k)}" aria-label="Pack size"><button class="btn tiny" data-unpin="${esc(k)}">Remove</button></li>`}).join("")}</ul>`:`<p class="muted small" style="margin:6px 0">Nothing pinned yet.</p>`}
+  ${a.msg?`<p class="small" style="margin:6px 0"><b>${esc(a.msg)}</b>${nx?` <button class="btn tiny primary" data-pnext="${esc(nx)}">Next: ${esc(ING[nx]?.name||nx)} →</button>`:""}</p>`:""}
+  <div class="row" style="gap:6px;flex-wrap:wrap;margin-top:8px"><input style="flex:1;min-width:200px" placeholder="Search" value="${esc(q)}" data-sq="${esc(ing)}"><button class="btn" data-sgo="${esc(ing)}">Search Rohlík</button>
+    ${shopSearchLinks(q).slice(0,2).map(([n,u])=>`<a class="btn" href="${esc(u)}" target="_blank" rel="noopener">${n} ↗</a>`).join("")}</div>
+  ${sr&&!sr.items?`<p class="muted small">Searching Rohlík…</p>`:""}
+  ${sr?.items?`<ul class="plain results">${res.map(({it,i,packs})=>{const done=pinnedIds.has(String(it.id));
+    return`<li><span><a href="${esc(it.url)}" target="_blank" rel="noopener">${esc(it.name)}</a> <span class="muted small">${esc(it.amount||"")} · ${kc(it.price)} Kč${it.perUnit?` · ${kc(it.perUnit)} Kč/${esc(it.unit||"unit")}`:""}${packOf(it)?"":` · <span class="warn">pack size not shown</span>`}${packs?` · you'd buy ${packs} × ≈ ${Math.round(packs*it.price)} Kč`:""}</span>${cheapest&&cheapest.i===i&&res.length>1?` <span class="chip on">cheapest for your amount</span>`:""}</span>
+      ${done?`<span class="chip">pinned</span>`:`<button class="btn tiny" data-spin="${esc(ing)}|${i}">Pin</button>`}</li>`}).join("")||"<li class='muted'>No results. Try fewer words.</li>"}</ul>`:""}
+  <div class="row" style="gap:6px;flex-wrap:wrap;margin-top:8px"><input style="flex:1;min-width:200px" placeholder="…or paste a Rohlík, Košík or Tesco product link" value="${esc(a.url||"")}" data-addurl="${esc(ing)}">
+    <button class="btn" data-addgo="${esc(ing)}">Pin link</button></div>
+  <p class="muted small" style="margin:6px 0 0">Found it on Košík or Tesco? Copy the product page's address and paste it here: it pins as soon as you paste.</p></div>`}
+async function runSearch(ing,q){pui.search[ing]={q,items:null};render();
+  try{const j=await (await fetch("/api/products/search?q="+encodeURIComponent(q))).json();pui.search[ing]={q,items:j.items||[]};if(j.error)toast(j.error)}catch(er){pui.search[ing]={q,items:[]};toast("Search failed")}
+  if(tab==="prices")render()}
+async function addLink(ing,url){pui.add[ing]={url,msg:"Looking it up…"};render();
+  try{const r=await fetch("/api/products/lookup",{method:"POST",headers:jhead,body:JSON.stringify({url})});const j=await r.json();if(!r.ok)throw new Error(j.error||"HTTP "+r.status);await pinProduct(ing,j);pui.add[ing]={...pui.add[ing],url:""};render()}
+  catch(er){pui.add[ing]={url,msg:er.message||String(er)};render()}}
+function openPin(ing){pui.open=ing;if(!pui.search[ing]&&ING[ing])runSearch(ing,ING[ing].name);else render();
+  setTimeout(()=>document.getElementById("pinrow")?.scrollIntoView({block:"start",behavior:"smooth"}),60)}
 
 /* ---------- Tesco: a bookmark that runs in your own Tesco tab ---------- */
 function tescoRunner(){(async()=>{const H=new URLSearchParams(location.hash.slice(1)),raw=H.get("mpcheck"),back=H.get("mpback");
@@ -156,19 +183,21 @@ async function pinProduct(ing,info){if(!info?.shop||!info.id)return;const key=in
   const first=!prodsFor(ing,info.shop).length;const data={shop:info.shop,ing,name:info.name||`${SHOPNAME[info.shop]} product ${info.id}`,url:info.url,packG:info.packG||null,perKg:!!info.perKg,usual:first,status:"ok"};
   if(await putDoc("products/"+key,data)){loadPrices(DOCS);pui.add[ing]={msg:`Pinned at ${SHOPNAME[info.shop]}${data.packG||data.perKg?"":": enter its pack size"}${info.shop==="tesco"?". Its price comes with the next Tesco check":". Its price comes with the next check"}.`};render()}}
 
-document.addEventListener("click",async e=>{const t=e.target.closest("[data-pr],[data-pin],[data-usual],[data-unpin],[data-addgo],[data-sgo],[data-spin]");if(!t||tab!=="prices")return;const d=t.dataset;
+document.addEventListener("click",async e=>{const t=e.target.closest("[data-pr],[data-pin],[data-usual],[data-unpin],[data-addgo],[data-sgo],[data-spin],[data-pnext]");if(!t||tab!=="prices")return;const d=t.dataset;
   if(d.pr==="check")runCheck();
   else if(d.pr==="tesco"){ui.tescoHelp=!ui.tescoHelp;render()}
   else if(d.pr==="swaps"){pui.swapsOnly=t.checked;render()}
-  else if(d.pin!==undefined){pui.open=pui.open===d.pin?null:d.pin;render()}
+  else if(d.pin!==undefined){if(pui.open===d.pin){pui.open=null;render()}else openPin(d.pin)}
+  else if(d.pnext)openPin(d.pnext);
   else if(d.usual)setUsual(d.usual);
   else if(d.unpin){const x=PRODUCTS[d.unpin];if(x&&await delDoc("products/"+d.unpin)){loadPrices(DOCS);render();toast(`Removed ${x.name}`)}}
-  else if(d.addgo){const ing=d.addgo,url=(document.querySelector(`[data-addurl="${CSS.escape(ing)}"]`)?.value||"").trim();pui.add[ing]={url,msg:"Looking it up…"};render();
-    try{const r=await fetch("/api/products/lookup",{method:"POST",headers:jhead,body:JSON.stringify({url})});const j=await r.json();if(!r.ok)throw new Error(j.error||"HTTP "+r.status);await pinProduct(ing,j)}
-    catch(er){pui.add[ing]={url,msg:er.message||String(er)};render()}}
-  else if(d.sgo){const ing=d.sgo,q=(document.querySelector(`[data-sq="${CSS.escape(ing)}"]`)?.value||"").trim();pui.search[ing]={q,items:null};
-    try{const j=await (await fetch("/api/products/search?q="+encodeURIComponent(q))).json();pui.search[ing]={q,items:j.items||[]};if(j.error)toast(j.error)}catch(er){toast("Search failed")}render()}
-  else if(d.spin){const[ing,i]=d.spin.split("|");const it=pui.search[ing]?.items?.[+i];if(it)await pinProduct(ing,it)}});
+  else if(d.addgo){const ing=d.addgo;addLink(ing,(document.querySelector(`[data-addurl="${CSS.escape(ing)}"]`)?.value||"").trim())}
+  else if(d.sgo){const ing=d.sgo;runSearch(ing,(document.querySelector(`[data-sq="${CSS.escape(ing)}"]`)?.value||"").trim())}
+  else if(d.spin){const[ing,i]=d.spin.split("|");const it=pui.search[ing]?.items?.[+i];if(it)await pinProduct(ing,{...it,packG:ING[ing]?.unit==="ks"?it.packKs:it.packG})}});
 document.addEventListener("change",async e=>{const t=e.target;if(tab!=="prices")return;
   if(t.dataset.prset){const S={...(SHOPSET||{})};S.prices={...priceSet(),[t.dataset.prset]:t.checked};SHOPSET=S;render();await putDoc("settings/shopping",S)}
   else if(t.dataset.pack){const k=t.dataset.pack,x=PRODUCTS[k];if(!x)return;const v=czNum(t.value);await putDoc("products/"+k,{...x,packG:v>0?v:null});loadPrices(DOCS);render()}});
+document.addEventListener("paste",e=>{const t=e.target;if(tab!=="prices"||!t.dataset?.addurl)return;const txt=(e.clipboardData?.getData("text")||"").trim();
+  if(/^https?:\/\/\S*(rohlik\.cz|kosik\.cz|itesco\.cz)/i.test(txt)){e.preventDefault();addLink(t.dataset.addurl,txt)}});
+document.addEventListener("keydown",e=>{if(tab!=="prices"||e.key!=="Enter")return;const t=e.target;
+  if(t.dataset?.sq){e.preventDefault();runSearch(t.dataset.sq,t.value.trim())}else if(t.dataset?.addurl){e.preventDefault();addLink(t.dataset.addurl,t.value.trim())}});

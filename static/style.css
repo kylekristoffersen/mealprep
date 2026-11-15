@@ -220,7 +220,7 @@ table.prices .pn{display:block;font-size:.76rem;color:var(--muted);line-height:1
 table.prices .pn.warn,.warn{color:#b45309}
 table.prices .pn.swap{color:var(--ink)}
 table.prices .deal{color:var(--accent);font-weight:600}
-.pinpanel{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.pinpanel{overflow-wrap:anywhere;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
 .pinpanel input.tiny{width:70px;padding:2px 6px}
 .pinpanel li{margin:4px 0}
 table.prices td.num{white-space:nowrap}
@@ -248,3 +248,6 @@ table.prices td:first-child .linkbtn{text-align:left}
 .ingsug{position:absolute;z-index:20;list-style:none;margin:0;padding:4px;background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.15);max-height:280px;overflow-y:auto}
 .ingsug li{padding:8px 10px;border-radius:5px;cursor:pointer}
 .ingsug li[aria-selected="true"],.ingsug li:hover{background:var(--on-bg);color:var(--on)}
+.pinpanel ul.results li{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--line);margin:0}
+.pinpanel ul.results li:last-child{border-bottom:0}
+.pinpanel .btn,.pinpanel .chip{overflow-wrap:normal;white-space:nowrap;flex-shrink:0}
