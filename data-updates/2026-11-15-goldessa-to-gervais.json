@@ -1,0 +1,47 @@
+{
+ "id": "2026-11-15-goldessa-to-gervais",
+ "note": "Bread w/Cheese: Creme Goldessa Fitness (Lidl only) replaced by Gervais FITprotein, same amount",
+ "docs": {
+  "meals/bread-w-cheese": {
+   "base": 1,
+   "data": {
+    "cat": "breakfast",
+    "daySteps": [
+     "Spread the Gervais FITprotein on the bread and top with sliced hermelín.",
+     "Serve with radishes, cucumber and carrot sticks."
+    ],
+    "items": [
+     [
+      "chleb",
+      100
+     ],
+     [
+      "gervais-fitprotein",
+      50
+     ],
+     [
+      "hermelin-figura",
+      50
+     ],
+     [
+      "redkvicky",
+      100
+     ],
+     [
+      "okurka-salatova",
+      50
+     ],
+     [
+      "mrkev",
+      50
+     ]
+    ],
+    "keeps": "",
+    "name": "Bread w/Cheese",
+    "note": "",
+    "prep": "fresh",
+    "prepSteps": []
+   }
+  }
+ }
+}
