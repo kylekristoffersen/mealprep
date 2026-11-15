@@ -1,0 +1,12 @@
+{
+ "id": "2026-11-15-clear-store-picks",
+ "note": "Cleared Lidl and Kaufland pick-up choices carried over from the artifact import (bananas, frozen veg, strawberries etc. were showing as picked). Prices and freezer-pack settings are kept.",
+ "docs": {
+  "settings/shopping": {
+   "unset": [
+    "lidlPick",
+    "kauflandPick"
+   ]
+  }
+ }
+}

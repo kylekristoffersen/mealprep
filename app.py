@@ -14,7 +14,7 @@ try:
 except ImportError:  # falls back to the htpasswd program
     bcrypt = None
 
-APP_VERSION = "0.6.10"
+APP_VERSION = "0.6.11"
 DATA_DIR = os.environ.get("MEALPREP_DATA_DIR", os.path.join(os.path.dirname(os.path.abspath(__file__)), "_data"))
 PORT = int(os.environ.get("MEALPREP_PORT", "5020"))
 HTPASSWD = os.environ.get("MEALPREP_HTPASSWD", "/etc/nginx/.mealprep-htpasswd")
@@ -471,11 +471,24 @@ def apply_updates():
         done, skipped = [], []
         with _lock, db() as c:
             for path, spec in (u.get("docs") or {}).items():
-                if not PATH_RE.match(path) or ("data" not in spec and not spec.get("delete") and not isinstance(spec.get("add"), dict)):
+                if not PATH_RE.match(path) or ("data" not in spec and not spec.get("delete") and not isinstance(spec.get("add"), dict) and not isinstance(spec.get("unset"), list)):
                     skipped.append({"path": path, "why": "bad entry"})
                     continue
                 row = c.execute("SELECT version, data FROM docs WHERE path=?", (path,)).fetchone()
                 cur = row["version"] if row else 0
+                if "data" not in spec and isinstance(spec.get("unset"), list):
+                    # remove top-level keys, keep the rest of the doc: {"unset": ["lidlPick"]}
+                    data = json.loads(row["data"]) if row else {}
+                    gone = [k for k in spec["unset"] if isinstance(k, str) and k in data]
+                    for k in gone:
+                        del data[k]
+                    if gone:
+                        c.execute("UPDATE docs SET data=?,version=?,updated_at=?,updated_by=? WHERE path=?",
+                                  (json.dumps(data, ensure_ascii=False), cur + 1, now(), "update:" + uid[:40], path))
+                        done.append(f"{path} (removed: {', '.join(gone)})")
+                    else:
+                        skipped.append({"path": path, "why": "none of those keys were there"})
+                    continue
                 if "data" not in spec and isinstance(spec.get("add"), dict):
                     # add-only merge, no base check: {"add": {"items": {"id": {...}}}} adds keys that are missing, never overwrites
                     data = json.loads(row["data"]) if row else {}
