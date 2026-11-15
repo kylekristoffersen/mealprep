@@ -1,0 +1,3152 @@
+{
+ "id": "2026-11-15-shop-products",
+ "note": "Pinned shop products from the old artifact planner (242); only added where missing",
+ "docs": {
+  "products/k11867-redkvicky": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "redkvicky",
+    "name": "Ředkvičky, balení 250 g",
+    "url": "https://www.kosik.cz/p11867-redkvicky-baleni",
+    "packG": 250,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k12607-tvaroh-jihocesky-odt": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "tvaroh-jihocesky-odtucneny-0-8",
+    "name": "Madeta Jihočeský tvaroh odtučněný 250 g",
+    "url": "https://www.kosik.cz/p12607-madeta-jihocesky-tvaroh-odtucneny",
+    "packG": 250,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k12607-jihocesky-tvaroh-jog": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "jihocesky-tvaroh-jogurt-bily-madeta",
+    "name": "Madeta Jihočeský tvaroh odtučněný (Košík has no tvaroh&jogurt)",
+    "url": "https://www.kosik.cz/p12607-madeta-jihocesky-tvaroh-odtucneny",
+    "packG": 250,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k127467-cerstvy-kozi-syr-dor": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "cerstvy-kozi-syr-dora",
+    "name": "Biofarma DoRa BIO Pomazánkový sýr",
+    "url": "https://www.kosik.cz/p127467",
+    "packG": 100,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k14787-eidam-20": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "eidam-20",
+    "name": "Šumavský Eidam plátky 20%",
+    "url": "https://www.kosik.cz/p14787-sumavsky-eidam-platky-20",
+    "packG": 100,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k15067-mozzarella-light": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "mozzarella-light",
+    "name": "Galbani Mozzarella Light",
+    "url": "https://www.kosik.cz/p15067-galbani-mozzarella-light",
+    "packG": 125,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k158807-mouka-spaldova": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "mouka-spaldova",
+    "name": "Pernerka Špaldová mouka hladká",
+    "url": "https://www.kosik.cz/p158807-pernerka-spaldova-mouka-hladka",
+    "packG": 1000,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k16987-parmazan-gran-moravi": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "parmazan-gran-moravia",
+    "name": "Gran Moravia Extra tvrdý sýr",
+    "url": "https://www.kosik.cz/p16987-gran-moravia-extra-tvrdy-syr",
+    "packG": 100,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k17037-balkan": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "balkan",
+    "name": "Balsýr Žirovnický sýr balkánského typu",
+    "url": "https://www.kosik.cz/p17037-balsyr-zirovnicky-syr-balkanskeho-typu",
+    "packG": 200,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k18727-hermelin-figura": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "hermelin-figura",
+    "name": "Sedlčanský Hermelín Figura 100 g",
+    "url": "https://www.kosik.cz/p18727-sedlcansky-hermelin-figura",
+    "packG": 100,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k199492-olivovy-olej": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "olivovy-olej",
+    "name": "Costa d´Oro Extra panenský olivový olej 500 ml",
+    "url": "https://www.kosik.cz/p199492-costa-doro-extra-panensky-olivovy-olej",
+    "packG": 500,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k239134-korbacky": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "korbacky",
+    "name": "Koliba Korbáčik",
+    "url": "https://www.kosik.cz/p239134-koliba-korbacik",
+    "packG": 450,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k243484-eidam-20": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "eidam-20",
+    "name": "Madeta Jihočeský Eidam 20% plátky",
+    "url": "https://www.kosik.cz/p243484-madeta-jihocesky-eidam-syr-20-platky",
+    "packG": 100,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k24477-ovesne-vlocky-jemne": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "ovesne-vlocky-jemne",
+    "name": "Emco Ovesné vločky jemné",
+    "url": "https://www.kosik.cz/p24477-emco-ovesne-vlocky-jemne",
+    "packG": 500,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k245854-philadelphia-light": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "philadelphia-light",
+    "name": "Philadelphia Light 12%",
+    "url": "https://www.kosik.cz/p245854-philadelphia-light-12",
+    "packG": 125,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k25037-musli-sypane-cokolad": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "musli-sypane-cokoladou-emco",
+    "name": "Emco Mysli na Zdraví Sypané Čokoláda 750 g",
+    "url": "https://www.kosik.cz/p25037",
+    "packG": 750,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k250964-mrazena-zeleninova-s": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "mrazena-zeleninova-smes",
+    "name": "Frigoexim Lázeňská zeleninová směs 2,5 kg",
+    "url": "https://www.kosik.cz/p250964-frigoexim-lazenska-zeleninova-smes",
+    "packG": 2500,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k26327-marmelada": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "marmelada",
+    "name": "Schwartau Extra džem jahodový",
+    "url": "https://www.kosik.cz/p26327-schwartau-extra-dzem-jahodovy",
+    "packG": 340,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k309004-kureci-prsa": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "kureci-prsa",
+    "name": "Kuřecí prsní řízky (cca 1,1 kg)",
+    "url": "https://www.kosik.cz/p309004",
+    "packG": 1000,
+    "perKg": true,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k309034-koriandr": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "koriandr",
+    "name": "Koriandr čerstvý 30 g",
+    "url": "https://www.kosik.cz/p309034-koriandr-cerstvy",
+    "packG": 30,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k31937-ryze-natural": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "ryze-natural",
+    "name": "Lagris Rýže natural",
+    "url": "https://www.kosik.cz/p31937-lagris-ryze-natural",
+    "packG": 500,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k32467-paprika-mleta": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "paprika-mleta",
+    "name": "J.C. Horn Paprika sladká mletá",
+    "url": "https://www.kosik.cz/p32467-j-c-horn-paprika-sladka-mleta",
+    "packG": 20,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k329334-citronova-stava": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "citronova-stava",
+    "name": "ATI Lemonita Citronová šťáva 100% 330 ml",
+    "url": "https://www.kosik.cz/p329334-ati-lemonita-citronova-stava-100",
+    "packG": 330,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k386284-parenica-neuzena": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "parenica-neuzena",
+    "name": "Fine Life Parenica neuzená",
+    "url": "https://www.kosik.cz/p386284-fine-life-parenica-neuzena",
+    "packG": 120,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k407784-ryze": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "ryze",
+    "name": "ARO Rýže dlouhozrnná 1 kg",
+    "url": "https://www.kosik.cz/p407784-aro-ryze-dlouhozrnna",
+    "packG": 1000,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k455120-repkovy-olej": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "repkovy-olej",
+    "name": "ARO Olej řepkový 1 l",
+    "url": "https://www.kosik.cz/p455120-aro-olej-repkovy",
+    "packG": 1000,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k485655-hummus": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "hummus",
+    "name": "Authentic Hummus Classico",
+    "url": "https://www.kosik.cz/p485655-authentic-hummus-classico",
+    "packG": 180,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k529425-med": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "med",
+    "name": "ARO Med květový 500 g",
+    "url": "https://www.kosik.cz/p529425-aro-med-kvetovy",
+    "packG": 500,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k568991-petrzel-nat": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "petrzel-nat",
+    "name": "Petržel hladkolistá čerstvá",
+    "url": "https://www.kosik.cz/p568991-petrzel-hladkolista-cerstva",
+    "packG": 100,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k569011-petrzel-nat": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "petrzel-nat",
+    "name": "Petržel kadeřavá čerstvá",
+    "url": "https://www.kosik.cz/p569011-petrzel-kaderava-cerstva",
+    "packG": 100,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k598651-korbacky": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "korbacky",
+    "name": "Authentic Farmářské sýrové nitě",
+    "url": "https://www.kosik.cz/p598651-authentic-farmarske-syrove-nite",
+    "packG": 100,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k614669-bulgur": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "bulgur",
+    "name": "Essa Bulgur",
+    "url": "https://www.kosik.cz/p614669-essa-bulgur",
+    "packG": 500,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k614679-kuskus": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "kuskus",
+    "name": "Essa Kuskus",
+    "url": "https://www.kosik.cz/p614679-essa-kuskus",
+    "packG": 500,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k633150-fazole-cervene-v-mir": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "fazole-cervene-v-mirne-slanem-nalevu",
+    "name": "ATI Vegetable Fazole červené",
+    "url": "https://www.kosik.cz/p633150-ati-vegetable-fazole-cervene",
+    "packG": 400,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k655270-rajcata-v-plechovce": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "rajcata-v-plechovce",
+    "name": "Fine Life Rajčata celá loupaná, plech",
+    "url": "https://www.kosik.cz/p655270-fine-life-rajcata-cela-loupana-plech",
+    "packG": 400,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k661078-hovezi-maso": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "hovezi-maso",
+    "name": "Gurmet Hovězí zadní kýta",
+    "url": "https://www.kosik.cz/p661078",
+    "packG": 1000,
+    "perKg": true,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k675786-kruti-prsa": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "kruti-prsa",
+    "name": "Metro Chef Krůtí prsa",
+    "url": "https://www.kosik.cz/p675786-metro-chef-kruti-prsa",
+    "packG": 1000,
+    "perKg": true,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k703803-kefirove-mleko-nizko": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "kefirove-mleko-nizkotucne-bile",
+    "name": "Krajanka Mléko kefírové 1% 500 ml",
+    "url": "https://www.kosik.cz/p703803-krajanka-mleko-kefirove-1",
+    "packG": 500,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k716064-hovezi-mlete-maso-vy": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "hovezi-mlete-maso-vyberove",
+    "name": "Fine Life Hovězí maso mělněné (max. 12% tuku)",
+    "url": "https://www.kosik.cz/p716064",
+    "packG": 300,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k723948-cherry-rajcata": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "cherry-rajcata",
+    "name": "Rajčata cherry, vanička 250 g",
+    "url": "https://www.kosik.cz/p723948-rajcata-cherry-vanicka",
+    "packG": 250,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k727448-sojovy-napoj-plus-s-": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "sojovy-napoj-plus-s-kalciem-bio-provamel",
+    "name": "Metro Chef BIO Nápoj sójový",
+    "url": "https://www.kosik.cz/p727448-metro-chef-bio-napoj-sojovy",
+    "packG": 1000,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k732998-zazvor": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "zazvor",
+    "name": "Zázvor, vanička 150 g",
+    "url": "https://www.kosik.cz/p732998",
+    "packG": 150,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k735826-fazole-cerne": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "fazole-cerne",
+    "name": "Metro Chef Fazole černé",
+    "url": "https://www.kosik.cz/p735826-metro-chef-fazole-cerne",
+    "packG": 400,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k735900-baby-spenat": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "baby-spenat",
+    "name": "Polníček praný, vanička",
+    "url": "https://www.kosik.cz/p735900-polnicek-prany-vanicka",
+    "packG": 125,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k735908-baby-spenat": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "baby-spenat",
+    "name": "Špenát baby praný, sáček",
+    "url": "https://www.kosik.cz/p735908-spenat-baby-prany-sacek",
+    "packG": 200,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k74377-tvaroh-mekky-nizkotu": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "tvaroh-mekky-nizkotucny",
+    "name": "Milko Tvaroh měkký odtučněný",
+    "url": "https://www.kosik.cz/p74377-milko-tvaroh-mekky-odtucneny",
+    "packG": 1000,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k74557-recky-jogurt-milko-0": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "recky-jogurt-milko-0-3",
+    "name": "Milko Řecký jogurt bílý 0% 1 kg",
+    "url": "https://www.kosik.cz/p74557-milko-recky-jogurt-bily-0",
+    "packG": 1000,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k75377-jogurt-selsky-bily-h": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "jogurt-selsky-bily-hollandia",
+    "name": "Hollandia jogurt selský bílý 500 g",
+    "url": "https://www.kosik.cz/p75377-hollandia-jogurt-selsky-bily",
+    "packG": 500,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k76147-rajcatovy-protlak": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "rajcatovy-protlak",
+    "name": "Otma Rajčatový protlak",
+    "url": "https://www.kosik.cz/p76147-otma-rajcatovy-protlak",
+    "packG": 115,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k767416-cedar-light": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "cedar-light",
+    "name": "Fine Life Red Cheddar 50% plátky 100 g",
+    "url": "https://www.kosik.cz/p767416",
+    "packG": 100,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k768480-vejce": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "vejce",
+    "name": "Vejce Kosičky podestýlková M 10 ks",
+    "url": "https://www.kosik.cz/p768480",
+    "packG": 10,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k770290-kaiserka-cerealni": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "kaiserka-cerealni",
+    "name": "Kaiserka cereální",
+    "url": "https://www.kosik.cz/p770290-kaiserka-cerealni",
+    "packG": 60,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k770290-rohlik-sedmizrnny": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "rohlik-sedmizrnny",
+    "name": "Kaiserka cereální",
+    "url": "https://www.kosik.cz/p770290-kaiserka-cerealni",
+    "packG": 60,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k778060-knackebrot-zitny-s-v": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "knackebrot-zitny-s-vlakninou",
+    "name": "Racio knäckebrot žitný s vlákninou",
+    "url": "https://www.kosik.cz/p778060",
+    "packG": 230,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k778248-zakysana-smetana-12": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "zakysana-smetana-12",
+    "name": "Ekomilk Zakysaná smetana 12%",
+    "url": "https://www.kosik.cz/p778248-ekomilk-zakysana-smetana-12",
+    "packG": 200,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k778314-eidam-30": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "eidam-30",
+    "name": "Fine Life Eidam 30% bloček",
+    "url": "https://www.kosik.cz/p778314-fine-life-eidam-30-blocek",
+    "packG": 200,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k778318-cedar-light": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "cedar-light",
+    "name": "Fine Life Red Cheddar 50 % bloček 200 g",
+    "url": "https://www.kosik.cz/p778318",
+    "packG": 200,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k781260-limetkova-stava": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "limetkova-stava",
+    "name": "Limmi limetková šťáva",
+    "url": "https://www.kosik.cz/p781260-limmi-limetkova-stava",
+    "packG": 200,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k789684-chleb": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "chleb",
+    "name": "Český pekař Chléb konzumní 500 g",
+    "url": "https://www.kosik.cz/p789684-cesky-pekar-chleb-konzumni",
+    "packG": 500,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k789704-rohlik-sedmizrnny": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "rohlik-sedmizrnny",
+    "name": "Český pekař Vita rohlík",
+    "url": "https://www.kosik.cz/p789704-cesky-pekar-vita-rohlik",
+    "packG": 60,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k793248-jablko": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "jablko",
+    "name": "Jablka červená balená 1 kg",
+    "url": "https://www.kosik.cz/p793248",
+    "packG": 1000,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k793250-mrkev": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "mrkev",
+    "name": "Fine Life Mrkev praná 1 kg",
+    "url": "https://www.kosik.cz/p793250-fine-life-mrkev-prana-baleni",
+    "packG": 1000,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k793552-okurka-salatova": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "okurka-salatova",
+    "name": "Okurka hadovka, 1 ks (cca 300 g)",
+    "url": "https://www.kosik.cz/p793552-okurka-hadovka-1-ks",
+    "packG": 300,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k794624-banan": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "banan",
+    "name": "Banán, 1 ks",
+    "url": "https://www.kosik.cz/p794624-banan-1-ks",
+    "packG": 140,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k794728-cesnek": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "cesnek",
+    "name": "Česnek bílý (volný)",
+    "url": "https://www.kosik.cz/p794728",
+    "packG": 1000,
+    "perKg": true,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k794752-paprika": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "paprika",
+    "name": "Paprika červená",
+    "url": "https://www.kosik.cz/p794752-paprika-cervena-1-ks",
+    "packG": null,
+    "perKg": true,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k797088-mleko-polotucne-1-5": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "mleko-polotucne-1-5",
+    "name": "Baskeeto Čerstvé polotučné mléko 1,5%",
+    "url": "https://www.kosik.cz/p797088-baskeeto-cerstve-polotucne-mleko-1-5",
+    "packG": 1000,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k798614-lnena-seminka": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "lnena-seminka",
+    "name": "IBK trade Lněné semínko 100 g",
+    "url": "https://www.kosik.cz/p798614",
+    "packG": 100,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k798704-jahody-cerstve": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "jahody-cerstve",
+    "name": "Jahody, vanička 500 g",
+    "url": "https://www.kosik.cz/p798704-jahody-vanicka",
+    "packG": 500,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k799470-kedlubna": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "kedlubna",
+    "name": "Kedlubna, 1 ks",
+    "url": "https://www.kosik.cz/p799470-kedlubna-1-ks",
+    "packG": 250,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k802892-rajcata": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "rajcata",
+    "name": "Rajče keříkové (volné)",
+    "url": "https://www.kosik.cz/p802892",
+    "packG": 1000,
+    "perKg": true,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k803642-jablko": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "jablko",
+    "name": "Metro Chef Jablko Golden Delicious",
+    "url": "https://www.kosik.cz/p803642",
+    "packG": null,
+    "perKg": true,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k804104-cuketa": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "cuketa",
+    "name": "Metro Chef Cuketa zelená, 1 ks",
+    "url": "https://www.kosik.cz/p804104-metro-chef-cuketa-zelena-1-ks",
+    "packG": 210,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k805304-paprika": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "paprika",
+    "name": "Paprika červená kapie",
+    "url": "https://www.kosik.cz/p805304-paprika-cervena-kapie-1-ks",
+    "packG": null,
+    "perKg": true,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k810898-tortila-wraps": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "tortila-wraps",
+    "name": "Metro Chef Tortilla 20 cm, 8 x 40 g",
+    "url": "https://www.kosik.cz/p810898-metro-chef-tortilla-20-cm-8-x-40-g",
+    "packG": 320,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k811080-tortila-wraps": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "tortila-wraps",
+    "name": "Metro Chef Tortilla 25 cm, 12 x 61,7 g",
+    "url": "https://www.kosik.cz/p811080-metro-chef-tortilla-25-cm-12-x-61-7-g",
+    "packG": 740,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k811574-kesu-nutella-maslo-o": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "kesu-nutella-maslo-orechove-maslo",
+    "name": "Vilgain Arašídové máslo BIO jemné 350 g",
+    "url": "https://www.kosik.cz/p811574-vilgain-arasidove-maslo-bio-jemne-arasidy",
+    "packG": 350,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k811768-bataty": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "bataty",
+    "name": "Batáty, síť 1 kg",
+    "url": "https://www.kosik.cz/p811768-bataty-sit",
+    "packG": 1000,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k812986-gervais-fitprotein": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "gervais-fitprotein",
+    "name": "Gervais High Protein 100 g",
+    "url": "https://www.kosik.cz/p812986",
+    "packG": 100,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k814960-tortila-wraps": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "tortila-wraps",
+    "name": "Fine Life Tortilla 25 cm, 4 x 62,5 g",
+    "url": "https://www.kosik.cz/p814960-fine-life-tortilla-25-cm-4-x-62-5-g",
+    "packG": 250,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k815748-kesu-orisky": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "kesu-orisky",
+    "name": "Fine Life Kešu ořechy 100 g",
+    "url": "https://www.kosik.cz/p815748-fine-life-kesu-orechy",
+    "packG": 100,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k819094-mrkev": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "mrkev",
+    "name": "Metro Chef Mrkev karotka praná",
+    "url": "https://www.kosik.cz/p819094-metro-chef-mrkev-karotka-prana-1-ks",
+    "packG": null,
+    "perKg": true,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k822076-hruska": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "hruska",
+    "name": "Hruška (volná)",
+    "url": "https://www.kosik.cz/p822076",
+    "packG": 1000,
+    "perKg": true,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/k85087-kefirove-mleko-nizko": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "kefirove-mleko-nizkotucne-bile",
+    "name": "Mlékárna ValMez Kefírové mléko nízkotučné 500 g",
+    "url": "https://www.kosik.cz/p85087-mlekarna-valmez-kefirove-mleko-nizkotucne",
+    "packG": 500,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/k85187-tvaroh-na-strouhani": {
+   "base": 0,
+   "data": {
+    "shop": "kosik",
+    "ing": "tvaroh-na-strouhani",
+    "name": "Jaroměřická Mlékárna Tvaroh tvrdý na strouhání",
+    "url": "https://www.kosik.cz/p85187-jaromericka-mlekarna-tvaroh-tvrdy-na-strouhani",
+    "packG": 200,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1287623-jahody-cerstve": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "jahody-cerstve",
+    "name": "Jahody, vanička 250 g",
+    "url": "https://www.rohlik.cz/1287623",
+    "packG": 250,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1288671-kedlubna": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "kedlubna",
+    "name": "Kedlubna 1 ks",
+    "url": "https://www.rohlik.cz/1288671",
+    "packG": 250,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1289229-ovesne-vlocky-jemne": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "ovesne-vlocky-jemne",
+    "name": "Emco vločky ovesné jemné",
+    "url": "https://www.rohlik.cz/1289229",
+    "packG": 500,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1289717-mrkev": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "mrkev",
+    "name": "Mrkev praná čerstvá, balení 1 kg",
+    "url": "https://www.rohlik.cz/1289717",
+    "packG": 1000,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1290261-musli-sypane-cokolad": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "musli-sypane-cokoladou-emco",
+    "name": "Emco Mysli na Zdraví Sypané Čokoláda 750 g",
+    "url": "https://www.rohlik.cz/1290261",
+    "packG": 750,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1294559-okurka-salatova": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "okurka-salatova",
+    "name": "Okurka hadovka 1 ks (cca 300 g)",
+    "url": "https://www.rohlik.cz/1294559",
+    "packG": 300,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1298747-baby-spenat": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "baby-spenat",
+    "name": "Špenát Baby, vanička",
+    "url": "https://www.rohlik.cz/1298747",
+    "packG": 125,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1303581-tvaroh-jihocesky-odt": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "tvaroh-jihocesky-odtucneny-0-8",
+    "name": "Milko Tvaroh měkký odtučněný 250 g",
+    "url": "https://www.rohlik.cz/1303581",
+    "packG": 250,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1304945-balkan": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "balkan",
+    "name": "Balsýr Žirovnický sýr balkánského typu",
+    "url": "https://www.rohlik.cz/1304945",
+    "packG": 200,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1306505-recky-jogurt-milko-0": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "recky-jogurt-milko-0-3",
+    "name": "Milko Řecký jogurt 0 % bílý kbelík",
+    "url": "https://www.rohlik.cz/1306505",
+    "packG": 1000,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1306507-tvaroh-mekky-nizkotu": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "tvaroh-mekky-nizkotucny",
+    "name": "Milko Tvaroh měkký odtučněný kbelík",
+    "url": "https://www.rohlik.cz/1306507",
+    "packG": 1000,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1309925-koriandr": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "koriandr",
+    "name": "Koriandr řezaný, balení 30 g",
+    "url": "https://www.rohlik.cz/1309925",
+    "packG": 30,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1311735-parmazan-gran-moravi": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "parmazan-gran-moravia",
+    "name": "Gran Moravia Extra tvrdý sýr 32%",
+    "url": "https://www.rohlik.cz/1311735",
+    "packG": 100,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1311977-paprika-mleta": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "paprika-mleta",
+    "name": "Kotányi Paprika sladká mletá",
+    "url": "https://www.rohlik.cz/1311977",
+    "packG": 25,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1317995-med": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "med",
+    "name": "Medokom Med luční 900 g",
+    "url": "https://www.rohlik.cz/1317995",
+    "packG": 900,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1318655-cedar-light": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "cedar-light",
+    "name": "Laktos Cheddar 50% plátky 100 g",
+    "url": "https://www.rohlik.cz/1318655",
+    "packG": 100,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1318657-jogurt-selsky-bily-h": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "jogurt-selsky-bily-hollandia",
+    "name": "Hollandia Selský jogurt bílý 1 kg",
+    "url": "https://www.rohlik.cz/1318657",
+    "packG": 1000,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1318831-recky-jogurt-milko-0": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "recky-jogurt-milko-0-3",
+    "name": "Milko BIO Řecký jogurt bílý 0 %",
+    "url": "https://www.rohlik.cz/1318831",
+    "packG": 130,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1320937-philadelphia-light": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "philadelphia-light",
+    "name": "Philadelphia Light Smetanový sýr",
+    "url": "https://www.rohlik.cz/1320937",
+    "packG": 125,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1321203-tvaroh-na-strouhani": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "tvaroh-na-strouhani",
+    "name": "Jaroměřická mlékárna Tvaroh tvrdý strouhaný",
+    "url": "https://www.rohlik.cz/1321203",
+    "packG": 200,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1322665-cherry-rajcata": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "cherry-rajcata",
+    "name": "Rajčata cherry, vanička 250 g",
+    "url": "https://www.rohlik.cz/1322665",
+    "packG": 250,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1323053-korbacky": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "korbacky",
+    "name": "Korbáčky přírodní pařené",
+    "url": "https://www.rohlik.cz/1323053",
+    "packG": 50,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1335179-citronova-stava": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "citronova-stava",
+    "name": "Rauch Culinary citrónová šťáva 250 ml",
+    "url": "https://www.rohlik.cz/1335179",
+    "packG": 250,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1343835-mouka-spaldova": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "mouka-spaldova",
+    "name": "Pernerka Špaldová hladká mouka",
+    "url": "https://www.rohlik.cz/1343835",
+    "packG": 1000,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1344489-lnena-seminka": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "lnena-seminka",
+    "name": "Nature Park Lněné semínko hnědé 150 g",
+    "url": "https://www.rohlik.cz/1344489",
+    "packG": 150,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1344603-cerstvy-kozi-syr-dor": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "cerstvy-kozi-syr-dora",
+    "name": "Biofarma DoRa BIO Pomazánkový kozí sýr bílý",
+    "url": "https://www.rohlik.cz/1344603",
+    "packG": 100,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1349777-banan": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "banan",
+    "name": "Banán 1 ks",
+    "url": "https://www.rohlik.cz/1349777",
+    "packG": 160,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1349779-rajcata": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "rajcata",
+    "name": "Rajče kulaté, volné",
+    "url": "https://www.rohlik.cz/1349779",
+    "packG": 1000,
+    "perKg": true,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1350165-paprika": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "paprika",
+    "name": "Paprika červená",
+    "url": "https://www.rohlik.cz/1350165",
+    "packG": null,
+    "perKg": true,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1350461-cuketa": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "cuketa",
+    "name": "Cuketa zelená 1 ks",
+    "url": "https://www.rohlik.cz/1350461",
+    "packG": 320,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1350471-cesnek": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "cesnek",
+    "name": "Česnek volný",
+    "url": "https://www.rohlik.cz/1350471",
+    "packG": 1000,
+    "perKg": true,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1350677-bataty": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "bataty",
+    "name": "Batát – sladká brambora volná",
+    "url": "https://www.rohlik.cz/1350677",
+    "packG": 1000,
+    "perKg": true,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1351559-jablko": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "jablko",
+    "name": "Jablko Golden Delicious výběrové",
+    "url": "https://www.rohlik.cz/1351559",
+    "packG": null,
+    "perKg": true,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1353879-kureci-prsa": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "kureci-prsa",
+    "name": "Kuřecí prsní řízky od českého výrobce",
+    "url": "https://www.rohlik.cz/1353879",
+    "packG": 1000,
+    "perKg": true,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1354045-kureci-prsa": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "kureci-prsa",
+    "name": "Kuřecí prsní řízky od českého výrobce XXL",
+    "url": "https://www.rohlik.cz/1354045",
+    "packG": 1000,
+    "perKg": true,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1360903-hruska": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "hruska",
+    "name": "Hrušky balené, vanička",
+    "url": "https://www.rohlik.cz/1360903",
+    "packG": 1000,
+    "perKg": true,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1368371-zazvor": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "zazvor",
+    "name": "Zázvor, volně",
+    "url": "https://www.rohlik.cz/1368371",
+    "packG": 1000,
+    "perKg": true,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1378761-petrzel-nat": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "petrzel-nat",
+    "name": "Petržel hladkolistá řezaná, svazek",
+    "url": "https://www.rohlik.cz/1378761",
+    "packG": 100,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1394444-vejce": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "vejce",
+    "name": "Schubert Podestýlková vejce M 10 ks",
+    "url": "https://www.rohlik.cz/1394444",
+    "packG": 10,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1399147-redkvicky": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "redkvicky",
+    "name": "Ředkvičky bez natě 300 g",
+    "url": "https://www.rohlik.cz/1399147",
+    "packG": 300,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1406203-mleko-polotucne-1-5": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "mleko-polotucne-1-5",
+    "name": "Miil Čerstvé mléko polotučné 1,5 % tuku",
+    "url": "https://www.rohlik.cz/1406203",
+    "packG": 1000,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1406258-cedar-light": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "cedar-light",
+    "name": "Miil Cheddar 51% bloček 250 g",
+    "url": "https://www.rohlik.cz/1406258",
+    "packG": 250,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1409115-hovezi-maso": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "hovezi-maso",
+    "name": "MASO! Hovězí zadní v celku",
+    "url": "https://www.rohlik.cz/1409115",
+    "packG": 1000,
+    "perKg": true,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1412419-chleb": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "chleb",
+    "name": "Bílovická pekárna Královopolský chléb – půlka 500 g",
+    "url": "https://www.rohlik.cz/1412419",
+    "packG": 500,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1413425-eidam-30": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "eidam-30",
+    "name": "Miil Eidam 30% bloček",
+    "url": "https://www.rohlik.cz/1413425",
+    "packG": 250,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1416959-hovezi-mlete-maso-vy": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "hovezi-mlete-maso-vyberove",
+    "name": "Hovězí mletý polotovar",
+    "url": "https://www.rohlik.cz/1416959",
+    "packG": 500,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1418313-hummus": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "hummus",
+    "name": "Pappudia Hummus s panenským olivovým olejem",
+    "url": "https://www.rohlik.cz/1418313",
+    "packG": 200,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1419922-jahody-cerstve": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "jahody-cerstve",
+    "name": "Agro Jesenice Jahody 350 g",
+    "url": "https://www.rohlik.cz/1419922",
+    "packG": 350,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1420192-kaiserka-cerealni": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "kaiserka-cerealni",
+    "name": "Kaiserka cereální sypaná solí a lněným semínkem",
+    "url": "https://www.rohlik.cz/1420192",
+    "packG": 60,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1420192-rohlik-sedmizrnny": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "rohlik-sedmizrnny",
+    "name": "Kaiserka cereální (no seven-grain roll at Rohlík)",
+    "url": "https://www.rohlik.cz/1420192",
+    "packG": 60,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1421024-fazole-cerne": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "fazole-cerne",
+    "name": "Nuevo Progreso Fazole černé celé",
+    "url": "https://www.rohlik.cz/1421024",
+    "packG": 240,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1435406-sojovy-napoj-plus-s-": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "sojovy-napoj-plus-s-kalciem-bio-provamel",
+    "name": "Yutto BIO Sójový nápoj",
+    "url": "https://www.rohlik.cz/1435406",
+    "packG": 1000,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1436308-kruti-prsa": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "kruti-prsa",
+    "name": "Krůtí prsa",
+    "url": "https://www.rohlik.cz/1436308",
+    "packG": 1000,
+    "perKg": true,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1436381-kesu-orisky": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "kesu-orisky",
+    "name": "Yutto Kešu natural 200 g",
+    "url": "https://www.rohlik.cz/1436381",
+    "packG": 200,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1436520-hermelin-figura": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "hermelin-figura",
+    "name": "Sedlčanský Hermelín Figura 100 g",
+    "url": "https://www.rohlik.cz/1436520",
+    "packG": 100,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1440198-rajcata-v-plechovce": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "rajcata-v-plechovce",
+    "name": "Kitchin Krájená loupaná rajčata v rajčatové šťávě",
+    "url": "https://www.rohlik.cz/1440198",
+    "packG": 400,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1442687-mrazena-zeleninova-s": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "mrazena-zeleninova-smes",
+    "name": "Agro Jesenice Jesenická zeleninová směs 350 g",
+    "url": "https://www.rohlik.cz/1442687",
+    "packG": 350,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1446113-mrazena-zeleninova-s": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "mrazena-zeleninova-smes",
+    "name": "Nowaco Zámecká zeleninová směs premium 350 g",
+    "url": "https://www.rohlik.cz/1446113",
+    "packG": 350,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1451465-mozzarella-light": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "mozzarella-light",
+    "name": "Miil Mozzarella light",
+    "url": "https://www.rohlik.cz/1451465",
+    "packG": 125,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1451466-zakysana-smetana-12": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "zakysana-smetana-12",
+    "name": "Miil Zakysaná smetana 12 % tuku",
+    "url": "https://www.rohlik.cz/1451466",
+    "packG": 200,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1453869-vejce": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "vejce",
+    "name": "Milujeme vejce podestýlková M 10 ks",
+    "url": "https://www.rohlik.cz/1453869",
+    "packG": 10,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1454462-ryze": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "ryze",
+    "name": "Kitchin Rýže dlouhozrnná 1 kg",
+    "url": "https://www.rohlik.cz/1454462",
+    "packG": 1000,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1455389-bulgur": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "bulgur",
+    "name": "Kitchin Bulgur",
+    "url": "https://www.rohlik.cz/1455389",
+    "packG": 500,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1455390-kuskus": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "kuskus",
+    "name": "Kitchin Kuskus",
+    "url": "https://www.rohlik.cz/1455390",
+    "packG": 500,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1458265-korbacky": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "korbacky",
+    "name": "Rohlik.cz Farmářské sýrové korbáčky přírodní",
+    "url": "https://www.rohlik.cz/1458265",
+    "packG": 110,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1460462-kefirove-mleko-nizko": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "kefirove-mleko-nizkotucne-bile",
+    "name": "Miil Kefírové mléko 1% 500 ml",
+    "url": "https://www.rohlik.cz/1460462",
+    "packG": 500,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1461101-flora-pro-activ": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "flora-pro-activ",
+    "name": "ProActiv Original",
+    "url": "https://www.rohlik.cz/1461101",
+    "packG": 400,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1462232-repkovy-olej": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "repkovy-olej",
+    "name": "Kitchin Řepkový olej 1 l",
+    "url": "https://www.rohlik.cz/1462232",
+    "packG": 1000,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1464923-parenica-neuzena": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "parenica-neuzena",
+    "name": "Miil Parenica neuzená",
+    "url": "https://www.rohlik.cz/1464923",
+    "packG": 110,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1468176-limetkova-stava": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "limetkova-stava",
+    "name": "Rauch Culinary limetková šťáva",
+    "url": "https://www.rohlik.cz/1468176",
+    "packG": 1000,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1469426-tortila-wraps": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "tortila-wraps",
+    "name": "El Grito Tortilla classic 25 cm, 4 ks",
+    "url": "https://www.rohlik.cz/1469426",
+    "packG": 240,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1469745-tvaroh-jihocesky-odt": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "tvaroh-jihocesky-odtucneny-0-8",
+    "name": "Miil Tvaroh odtučněný 250 g",
+    "url": "https://www.rohlik.cz/1469745",
+    "packG": 250,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1470731-marmelada": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "marmelada",
+    "name": "Bonne Maman džem meruňkový",
+    "url": "https://www.rohlik.cz/1470731",
+    "packG": 370,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r1471336-olivovy-olej": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "olivovy-olej",
+    "name": "Kitchin Extra panenský olivový olej 0,75 l",
+    "url": "https://www.rohlik.cz/1471336",
+    "packG": 750,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1479304-kesu-nutella-maslo-o": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "kesu-nutella-maslo-orechove-maslo",
+    "name": "Yutto Arašídový krém 100% 350 g",
+    "url": "https://www.rohlik.cz/1479304",
+    "packG": 350,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1480745-gervais-fitprotein": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "gervais-fitprotein",
+    "name": "Gervais High protein 100 g",
+    "url": "https://www.rohlik.cz/1480745",
+    "packG": 100,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r1483727-jihocesky-tvaroh-jog": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "jihocesky-tvaroh-jogurt-bily-madeta",
+    "name": "Madeta Jihočeský tvaroh&jogurt bílý",
+    "url": "https://www.rohlik.cz/1483727",
+    "packG": 130,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r711263-jogurt-selsky-bily-h": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "jogurt-selsky-bily-hollandia",
+    "name": "Hollandia Selský jogurt bílý 3,5% 500 g",
+    "url": "https://www.rohlik.cz/711263",
+    "packG": 500,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r712073-eidam-20": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "eidam-20",
+    "name": "Madeta Jihočeský Eidam 20% plátky",
+    "url": "https://www.rohlik.cz/712073",
+    "packG": 100,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/r713423-kefirove-mleko-nizko": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "kefirove-mleko-nizkotucne-bile",
+    "name": "Mlékárna ValMez Kefírové mléko nízkotučné 1,1% 500 ml",
+    "url": "https://www.rohlik.cz/713423",
+    "packG": 500,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r725103-ryze-natural": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "ryze-natural",
+    "name": "Lagris Rýže natural",
+    "url": "https://www.rohlik.cz/725103",
+    "packG": 500,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r725477-rajcatovy-protlak": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "rajcatovy-protlak",
+    "name": "Otma Rajčatový protlak",
+    "url": "https://www.rohlik.cz/725477",
+    "packG": 115,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/r729623-knackebrot-zitny-s-v": {
+   "base": 0,
+   "data": {
+    "shop": "rohlik",
+    "ing": "knackebrot-zitny-s-vlakninou",
+    "name": "Racio Knäckebrot žitný s vlákninou",
+    "url": "https://www.rohlik.cz/729623",
+    "packG": 230,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t100241904-rajcata-v-plechovce": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "rajcata-v-plechovce",
+    "name": "Tesco Krájená rajčata v rajčatové šťávě 400g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/100241904",
+    "packG": 400,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t100396863-lnena-seminka": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "lnena-seminka",
+    "name": "Tesco Lněné semínko 200 g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/100396863",
+    "packG": 200,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t100501435-ryze": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "ryze",
+    "name": "Tesco Rýže dlouhozrnná loupaná 1 kg",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/100501435",
+    "packG": 1000,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t100501440-ovesne-vlocky-jemne": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "ovesne-vlocky-jemne",
+    "name": "Tesco Celozrnné ovesné vločky jemné 500g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/100501440",
+    "packG": 500,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t100547250-bulgur": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "bulgur",
+    "name": "Tesco Bulgur pšeničný 500g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/100547250",
+    "packG": 500,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t100547294-kesu-orisky": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "kesu-orisky",
+    "name": "Tesco Kešu ořechy jádra nepražená 200 g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/100547294",
+    "packG": 200,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t100579704-jahody-cerstve": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "jahody-cerstve",
+    "name": "Tesco Jahody 450 g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/100579704",
+    "packG": 450,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t105005185-rajcata": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "rajcata",
+    "name": "Rajčata keříková (volná)",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/105005185",
+    "packG": 1000,
+    "perKg": true,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t105010145-paprika": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "paprika",
+    "name": "Paprika kapie červená",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/105010145",
+    "packG": null,
+    "perKg": true,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t105013919-knackebrot-zitny-s-v": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "knackebrot-zitny-s-vlakninou",
+    "name": "Racio Knäckebrot žitný s vlákninou 230g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/105013919",
+    "packG": 230,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t111238793-cedar-light": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "cedar-light",
+    "name": "Tesco Cheddar zrající plnotučný 200 g (blok)",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/111238793",
+    "packG": 200,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t111276600-gervais-fitprotein": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "gervais-fitprotein",
+    "name": "Gervais High Protein čerstvý tvarohový sýr 100 g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/111276600",
+    "packG": 100,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t120034699-repkovy-olej": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "repkovy-olej",
+    "name": "Tesco Olej řepkový 1 l",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/120034699",
+    "packG": 1000,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t120160353-citronova-stava": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "citronova-stava",
+    "name": "Ati Lemonita citronová šťáva 330 ml",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/120160353",
+    "packG": 330,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t120364279-musli-sypane-cokolad": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "musli-sypane-cokoladou-emco",
+    "name": "Emco Mysli na Zdraví Sypané čokoláda 750 g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/120364279",
+    "packG": 750,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t120601466-mozzarella-light": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "mozzarella-light",
+    "name": "Galbani Mozzarella Light 220g (125 g drained)",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/120601466",
+    "packG": 125,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t120858409-hummus": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "hummus",
+    "name": "LUNTER Hummus pomazánka 100g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/120858409",
+    "packG": 100,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t120871289-recky-jogurt-milko-0": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "recky-jogurt-milko-0-3",
+    "name": "Milko Řecký jogurt 0% bílý 140g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/120871289",
+    "packG": 140,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t130340753-zakysana-smetana-12": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "zakysana-smetana-12",
+    "name": "Madeta Jihočeská tradiční zakysaná smetana 11% 180g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/130340753",
+    "packG": 180,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t130566716-cherry-rajcata": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "cherry-rajcata",
+    "name": "Tesco Rajčata cherry 400 g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/130566716",
+    "packG": 400,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t130586076-jihocesky-tvaroh-jog": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "jihocesky-tvaroh-jogurt-bily-madeta",
+    "name": "Tesco Tvaroh odtučněný 250g (Tesco has no tvaroh&jogurt)",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/130586076",
+    "packG": 250,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t130586076-tvaroh-jihocesky-odt": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "tvaroh-jihocesky-odtucneny-0-8",
+    "name": "Tesco Tvaroh odtučněný 250 g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/130586076",
+    "packG": 250,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t130586076-tvaroh-mekky-nizkotu": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "tvaroh-mekky-nizkotucny",
+    "name": "Tesco Tvaroh odtučněný 250g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/130586076",
+    "packG": 250,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t200094561-ryze-natural": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "ryze-natural",
+    "name": "Lagris Rýže natural 500g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/200094561",
+    "packG": 500,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t200119448-knackebrot-zitny-s-v": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "knackebrot-zitny-s-vlakninou",
+    "name": "Wasa Original knäckebrot z žitné mouky 275g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/200119448",
+    "packG": 275,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t200122424-jogurt-selsky-bily-h": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "jogurt-selsky-bily-hollandia",
+    "name": "Hollandia Selský jogurt bílý 500 g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/200122424",
+    "packG": 500,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t200135301-tvaroh-jihocesky-odt": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "tvaroh-jihocesky-odtucneny-0-8",
+    "name": "Madeta Jihočeský tvaroh odtučněný 250 g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/200135301",
+    "packG": 250,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t200135622-eidam-30": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "eidam-30",
+    "name": "Eidam 30% (by weight)",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/200135622",
+    "packG": null,
+    "perKg": true,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t207174631-kefirove-mleko-nizko": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "kefirove-mleko-nizkotucne-bile",
+    "name": "Mlékárna Valašské Meziříčí Kefírové mléko nízkotučné 500 g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/207174631",
+    "packG": 500,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t209996804-balkan": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "balkan",
+    "name": "Balsýr Balkánský sýr 200g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/209996804",
+    "packG": 200,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t212124270-kureci-prsa": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "kureci-prsa",
+    "name": "Tesco Kuřecí prsní řízek",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/212124270",
+    "packG": 1000,
+    "perKg": true,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t212430203-vejce": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "vejce",
+    "name": "Tesco Čerstvá vejce z halového chovu M 6 ks",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/212430203",
+    "packG": 6,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t212690126-banan": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "banan",
+    "name": "Banány (loose)",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/212690126",
+    "packG": null,
+    "perKg": true,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t212691222-paprika": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "paprika",
+    "name": "Paprika červená",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/212691222",
+    "packG": null,
+    "perKg": true,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t212691529-bataty": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "bataty",
+    "name": "Brambory sladké (volné)",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/212691529",
+    "packG": 1000,
+    "perKg": true,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t212692151-mrkev": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "mrkev",
+    "name": "Tesco Mrkev 1kg",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/212692151",
+    "packG": 1000,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t212692779-zazvor": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "zazvor",
+    "name": "Zázvor (volný)",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/212692779",
+    "packG": 1000,
+    "perKg": true,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t212692878-cuketa": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "cuketa",
+    "name": "Cuketa (loose)",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/212692878",
+    "packG": null,
+    "perKg": true,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t212693462-cesnek": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "cesnek",
+    "name": "Česnek (volný)",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/212693462",
+    "packG": 1000,
+    "perKg": true,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t212693530-redkvicky": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "redkvicky",
+    "name": "Ředkvičky, svazek (cca 200 g)",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/212693530",
+    "packG": 200,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t212987714-jahody-cerstve": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "jahody-cerstve",
+    "name": "Tesco Jahody 250 g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/212987714",
+    "packG": 250,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t213331899-jablko": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "jablko",
+    "name": "Jablka golden delicious",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/213331899",
+    "packG": null,
+    "perKg": true,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t213982725-hovezi-maso": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "hovezi-maso",
+    "name": "Hovězí kýta zadní",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/213982725",
+    "packG": 1000,
+    "perKg": true,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t214284569-hruska": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "hruska",
+    "name": "Hrušky zelené (volné)",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/214284569",
+    "packG": 1000,
+    "perKg": true,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t214829975-okurka-salatova": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "okurka-salatova",
+    "name": "Okurka hadovka 1 ks (cca 300 g)",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/214829975",
+    "packG": 300,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t214897691-chleb": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "chleb",
+    "name": "Chléb konzumní 1200 g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/214897691",
+    "packG": 1200,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t214948058-jablko": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "jablko",
+    "name": "Jablka červená",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/214948058",
+    "packG": null,
+    "perKg": true,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t215209233-kaiserka-cerealni": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "kaiserka-cerealni",
+    "name": "Kaiserka cereální 60g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/215209233",
+    "packG": 60,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t215209233-rohlik-sedmizrnny": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "rohlik-sedmizrnny",
+    "name": "Kaiserka cereální 60g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/215209233",
+    "packG": 60,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t215653432-parmazan-gran-moravi": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "parmazan-gran-moravia",
+    "name": "Gran Moravia Extra tvrdý sýr 100g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/215653432",
+    "packG": 100,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t215853030-hermelin-figura": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "hermelin-figura",
+    "name": "Sedlčanský Hermelín figura 100 g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/215853030",
+    "packG": 100,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t216080718-paprika-mleta": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "paprika-mleta",
+    "name": "Kotányi Paprika sladká mletá 30g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/216080718",
+    "packG": 30,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t218131111-mleko-polotucne-1-5": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "mleko-polotucne-1-5",
+    "name": "Madeta Jihočeské trvanlivé mléko polotučné 1,5% 1l",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/218131111",
+    "packG": 1000,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t218211424-koriandr": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "koriandr",
+    "name": "Tesco Koriandr 20 g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/218211424",
+    "packG": 20,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t218341503-hovezi-mlete-maso-vy": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "hovezi-mlete-maso-vyberove",
+    "name": "Tesco Mleté maso hovězí 0,500kg",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/218341503",
+    "packG": 500,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t218429447-sojovy-napoj-plus-s-": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "sojovy-napoj-plus-s-kalciem-bio-provamel",
+    "name": "ALPRO Sójový nápoj 1l",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/218429447",
+    "packG": 1000,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t218783907-rajcatovy-protlak": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "rajcatovy-protlak",
+    "name": "Giana Rajčatový protlak 140g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/218783907",
+    "packG": 140,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t219259234-olivovy-olej": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "olivovy-olej",
+    "name": "Ondoliva Selection extra panenský olivový olej 500 ml",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/219259234",
+    "packG": 500,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t219260216-repkovy-olej": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "repkovy-olej",
+    "name": "Fabio Produkt Manka řepkový olej 1 l",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/219260216",
+    "packG": 1000,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t219272219-kruti-prsa": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "kruti-prsa",
+    "name": "Tesco Krůtí prsní řízek",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/219272219",
+    "packG": 1000,
+    "perKg": true,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t219279683-vejce": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "vejce",
+    "name": "Tesco Čerstvá vejce z halového chovu L 10 ks",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/219279683",
+    "packG": 10,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t219347115-fazole-cervene-v-mir": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "fazole-cervene-v-mirne-slanem-nalevu",
+    "name": "Giana Červené fazole v nálevu 400g (240 g drained)",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/219347115",
+    "packG": 240,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t219437694-parenica-neuzena": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "parenica-neuzena",
+    "name": "Tesco Parenica neuzená 112g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/219437694",
+    "packG": 112,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t220005933-eidam-30": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "eidam-30",
+    "name": "Madeta Jihočeský eidam 30% plátky 100g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/220005933",
+    "packG": 100,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t220020882-cedar-light": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "cedar-light",
+    "name": "Zlatý Sýr Cheddar plátky 100 g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/220020882",
+    "packG": 100,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t220047292-vejce": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "vejce",
+    "name": "Čerstvá vejce od Kunína podestýlková M10",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/220047292",
+    "packG": 10,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t220148130-recky-jogurt-milko-0": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "recky-jogurt-milko-0-3",
+    "name": "Milko Bio řecký jogurt 0 % bílý 130 g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/220148130",
+    "packG": 130,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t220173117-mouka-spaldova": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "mouka-spaldova",
+    "name": "Babiččina Volba Špaldová mouka hladká 1kg",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/220173117",
+    "packG": 1000,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t220302178-mrazena-zeleninova-s": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "mrazena-zeleninova-smes",
+    "name": "Vinica Hluboce zmrazená směs s kukuřicí 1000g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/220302178",
+    "packG": 1000,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t220305529-med": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "med",
+    "name": "Product Bohemia Med květový 250 g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/220305529",
+    "packG": 250,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t220324909-eidam-20": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "eidam-20",
+    "name": "Madeta Jihočeský eidam 20 % plátky 100g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/220324909",
+    "packG": 100,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t220325157-jogurt-selsky-bily-h": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "jogurt-selsky-bily-hollandia",
+    "name": "Tesco Selský jogurt bílý 400 g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/220325157",
+    "packG": 400,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  },
+  "products/t220330621-kesu-nutella-maslo-o": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "kesu-nutella-maslo-orechove-maslo",
+    "name": "Tesco Arašídová pomazánka 340 g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/220330621",
+    "packG": 340,
+    "perKg": false,
+    "usual": true,
+    "status": "ok"
+   }
+  },
+  "products/t220340181-rohlik-sedmizrnny": {
+   "base": 0,
+   "data": {
+    "shop": "tesco",
+    "ing": "rohlik-sedmizrnny",
+    "name": "Rohlík žitný 60g",
+    "url": "https://nakup.itesco.cz/groceries/cs-CZ/products/220340181",
+    "packG": 60,
+    "perKg": false,
+    "usual": false,
+    "status": "ok"
+   }
+  }
+ }
+}

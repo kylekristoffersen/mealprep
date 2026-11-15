@@ -1,8 +1,9 @@
 /* Meal Prep Planner: the main app (Plan, Shop, Cook, Settings, storage). Library screens are in library.js. */
 "use strict";
 const $=s=>document.querySelector(s);
-const TABS=[["deals","Deals"],["plan","Plan"],["shop","Shop"],["cook","Cook"],["recipes","Recipes"],["ingredients","Ingredients"],["targets","Targets"],["settings","Settings"]];
-let DOCS={}, tab=(location.hash||"").slice(1), ME="", APPV="";
+const TABS=[["deals","Deals"],["plan","Plan"],["prices","Prices"],["shop","Shop"],["cook","Cook"],["recipes","Recipes"],["ingredients","Ingredients"],["targets","Targets"],["settings","Settings"]];
+let DOCS={}, tab=(location.hash||"").slice(1).split("&")[0], ME="", APPV="";
+const TESCO_IN=new URLSearchParams((location.hash||"").slice(1)).get("tesco");if(TESCO_IN)history.replaceState(null,"",location.pathname+"#prices");
 if(!TABS.some(t=>t[0]===tab))tab="plan";
 const ui={cookMode:"prep",confirmClear:false,editHome:null,list:false,cat:"all",q:"",open:null,edit:null,servings:6,estOnly:false,mui:null,imp:null,backups:null,link:null,pw:false,deal:null,dealMore:{}};
 
@@ -56,7 +57,7 @@ setInterval(poll,15000);document.addEventListener("visibilitychange",()=>{if(!do
 /* ---------- navigation ---------- */
 function renderTabs(){$("#tabs").innerHTML=TABS.map(([k,l])=>`<button role="tab" aria-selected="${k===tab}" data-tabgo="${k}">${l}</button>`).join("")}
 function render(){reconcile();renderTabs();document.body.dataset.tab=tab;const v=$("#view");
-  if(tab==="deals")dealsView(v);else if(tab==="plan")planView(v);else if(tab==="shop")shopView(v);else if(tab==="cook")cookView(v);
+  if(tab==="deals")dealsView(v);else if(tab==="plan")planView(v);else if(tab==="shop")shopView(v);else if(tab==="prices")pricesView(v);else if(tab==="cook")cookView(v);
   else if(tab==="recipes")recipesView(v);else if(tab==="ingredients")ingView(v);else if(tab==="targets")targetsView(v);else settingsView(v)}
 function go(t){tab=t;try{history.replaceState(null,"","#"+t)}catch(_){}render();window.scrollTo({top:0})}
 
@@ -331,4 +332,4 @@ document.addEventListener("click",e=>{const t=e.target.closest("button,[data-ope
   else libClick(t,d)});
 
 window.addEventListener("beforeunload",e=>{if(dirty()){e.preventDefault();e.returnValue=""}});
-(async()=>{renderTabs();try{await reloadAll()}catch(e){$("#status").textContent="Couldn't load your data. Check your connection and reload."}})();
+(async()=>{renderTabs();try{await reloadAll();if(TESCO_IN){tab="prices";await takeTescoResult(TESCO_IN)}}catch(e){$("#status").textContent="Couldn't load your data. Check your connection and reload."}})();

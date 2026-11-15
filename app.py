@@ -14,7 +14,7 @@ try:
 except ImportError:  # falls back to the htpasswd program
     bcrypt = None
 
-APP_VERSION = "0.4.6"
+APP_VERSION = "0.5.0"
 DATA_DIR = os.environ.get("MEALPREP_DATA_DIR", os.path.join(os.path.dirname(os.path.abspath(__file__)), "_data"))
 PORT = int(os.environ.get("MEALPREP_PORT", "5020"))
 HTPASSWD = os.environ.get("MEALPREP_HTPASSWD", "/etc/nginx/.mealprep-htpasswd")
@@ -445,6 +445,7 @@ def health():
 
 # ---- data updates shipped through the repo (data-updates/*.json), applied once each when the app starts ----
 # {"id": "...", "note": "...", "docs": {"meals/x": {"base": <version it was written against>, "data": {...}}}}
+# {"delete": true} instead of "data" removes the doc (same "base" check; base 0 = add only if missing).
 # A doc is only replaced if it is still at "base" (nobody changed it in the app since); otherwise it is skipped and reported.
 UPDATES_DIR = os.path.join(APP_DIR, "data-updates")
 
@@ -469,13 +470,18 @@ def apply_updates():
         done, skipped = [], []
         with _lock, db() as c:
             for path, spec in (u.get("docs") or {}).items():
-                if not PATH_RE.match(path) or "data" not in spec:
+                if not PATH_RE.match(path) or ("data" not in spec and not spec.get("delete")):
                     skipped.append({"path": path, "why": "bad entry"})
                     continue
                 row = c.execute("SELECT version FROM docs WHERE path=?", (path,)).fetchone()
                 cur = row["version"] if row else 0
                 if spec.get("base") is not None and spec["base"] != cur:
                     skipped.append({"path": path, "why": f"changed in the app since (now v{cur}, update written for v{spec['base']})"})
+                    continue
+                if spec.get("delete"):
+                    if row:
+                        c.execute("DELETE FROM docs WHERE path=?", (path,))
+                        done.append(path + " (removed)")
                     continue
                 c.execute("INSERT INTO docs(path,data,version,updated_at,updated_by) VALUES(?,?,?,?,?) "
                           "ON CONFLICT(path) DO UPDATE SET data=excluded.data,version=excluded.version,updated_at=excluded.updated_at,updated_by=excluded.updated_by",
@@ -490,6 +496,218 @@ def updates_report():
     with db() as c:
         rows = [json.loads(r["v"]) for r in c.execute("SELECT v FROM kv WHERE k LIKE 'update:%'")]
     return sorted(rows, key=lambda r: r.get("at", ""), reverse=True)[:10]
+
+
+# ---- shop prices: pinned products (docs products/<id>) checked against Rohlík and Košík. No model, just their public product data.
+# Tesco blocks server requests, so its prices come from a bookmark run in Kyle's own Tesco tab (see static/prices.js).
+import urllib.request, urllib.parse, urllib.error
+UA = "Mozilla/5.0 (X11; Linux x86_64) MealPrepPlanner/1.0 (personal price check, a few requests a week)"
+_pc = {"running": False, "done": 0, "total": 0, "started": None, "error": None}
+
+
+def _get_json(url, timeout=20):
+    req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "application/json", "Accept-Language": "cs-CZ"})
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        return json.loads(r.read().decode("utf-8"))
+
+
+def product_ref(url):
+    """(shop, product number) from a shop link, or (None, None)."""
+    u = (url or "").strip()
+    m = re.search(r"productPopup=(\d{6,8})", u) or re.search(r"rohlik\.cz/(?:[^?#]*?/)?(\d{6,8})(?:[-?#/]|$)", u)
+    if "rohlik.cz" in u and m:
+        return "rohlik", m.group(1)
+    m = re.search(r"kosik\.cz/p(\d+)", u)
+    if m:
+        return "kosik", m.group(1)
+    m = re.search(r"itesco\.cz/.*?/products/(\d+)", u)
+    if m:
+        return "tesco", m.group(1)
+    return None, None
+
+
+def _pack_from_text(txt):
+    """'cca 500 g' -> 500, '1 l' -> 1000, '10 ks' -> 10"""
+    m = re.search(r"([\d.,]+)\s*(kg|g|ml|l|ks)\b", txt or "", re.I)
+    if not m:
+        return None
+    v = float(m.group(1).replace(",", ".")); u = m.group(2).lower()
+    return round(v * 1000) if u in ("kg", "l") else round(v)
+
+
+def rohlik_check(ids):
+    out = {}
+    for i in range(0, len(ids), 40):
+        chunk = ids[i:i + 40]
+        q = ",".join(chunk)
+        prices = {str(x["productId"]): x for x in _get_json("https://www.rohlik.cz/api/v1/products/prices?products=" + q)}
+        stock = {str(x["productId"]): x for x in _get_json("https://www.rohlik.cz/api/v1/products/stock?products=" + q)}
+        for pid in chunk:
+            p, s = prices.get(pid), stock.get(pid) or {}
+            if not p:
+                out[pid] = {"gone": True}
+                continue
+            r = {"price": p["price"]["amount"], "perUnit": (p.get("pricePerUnit") or {}).get("amount"),
+                 "inStock": s.get("inStock"), "why": s.get("unavailabilityReason")}
+            pk = s.get("packageInfo") or {}
+            if pk.get("amount"):
+                r["pack"] = round(pk["amount"] * 1000) if pk.get("unit") in ("kg", "l") else pk["amount"]
+                r["packUnit"] = pk.get("unit")
+            for sale in p.get("sales") or []:
+                if not sale.get("active", True):
+                    continue
+                d = {"price": sale["price"]["amount"], "member": sale.get("type") == "premium",
+                     "minQty": sale.get("triggerAmount") if (sale.get("triggerAmount") or 1) > 1 else None,
+                     "until": (sale.get("validTill") or "")[:10] or None,
+                     "text": ((sale.get("badges") or [{}])[0].get("title") or "")}
+                if d["member"]:
+                    r["memberPrice"] = d["price"]
+                elif not r.get("sale") or d["price"] < r["sale"]["price"]:
+                    r["sale"] = d
+            out[pid] = r
+        time.sleep(0.5)
+    return out
+
+
+def kosik_one(pid):
+    try:
+        p = _get_json("https://www.kosik.cz/api/front/product/" + pid).get("product") or {}
+    except urllib.error.HTTPError as e:
+        return {"gone": True} if e.code == 404 else {"error": f"HTTP {e.code}"}
+    if not p.get("id"):
+        return {"gone": True}
+    r = {"price": p.get("price"), "perUnit": (p.get("pricePerUnit") or {}).get("price"), "unitBase": p.get("price"), "name": p.get("name"),
+         "inStock": True if (p.get("maxInCart") or 0) > 0 else None}  # Košík hides stock for some fresh items without a delivery address
+    reg = p.get("recommendedPrice")
+    if p.get("isSale") or (reg and p.get("price") and p["price"] < reg - 0.01):
+        r["sale"] = {"price": p["price"], "text": f"−{p.get('percentageDiscount')} %" if p.get("percentageDiscount") else "sale", "minQty": None}
+        r["price"] = reg or p["price"]
+    for c in p.get("cumulativePrices") or []:
+        q, pr = c.get("quantity") or c.get("minQuantity"), c.get("price")
+        if q and pr and pr < r["price"] and (not r.get("sale") or pr < r["sale"]["price"]):
+            r["sale"] = {"price": pr, "text": f"{q}+ ks", "minQty": q}
+    if p.get("loyaltyClubBenefitsPrice"):
+        r["memberPrice"] = p["loyaltyClubBenefitsPrice"]
+    pq = p.get("productQuantity") or {}
+    if pq.get("value"):
+        r["pack"] = _pack_from_text(f"{pq['value']} {pq.get('unit', '')}")
+    return r
+
+
+def run_price_check(ings):
+    global _pc
+    try:
+        d = all_docs()
+        prods = {p[9:]: v["data"] for p, v in d.items() if p.startswith("products/") and isinstance(v["data"], dict)}
+        want = [(k, x) for k, x in prods.items() if not x.get("blocked") and x.get("status") != "rejected"
+                and x.get("shop") in ("rohlik", "kosik") and (not ings or x.get("ing") in ings)]
+        _pc.update(total=len(want), done=0)
+        res = {}
+        rids = {}
+        for k, x in want:
+            shop, pid = product_ref(x.get("url"))
+            if shop == "rohlik":
+                rids.setdefault(pid, []).append(k)
+        if rids:
+            try:
+                rr = rohlik_check(list(rids))
+            except Exception as e:
+                rr = {pid: {"error": str(e)[:120]} for pid in rids}
+            for pid, keys in rids.items():
+                for k in keys:
+                    res[k] = rr.get(pid, {"error": "no answer"})
+            _pc["done"] += sum(len(v) for v in rids.values())
+        seen = {}
+        for k, x in want:
+            shop, pid = product_ref(x.get("url"))
+            if shop != "kosik":
+                continue
+            if pid not in seen:
+                try:
+                    seen[pid] = kosik_one(pid)
+                except Exception as e:
+                    seen[pid] = {"error": str(e)[:120]}
+                time.sleep(0.4)
+            res[k] = seen[pid]
+            _pc["done"] += 1
+        with _lock, db() as c:
+            row = c.execute("SELECT data,version FROM docs WHERE path='state/prices'").fetchone()
+            cur = json.loads(row["data"]) if row else {}
+            items = cur.get("items") or {}
+            stamp = now()
+            for k, r in res.items():
+                r["at"] = stamp
+                items[k] = r
+            cur.update(items=items, checkedAt=stamp)
+            nv = (row["version"] if row else 0) + 1
+            c.execute("INSERT INTO docs(path,data,version,updated_at,updated_by) VALUES('state/prices',?,?,?,?) "
+                      "ON CONFLICT(path) DO UPDATE SET data=excluded.data,version=excluded.version,updated_at=excluded.updated_at,updated_by=excluded.updated_by",
+                      (json.dumps(cur, ensure_ascii=False), nv, stamp, "price-check"))
+        _pc["error"] = None
+    except Exception as e:
+        _pc["error"] = str(e)[:200]
+    finally:
+        _pc["running"] = False
+
+
+@app.post("/api/prices/check")
+def api_price_check():
+    body = request.get_json(force=True, silent=True) or {}
+    with _lock:
+        if _pc["running"]:
+            return jsonify({"running": True, **_pc})
+        _pc.update(running=True, done=0, total=0, started=now(), error=None)
+    ings = set(body.get("ings") or [])
+    threading.Thread(target=run_price_check, args=(ings,), daemon=True).start()
+    return jsonify({"running": True})
+
+
+@app.get("/api/prices/status")
+def api_price_status():
+    return jsonify(_pc)
+
+
+@app.post("/api/products/lookup")
+def api_product_lookup():
+    """Name, pack size and price for a pasted shop link, so pinning a product is one paste."""
+    url = (request.get_json(force=True, silent=True) or {}).get("url", "")
+    shop, pid = product_ref(url)
+    if not shop:
+        return jsonify({"error": "That doesn't look like a Rohlík, Košík or Tesco product link."}), 400
+    try:
+        if shop == "rohlik":
+            info = _get_json("https://www.rohlik.cz/api/v1/products?products=" + pid)
+            info = info[0] if info else {}
+            r = rohlik_check([pid]).get(pid, {})
+            return jsonify({"shop": shop, "id": pid, "url": "https://www.rohlik.cz/" + pid, "name": info.get("name"),
+                            "packG": r.get("pack") if r.get("packUnit") != "piece" else None,
+                            "perKg": False, "price": r.get("price")})
+        if shop == "kosik":
+            r = kosik_one(pid)
+            if r.get("gone"):
+                return jsonify({"error": "Košík doesn't know that product (any more)."}), 404
+            return jsonify({"shop": shop, "id": pid, "url": f"https://www.kosik.cz/p{pid}", "name": r.get("name"),
+                            "packG": r.get("pack"), "perKg": False, "price": r.get("price")})
+    except Exception as e:
+        return jsonify({"error": "Couldn't reach the shop: " + str(e)[:120]}), 502
+    # Tesco: the server can't read it; the bookmark fills in name and price on the next Tesco check
+    return jsonify({"shop": shop, "id": pid, "url": f"https://nakup.itesco.cz/groceries/cs-CZ/products/{pid}", "name": None, "packG": None, "perKg": False, "price": None})
+
+
+@app.get("/api/products/search")
+def api_product_search():
+    q = (request.args.get("q") or "").strip()
+    if len(q) < 2:
+        return jsonify({"items": []})
+    try:
+        d = _get_json("https://www.rohlik.cz/services/frontend-service/search-metadata?offset=0&limit=12&companyId=1&search=" + urllib.parse.quote(q))
+        items = [{"shop": "rohlik", "id": str(x["productId"]), "url": f"https://www.rohlik.cz/{x['productId']}", "name": x.get("productName"),
+                  "amount": x.get("textualAmount"), "packG": _pack_from_text(x.get("textualAmount")), "perKg": False,
+                  "price": (x.get("price") or {}).get("full"), "perUnit": (x.get("pricePerUnit") or {}).get("full")}
+                 for x in (d.get("data") or {}).get("productList") or []]
+        return jsonify({"items": items})
+    except Exception as e:
+        return jsonify({"error": "Rohlík search failed: " + str(e)[:120]}), 502
 
 
 init_db()

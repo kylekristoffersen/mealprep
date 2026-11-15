@@ -16,3 +16,8 @@ Recipe/data changes without a browser: put a file in data-updates/ (format at ap
 The app applies each file once on its next start (a push restarts it), takes a backup first, and skips any doc that was
 changed in the app since the update was written. Results show in Settings > Server status. Current data can be read
 through the Cook link's /api/cook/<secret> (meals, ingredients, plan).
+
+Prices tab (v0.5): pinned shop products are docs `products/<id>` ({shop, ing, name, url, packG, perKg, usual}).
+"Check Rohlík + Košík" makes the server read their public product data (about 2 minutes for everything, less for one week's list) and saves `state/prices`.
+Tesco blocks server requests, so its prices come from the "Meal Prep: Tesco prices" bookmark run in your own signed-in Tesco tab; it returns to /#prices&tesco=… and the app saves them.
+Data updates can now remove docs: {"delete": true} instead of "data".

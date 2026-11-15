@@ -1,0 +1,42 @@
+{
+ "id": "2026-11-15-remove-duplicates",
+ "note": "Removed 6 near-duplicate Jalal meals (lunch + dinner): Golden Steak Fried Rice, Crispy Orange Chicken Noodles, Butter Chicken Shawarma Rice Bowls, Korean Beef Rice Bowls, Creamy Spicy Smoky Chicken Pasta, Cheesy Garlic Steak & Sweet Potato Bites",
+ "docs": {
+  "meals/butter-chicken-shawarma-rice-bowls-dinner": {
+   "delete": true
+  },
+  "meals/butter-chicken-shawarma-rice-bowls-lunch": {
+   "delete": true
+  },
+  "meals/cheesy-garlic-steak-sweet-potato-bites-dinner": {
+   "delete": true
+  },
+  "meals/cheesy-garlic-steak-sweet-potato-bites-lunch": {
+   "delete": true
+  },
+  "meals/creamy-spicy-chipotle-chicken-pasta-dinner": {
+   "delete": true
+  },
+  "meals/creamy-spicy-chipotle-chicken-pasta-lunch": {
+   "delete": true
+  },
+  "meals/crispy-orange-chicken-noodles-dinner": {
+   "delete": true
+  },
+  "meals/crispy-orange-chicken-noodles-lunch": {
+   "delete": true
+  },
+  "meals/golden-steak-fried-rice-dinner": {
+   "delete": true
+  },
+  "meals/golden-steak-fried-rice-lunch": {
+   "delete": true
+  },
+  "meals/korean-beef-rice-bowls-dinner": {
+   "delete": true
+  },
+  "meals/korean-beef-rice-bowls-lunch": {
+   "delete": true
+  }
+ }
+}

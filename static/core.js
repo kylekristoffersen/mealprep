@@ -197,7 +197,7 @@ function listText(){const{reg,b2,lidl,kaufland,dealGroups}=shoppingData();const 
 function planText(){let t="";for(const[s,label] of SLOTS){const f=b=>{const m=MEALS[PLAN[b][s].meal];return`${label}: ${m?m.name:"None"} (${PLAN[b][s].n})`};t+=`${f("block1")}\t\t${f("block2")}\n`}return t.trim()}
 
 /* ---------- loading from the server's documents ---------- */
-function loadDocs(docs){ING=docs["lib/ingredients"]?.data?.items||{};MEALS={};
+function loadDocs(docs){ING=docs["lib/ingredients"]?.data?.items||{};if(typeof loadPrices==="function")loadPrices(docs);MEALS={};
   for(const[p,d] of Object.entries(docs))if(p.startsWith("meals/"))MEALS[p.slice(6)]=d.data;
   TARGETS=docs["settings/targets"]?.data||null;SAFETY=docs["settings/safety"]?.data||null;SHOPSET=docs["settings/shopping"]?.data||null;
   const d=docs["state/plan"]?.data;const cl=o=>JSON.parse(JSON.stringify(o||{}));

@@ -205,3 +205,23 @@ small.uses.two{color:var(--cat,var(--muted));font-weight:600}
 @media (max-width:700px){ol.steps.tick label{padding:8px 6px}ol.steps.tick input{width:26px;height:26px}}
 @media print{ol.steps.tick input{border-color:#000}.tickreset,.legend .small{display:none}}
 .logbox{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px;font:.74rem/1.45 var(--mono);white-space:pre-wrap;word-break:break-word;max-height:260px;overflow:auto;margin:6px 0 0}
+
+/* Prices tab */
+.tot{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.tot>div{border:1px solid var(--line);border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:2px}
+.tot>div b{font:700 1.25rem/1.2 var(--mono)}
+.tot>div.win{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+table.prices{width:100%;border-collapse:collapse;font-size:.9rem}
+table.prices th,table.prices td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+table.prices td.pc{min-width:120px}
+table.prices td.pc b{font-family:var(--mono)}
+table.prices td.win{background:color-mix(in srgb,var(--accent) 12%,transparent)}
+table.prices .pn{display:block;font-size:.76rem;color:var(--muted);line-height:1.3}
+table.prices .pn.warn,.warn{color:#b45309}
+table.prices .pn.swap{color:var(--ink)}
+table.prices .deal{color:var(--accent);font-weight:600}
+.pinpanel{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.pinpanel input.tiny{width:70px;padding:2px 6px}
+.pinpanel li{margin:4px 0}
+table.prices td.num{white-space:nowrap}
+table.prices td:first-child .linkbtn{text-align:left}
