@@ -7,7 +7,7 @@ if(!MODES.some(m=>m[0]===mode))mode="prep";
 let lastSig="";
 function draw(){reconcile();
   $("#tabs").innerHTML=MODES.map(([k,l])=>`<button role="tab" aria-selected="${k===mode}" data-m="${k}">${l}</button>`).join("");
-  $("#view").innerHTML=mode==="prep"?prepHTML():mode==="day"?eachDayHTML():mode==="week"?weekRecipesHTML():safetyHTML(false)}
+  $("#view").innerHTML=mode==="prep"?prepHTML():mode==="day"?eachDayHTML():mode==="week"?weekRecipesHTML():safetyHTML(false);applyTicks($("#view"))}
 async function load(){
   try{const r=await fetch("/api/cook/"+token);if(!r.ok)throw new Error(r.status===404?"This link isn't valid any more. Ask Kyle for the new one.":"HTTP "+r.status);
     const j=await r.json();const sig=JSON.stringify(Object.entries(j.docs).map(([p,d])=>[p,d.version]));

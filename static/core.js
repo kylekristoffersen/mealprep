@@ -49,9 +49,17 @@ function parseQty(t){const m=String(t).trim().match(/^(\d+(?:[.,]\d+)?)?\s*([½�
 function fmtQty(v,u){if(/^(tsp|tbsp|lžič|lžíc|cup)/i.test(u)||!u){const opts=[[0,""],[.25,"¼"],[1/3,"⅓"],[.5,"½"],[2/3,"⅔"],[.75,"¾"],[1,""]];let w=Math.floor(v),f=v-w;
     const best=opts.reduce((a,b)=>Math.abs(b[0]-f)<Math.abs(a[0]-f)?b:a);if(best[0]===1)w++;const txt=`${w||(best[1]?"":"0")}${best[0]===1?"":best[1]}`;return txt==="0"?`a pinch${u?" of":""}`:`${txt}${u?" "+u:""}`}
   const step=v<20?1:v<100?5:v<500?10:50;return`${Math.round(v/step)*step} ${u}`}
-function renderStep(txt,m,n){const k=n/(m.stepBatch||4)*(m.stepScale||1);
-  return String(txt).replace(/\{=([a-z0-9-]+)\}/g,(all,id)=>{const it=(m.items||[]).find(x=>x[0]===id);return it&&ING[id]?fmtAmt(it[1]*n,ING[id].unit):all})
-    .replace(/\{q:([^}]+)\}/g,(all,q)=>{const p=parseQty(q);return p?fmtQty(p.v*k,p.u):q})}
+/* {@ingredient-id}  prints nothing; only tells the Cook page that this step uses that ingredient (for crossing it off).
+   An ingredient listed twice in a meal: {=id} shows the total, unless the steps have exactly one {=id} per row, in which case
+   the first token shows the first row's amount, the second the second's, and so on (occ carries the count across steps). */
+const tokenCount=(m,id)=>[...(m.prepSteps||[]),...(m.daySteps||[])].reduce((c,st)=>c+(String(st).split(`{=${id}}`).length-1),0);
+function occFor(m,phase){const o={};if(phase==="day")for(const st of m.prepSteps||[])for(const t of String(st).matchAll(/\{=([a-z0-9-]+)\}/g))o[t[1]]=(o[t[1]]||0)+1;return o}
+function renderStep(txt,m,n,occ){const k=n/(m.stepBatch||4)*(m.stepScale||1);
+  return String(txt).replace(/\{=([a-z0-9-]+)\}/g,(all,id)=>{const rows=(m.items||[]).filter(x=>x[0]===id);if(!rows.length||!ING[id])return all;
+      let a=rows.reduce((t,x)=>t+x[1],0);if(rows.length>1&&occ){const j=occ[id]||0;occ[id]=j+1;if(tokenCount(m,id)===rows.length&&rows[j])a=rows[j][1]}
+      return fmtAmt(a*n,ING[id].unit)})
+    .replace(/\{q:([^}]+)\}/g,(all,q)=>{const p=parseQty(q);return p?fmtQty(p.v*k,p.u):q})
+    .replace(/\s*\{@[a-z0-9-]+\}/g,"").replace(/ {2,}/g," ")}
 
 /* ---------- this week's ground beef: lean (5 %) or the usual 80/20, counted browned and drained ---------- */
 const minceMode=()=>MINCE==="lean"?"lean":"8020";
@@ -180,36 +188,131 @@ const planDoc=()=>({plan:PLAN,swaps:SWAPS,dismissed:DISMISSED,edits:EDITS,checke
 
 /* ---------- Cook views (shared with the read-only Cook page) ---------- */
 const who=s=>s.startsWith("snack")?"Kyle":"Kyle & Annie";
-function slotRows(b){return SLOTS.map(([s,label])=>({s,label,sel:PLAN[b][s],m:PM(PLAN[b][s].meal)})).filter(x=>x.m)}
+const slotCat=s=>(SLOTS.find(x=>x[0]===s)||[])[2]||"snack";
+function slotRows(b){return SLOTS.map(([s,label])=>({s,label,cat:slotCat(s),sel:PLAN[b][s],m:PM(PLAN[b][s].meal)})).filter(x=>x.m)}
+const mtype=x=>`<span class="mtype" data-cat="${x.cat}">${esc(x.label)}</span>`;
+const legendHTML=()=>`<div class="legend" aria-label="Meal colours">${CATS.map(([c,l])=>`<span class="mtype" data-cat="${c}">${l}</span>`).join("")}<span class="muted small">Tap a step when it's done. Its ingredients get crossed off.</span></div>`;
+
+/* ---------- ticking off steps ----------
+   Which ingredients a step uses: its {=id} / {@id} tokens, then English words matched to the Czech ingredient names below.
+   An ingredient is crossed off only when every step that uses it is ticked; until then it shows as part-used.
+   Ingredients no step mentions are crossed off once all the steps on the card are done.
+   Ticks live on this device only (no password page writes to the server): prep-day ticks for the week, each-day ticks for today. */
+const EN_RULES=[ // [test on the folded Czech name + id, English words used in steps, unless this test matches]
+ [/kure/,["chicken"]],[/kure.*prs|prsa/,["chicken breast","chicken breasts","breast","breasts"]],[/stehn/,["thigh","thighs","chicken thighs"]],
+ [/hovez/,["beef"]],[/mlet.*(maso|hovez|vepr|kure)|(hovez|vepr|kure).*mlet/,["mince","minced","ground beef","ground meat"]],[/vepr/,["pork"]],[/krut|krocan/,["turkey"]],
+ [/slanin/,["bacon"]],[/sunk/,["ham"]],[/losos/,["salmon"]],[/tunak/,["tuna"]],[/tresk/,["cod"]],[/\bryb/,["fish"]],
+ [/ryz/,["rice"],/chlebic/],[/bulgur/,["bulgur","bulghur"]],[/kuskus/,["couscous"]],[/quinoa|kinoa/,["quinoa"]],
+ [/testovin|spaget|penne|fusill|nudl|tagliat/,["pasta","spaghetti","penne","fusilli","noodles","tagliatelle"]],
+ [/brambor/,["potato","potatoes"],/sladk|batat/],[/batat|sladk.*brambor/,["sweet potato","sweet potatoes"]],[/ovesn|vlock/,["oats","oat","porridge","oatmeal"]],
+ [/chleb|toast/,["bread","toast"],/chlebic/],[/chlebic|krehk|knacke/,["crispbread","crispbreads","crackers","rice cakes","rice cake"]],[/tortil|wrap/,["tortilla","tortillas","wrap","wraps"]],
+ [/brokol/,["broccoli"]],[/cibul/,["onion","onions"],/cibulk/],[/cibulk/,["spring onion","spring onions","scallion","scallions","green onion","green onions"]],[/cesn/,["garlic"]],
+ [/mrkev|mrkv/,["carrot","carrots"]],[/cuket/,["courgette","courgettes","zucchini"]],[/rajc|rajsk/,["tomato","tomatoes"]],
+ [/protlak|pyre/,["tomato paste","tomato puree","puree"]],[/spenat/,["spinach"]],[/houb|zampion/,["mushroom","mushrooms"]],[/hrasek|hrach/,["peas"]],
+ [/kukur/,["corn","sweetcorn"]],[/fazol/,["beans"],/fazolk/],[/fazolk/,["green beans"]],[/cizrn/,["chickpeas","chickpea"]],[/cock/,["lentils"]],
+ [/okurk/,["cucumber","cucumbers"]],[/salat/,["lettuce","salad leaves"],/okurk/],[/\bzeli\b/,["cabbage"]],[/kvetak/,["cauliflower"]],[/zelenin/,["vegetables","veg","veggies"]],
+ [/vejc|vajic/,["egg","eggs"],/bilk/],[/bilk/,["egg white","egg whites"]],
+ [/\bsyr|eidam|edam|gouda|cedar|mozzarel|parmaz|parmez|grana|feta|balkan|cottage|niva|hermelin/,["cheese"]],[/eidam|edam/,["eidam","edam"]],[/mozzarel/,["mozzarella"]],
+ [/parmaz|parmez|grana/,["parmesan"]],[/feta|balkan/,["feta"]],[/cottage/,["cottage cheese","cottage"]],[/tvaroh/,["tvaroh","quark","curd"]],
+ [/jogurt/,["yogurt","yoghurt"]],[/skyr/,["skyr"]],[/kefir/,["kefir"]],[/mlek|napoj/,["milk"]],[/soj.*(mlek|napoj)|(mlek|napoj).*soj/,["soy milk","soya milk"]],
+ [/smetan/,["cream"],/zakys/],[/zakys/,["sour cream"]],[/maslo/,["butter"],/arasid|burak|kesu|mandl/],[/arasid|burak/,["peanut butter","peanut"]],
+ [/olej/,["oil"]],[/olivov/,["olive oil"]],[/\bsul\b/,["salt"]],[/pepr/,["black pepper","salt and pepper","pepper"]],[/kmin/,["cumin","caraway"]],[/oregan/,["oregano"]],
+ [/bazalk/,["basil"]],[/petrzel/,["parsley"]],[/koriandr/,["coriander","cilantro"]],[/skoric/,["cinnamon"]],[/chil/,["chilli","chili","chilli flakes"]],
+ [/\bkari\b|curry/,["curry","curry powder"]],[/zazvor/,["ginger"]],[/kurkum/,["turmeric"]],[/majoran/,["marjoram"]],[/tymian/,["thyme"]],[/citron/,["lemon"]],[/limet/,["lime"]],
+ [/\bmed\b/,["honey"]],[/sojov.*omack|omack.*soj/,["soy sauce"]],[/ocet|octa/,["vinegar"]],[/horcic/,["mustard"]],[/kecup/,["ketchup"]],
+ [/vyvar|bujon/,["stock","broth","bouillon","stock cube"]],[/mouk/,["flour"]],[/(^|\s)cukr(\s|$)/,["sugar"]],[/kesu/,["cashew","cashews"]],[/orech|orisk/,["nuts","walnuts","hazelnuts"]],
+ [/mandl/,["almond","almonds"]],[/banan/,["banana","bananas"]],[/jahod/,["strawberry","strawberries"]],[/boruv/,["blueberry","blueberries"]],[/malin/,["raspberry","raspberries"]],
+ [/jablk|jablec/,["apple","apples"]],[/ovoc/,["fruit","berries"]],[/protein|syrovatk/,["protein powder","protein","whey"]],[/hummus/,["hummus"]],[/vlakn|slupk/,["powder","fibre","fiber"]],[/kakao/,["cocoa"]]];
+// Czech "paprika" is a bell pepper; English "paprika" is the ground spice. Never let one stand in for the other.
+const PAPRIKA_SPICE=["paprika","smoked paprika","sweet paprika","hot paprika"],BELL=["pepper","peppers","bell pepper","bell peppers","red pepper","red peppers","capsicum"];
+const NAME_STOP=new Set(["paprika","mleta","mlete","maso","light","polotucny","tucny","nizkotucny","jasminova","jasminova","zitny","vyberove","libove","cerstve","mrazene","mrazena","plnotucne","sterilovane","konzerva"]);
+const _kw={};
+function ingWords(id){const x=ING[id];if(!x)return[];const ck=id+"|"+x.name;if(_kw[ck])return _kw[ck];
+  const n=fold(x.name)+" "+id.replace(/-/g," ");const out=new Set();
+  if(/paprik/.test(n))(x.spice||/mlet|uzen|sladk|pal|koreni/.test(n)?PAPRIKA_SPICE:BELL).forEach(w=>out.add(w));
+  for(const[re,ws,not] of EN_RULES)if(re.test(n)&&!(not&&not.test(n)))ws.forEach(w=>out.add(w));
+  for(const w of fold(x.name).split(/[^a-z0-9]+/))if(w.length>=4&&!NAME_STOP.has(w))out.add(w);
+  return _kw[ck]=[...out]}
+const reEsc=s=>s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+function stepLinks(m,steps){const ids=[...new Set((m.items||[]).map(x=>x[0]))].filter(id=>ING[id]);
+  const byWord=new Map();for(const id of ids)for(const w of ingWords(id)){const f=fold(w);if(!byWord.has(f))byWord.set(f,new Set());byWord.get(f).add(id)}
+  const words=[...byWord.keys()].sort((a,b)=>b.length-a.length); // longest first, so "black pepper" is taken before "pepper"
+  return steps.map(st=>{const found=new Set();
+    let t=String(st).replace(/\{([=@])([a-z0-9-]+)\}/g,(a,k,id)=>{if(ids.includes(id))found.add(id);return" "}).replace(/\{q:[^}]*\}/g," ");t=" "+fold(t)+" ";
+    for(const w of words){const re=new RegExp("([^a-z0-9])"+reEsc(w)+"(?=[^a-z0-9])","g");if(re.test(t)){byWord.get(w).forEach(id=>found.add(id));t=t.replace(re,(a,p)=>p+"#".repeat(w.length))}}
+    return found})}
+const hashStr=s=>{let h=5381;for(const c of String(s))h=(h*33+c.charCodeAt(0))|0;return(h>>>0).toString(36)};
+
+const TICK_KEY="mealprep-ticks";let TICKS=new Map();
+function tickLoad(){try{const o=JSON.parse(localStorage.getItem(TICK_KEY)||"{}");const cut=Date.now()-12*864e5;TICKS=new Map(Object.entries(o).filter(([,v])=>v&&v.t>cut))}catch(e){}}
+function tickSave(){try{localStorage.setItem(TICK_KEY,JSON.stringify(Object.fromEntries(TICKS)))}catch(e){}}
+tickLoad();
+const phaseScope=ph=>ph==="prep"?"w"+weekKey():"d"+todayISO();
+/* phases: [[phase, steps]] shown on this card; info: phases not shown, used only to say "used on the day" */
+function tickCtx(b,s,mid,m,phases,info){const c={keys:{},label:{},uses:{},all:[],later:new Set()};const both=phases.filter(p=>p[1].length).length>1;
+  for(const[ph,steps] of phases){const links=stepLinks(m,steps);steps.forEach((st,i)=>{const k=`${phaseScope(ph)}|${b}|${s}|${mid}|${ph}|${i}|${hashStr(st)}`;
+    c.keys[ph+i]=k;c.label[k]=(both?(ph==="prep"?"prep ":"day "):"step ")+(i+1);c.all.push(k);for(const id of links[i])(c.uses[id]=c.uses[id]||[]).push(k)})}
+  for(const[,steps] of info||[])for(const set of stepLinks(m,steps))for(const id of set)if(!c.uses[id])c.later.add(id);
+  return c}
+/* attributes for one ingredient row; a meal can list the same ingredient twice (row j of k): split its steps between the rows in order */
+function ingTick(c,dk,id,j,k){let u=c.uses[id]||[];if(k>1&&u.length>=k)u=j<k-1?[u[j]]:u.slice(k-1);
+  return` data-ik="${esc(dk)}|i|${esc(id)}|${j}" data-uses="${esc(u.join(" "))}" data-lbl="${esc(u.map(x=>c.label[x]).join("|"))}"${!u.length&&c.later.has(id)?" data-later=\"1\"":""} tabindex="0" title="Tap to cross off or bring back"`}
+function ingRowsInfo(m){const cnt={},seen={};for(const[id] of m.items||[])cnt[id]=(cnt[id]||0)+1;return(m.items||[]).filter(([id])=>ING[id]).map(([id,a])=>{const j=seen[id]=(seen[id]??-1)+1;return{id,a,j,k:cnt[id]}})}
+const usesSpan=`<small class="uses" data-ul></small>`;
+function tickSteps(c,ph,steps,m,n){const occ=occFor(m,ph);return`<ol class="steps tick">${steps.map((st,i)=>{const k=c.keys[ph+i];
+  return`<li><label><input type="checkbox" data-ck="${esc(k)}"${TICKS.has(k)?" checked":""}><span>${esc(renderStep(st,m,n,occ))}</span></label></li>`}).join("")}</ol>`}
+const resetBtn=`<button class="linkbtn tickreset" data-tickreset hidden>Clear ticks</button>`;
+function applyTicks(root){(root||document).querySelectorAll(".dish[data-dk]").forEach(d=>{
+  const on=new Set([...d.querySelectorAll("[data-ck]")].filter(x=>x.checked).map(x=>x.dataset.ck));const fb=(d.dataset.fallback||"").split(" ").filter(Boolean);let any=on.size>0;
+  d.querySelectorAll("[data-ik]").forEach(el=>{const own=(el.dataset.uses||"").split(" ").filter(Boolean);const uses=own.length?own:el.dataset.later?[]:fb;
+    const auto=uses.length>0&&uses.every(k=>on.has(k)),some=uses.some(k=>on.has(k));const ov=TICKS.get(el.dataset.ik);if(ov)any=true;const done=ov?ov.v==="1":auto;
+    el.classList.toggle("done",done);el.classList.toggle("partial",!done&&some&&own.length>1);el.setAttribute("aria-pressed",done);
+    const ul=el.querySelector("[data-ul]");if(ul){const lb=(el.dataset.lbl||"").split("|");
+      ul.textContent=own.length>1?(some&&!done?"Part used: ":"Used in ")+own.map((k,i)=>lb[i]+(on.has(k)?" ✓":"")).join(", "):el.dataset.later?"used on the day":"";ul.classList.toggle("two",own.length>1)}});
+  const r=d.querySelector("[data-tickreset]");if(r)r.hidden=!any})}
+function tickStep(cb){const d=cb.closest(".dish");const k=cb.dataset.ck;if(cb.checked)TICKS.set(k,{t:Date.now()});else TICKS.delete(k);
+  if(d){const fb=(d.dataset.fallback||"").split(" ");d.querySelectorAll("[data-ik]").forEach(el=>{const u=(el.dataset.uses||"").split(" ").filter(Boolean);if((u.length?u:fb).includes(k))TICKS.delete(el.dataset.ik)})}
+  tickSave();applyTicks(d?.parentNode||document)}
+function tickIng(el){el.classList.contains("done")?TICKS.set(el.dataset.ik,{t:Date.now(),v:"0"}):TICKS.set(el.dataset.ik,{t:Date.now(),v:"1"});tickSave();applyTicks(el.closest(".dish").parentNode)}
+document.addEventListener("change",e=>{const cb=e.target.closest?.("[data-ck]");if(cb)tickStep(cb)});
+document.addEventListener("click",e=>{const r=e.target.closest?.("[data-tickreset]");if(r){const d=r.closest(".dish");d.querySelectorAll("[data-ck]").forEach(x=>{x.checked=false;TICKS.delete(x.dataset.ck)});d.querySelectorAll("[data-ik]").forEach(x=>TICKS.delete(x.dataset.ik));tickSave();applyTicks(d.parentNode);return}
+  const el=e.target.closest?.("[data-ik]");if(el&&!e.target.closest("a,button,input"))tickIng(el)});
+document.addEventListener("keydown",e=>{if(e.key!=="Enter"&&e.key!==" ")return;const el=e.target.closest?.("[data-ik]");if(el&&e.target===el){e.preventDefault();tickIng(el)}});
+window.addEventListener("storage",e=>{if(e.key!==TICK_KEY)return;tickLoad();document.querySelectorAll("[data-ck]").forEach(x=>x.checked=TICKS.has(x.dataset.ck));applyTicks(document)});
+
 function prepHTML(){let html="";
   for(const[b,name,days] of BLOCKS){const ms=slotRows(b);if(!ms.length)continue;const ahead=ms.filter(x=>x.m.prep!=="fresh"),fresh=ms.filter(x=>x.m.prep==="fresh");
     html+=`<section class="panel" style="margin-bottom:16px"><div class="row" style="justify-content:space-between"><h2>${name} prep</h2><span class="tape">${days}</span></div>
-    ${ahead.length?ahead.map(x=>`<div class="dish"><div class="row"><h3>${esc(x.m.name)}</h3><span class="prep ${x.m.prep}">${x.m.prep}</span></div>
-      <p class="muted small">${x.sel.n} servings${esc(spareText(b,x.s))}${x.m.keeps?` · keeps ${esc(x.m.keeps)}`:""} · ${x.label}, ${who(x.s)}</p>
-      <ul class="ings">${(x.m.items||[]).filter(([id])=>ING[id]).map(([id,a])=>`<li><span>${esc(ING[id].name)}${esc((isFresh(x.m)||x.sel.fresh)&&id==="kureci-prsa"?" (buy fresh)":packNote(id,a*x.sel.n))}</span><b>${fmtAmt(a*x.sel.n,ING[id].unit)}</b></li>`).join("")}</ul>
-      <ol class="steps">${(x.m.prepSteps||[]).map(s=>`<li>${esc(renderStep(s,x.m,x.sel.n))}</li>`).join("")}</ol>${x.m.note?`<p class="note">${esc(x.m.note)}</p>`:""}</div>`).join(""):`<p class="muted">Nothing to cook ahead for this block.</p>`}
+    ${ahead.length?ahead.map(x=>{const m=x.m,mid=x.sel.meal,dk=`w${weekKey()}|${b}|${x.s}|${mid}|prep`;
+      const c=tickCtx(b,x.s,mid,m,[["prep",m.prepSteps||[]]],[["day",m.daySteps||[]]]);
+      return`<div class="dish" data-cat="${x.cat}" data-dk="${esc(dk)}" data-fallback="${m.prep==="hybrid"?"":esc(c.all.join(" "))}"><div class="row">${mtype(x)}<h3>${esc(m.name)}</h3><span class="prep ${m.prep}">${m.prep}</span>${resetBtn}</div>
+      <p class="muted small">${x.sel.n} servings${esc(spareText(b,x.s))}${m.keeps?` · keeps ${esc(m.keeps)}`:""} · ${who(x.s)}</p>
+      <ul class="ings">${ingRowsInfo(m).map(({id,a,j,k})=>`<li${ingTick(c,dk,id,j,k)}><span>${esc(ING[id].name)}${esc((isFresh(m)||x.sel.fresh)&&id==="kureci-prsa"?" (buy fresh)":packNote(id,a*x.sel.n))}${usesSpan}</span><b>${fmtAmt(a*x.sel.n,ING[id].unit)}</b></li>`).join("")}</ul>
+      ${tickSteps(c,"prep",m.prepSteps||[],m,x.sel.n)}${m.note?`<p class="note">${esc(m.note)}</p>`:""}</div>`}).join(""):`<p class="muted">Nothing to cook ahead for this block.</p>`}
     ${fresh.length?`<p class="muted" style="margin-top:14px">Made on the day: ${fresh.map(x=>esc(x.m.name+spareText(b,x.s))).join(", ")}.</p>`:""}</section>`}
-  return html||`<div class="empty">Choose meals on the Plan tab to see what to cook on prep day.</div>`}
+  return html?legendHTML()+html:`<div class="empty">Choose meals on the Plan tab to see what to cook on prep day.</div>`}
 function eachDayHTML(){let html="";
   for(const[b,name,days] of BLOCKS){const ms=slotRows(b);if(!ms.length)continue;
     html+=`<section class="panel" style="margin-bottom:16px"><div class="row" style="justify-content:space-between"><h2>${name}</h2><span class="tape">${days}</span></div>
-    ${ms.map(x=>{const m=x.m;const steps=m.daySteps||[];return`<div class="dish"><div class="row"><span class="slotname">${x.label}</span><h3>${esc(m.name)}</h3><span class="prep ${m.prep}">${m.prep}</span></div>
+    ${ms.map(x=>{const m=x.m,mid=x.sel.meal,steps=m.daySteps||[],dk=`d${todayISO()}|${b}|${x.s}|${mid}|day`;const c=tickCtx(b,x.s,mid,m,[["day",steps]]);
+      return`<div class="dish" data-cat="${x.cat}" data-dk="${esc(dk)}" data-fallback="${esc(c.all.join(" "))}"><div class="row">${mtype(x)}<h3>${esc(m.name)}</h3><span class="prep ${m.prep}">${m.prep}</span>${resetBtn}</div>
       <p class="muted small">${who(x.s)} · ${x.sel.n} servings${esc(spareText(b,x.s))}</p>
-      ${m.prep==="fresh"?`<ul class="ings">${(m.items||[]).filter(([id])=>ING[id]).map(([id,a])=>`<li><span>${esc(ING[id].name)}</span><b>${fmtAmt(a,ING[id].unit)}</b></li>`).join("")}</ul>`:`<p class="muted small">Cooked on prep day.</p>`}
-      ${steps.length?`<h4>${m.prep==="fresh"?"Method":"Before serving"}</h4><ol class="steps">${steps.map(s=>`<li>${esc(renderStep(s,m,1))}</li>`).join("")}</ol>`:""}
+      ${m.prep==="fresh"?`<ul class="ings">${ingRowsInfo(m).map(({id,a,j,k})=>`<li${ingTick(c,dk,id,j,k)}><span>${esc(ING[id].name)}${usesSpan}</span><b>${fmtAmt(a,ING[id].unit)}</b></li>`).join("")}</ul>`:`<p class="muted small">Cooked on prep day.</p>`}
+      ${steps.length?`<h4>${m.prep==="fresh"?"Method":"Before serving"}</h4>${tickSteps(c,"day",steps,m,1)}`:""}
       ${m.prep==="fresh"&&m.note?`<p class="note">${esc(m.note)}</p>`:""}</div>`}).join("")}</section>`}
-  return html||`<div class="empty">Choose meals on the Plan tab and each day's steps appear here.</div>`}
+  return html?legendHTML()+html:`<div class="empty">Choose meals on the Plan tab and each day's steps appear here.</div>`}
 function weekRecipesHTML(){let html="";
   for(const[b,name,days] of BLOCKS){const ms=slotRows(b);if(!ms.length)continue;
     html+=`<section class="panel" style="margin-bottom:16px"><div class="row" style="justify-content:space-between"><h2>${name}</h2><span class="tape">${days}</span></div>
-    ${ms.map(x=>{const m=x.m,per=x.sel.n,t=macros(m);
-      return`<article class="dish"><div class="row"><span class="slotname">${x.label}</span><h3>${esc(m.name)}</h3><span class="prep ${m.prep}">${m.prep}</span></div>
+    ${ms.map(x=>{const m=x.m,per=x.sel.n,t=macros(m),mid=x.sel.meal,dk=`w${weekKey()}|${b}|${x.s}|${mid}|week`;
+      const c=tickCtx(b,x.s,mid,m,[["prep",m.prepSteps||[]],["day",m.daySteps||[]]]);
+      return`<article class="dish" data-cat="${x.cat}" data-dk="${esc(dk)}" data-fallback="${esc(c.all.join(" "))}"><div class="row">${mtype(x)}<h3>${esc(m.name)}</h3><span class="prep ${m.prep}">${m.prep}</span>${resetBtn}</div>
       <p class="muted small">${per} servings${m.keeps?` · keeps ${esc(m.keeps)}`:""} · per serving ${Math.round(t.kcal)} kcal, P ${Math.round(t.p)} · C ${Math.round(t.c)} · F ${Math.round(t.f)}</p>
-      <div class="scroll"><table><thead><tr><th>Ingredient</th><th class="num">1 serving</th><th class="num">${per} servings</th></tr></thead><tbody>${(m.items||[]).filter(([id])=>ING[id]).map(([id,a])=>`<tr><td>${esc(ING[id].name)}</td><td class="num">${fmtAmt(a,ING[id].unit)}</td><td class="num">${fmtAmt(a*per,ING[id].unit)}</td></tr>`).join("")}</tbody></table></div>
-      ${(m.prepSteps||[]).length?`<h4>On prep day</h4><ol class="steps">${m.prepSteps.map(s=>`<li>${esc(renderStep(s,m,per))}</li>`).join("")}</ol>`:""}
-      ${(m.daySteps||[]).length?`<h4>${m.prep==="fresh"?"Method":"On the day"}</h4><ol class="steps">${m.daySteps.map(s=>`<li>${esc(renderStep(s,m,per))}</li>`).join("")}</ol>`:""}
+      <div class="scroll"><table class="ingtick"><thead><tr><th>Ingredient</th><th class="num">1 serving</th><th class="num">${per} servings</th></tr></thead><tbody>${ingRowsInfo(m).map(({id,a,j,k})=>`<tr${ingTick(c,dk,id,j,k)}><td>${esc(ING[id].name)}${usesSpan}</td><td class="num">${fmtAmt(a,ING[id].unit)}</td><td class="num">${fmtAmt(a*per,ING[id].unit)}</td></tr>`).join("")}</tbody></table></div>
+      ${(m.prepSteps||[]).length?`<h4>On prep day</h4>${tickSteps(c,"prep",m.prepSteps,m,per)}`:""}
+      ${(m.daySteps||[]).length?`<h4>${m.prep==="fresh"?"Method":"On the day"}</h4>${tickSteps(c,"day",m.daySteps,m,per)}`:""}
       ${m.note?`<p class="note">${esc(m.note)}</p>`:""}</article>`}).join("")}</section>`}
-  return html||`<div class="empty">Choose meals on the Plan tab and their recipes appear here.</div>`}
+  return html?legendHTML()+html:`<div class="empty">Choose meals on the Plan tab and their recipes appear here.</div>`}
 
 const SAFETY_TABLE=[
  ["Chicken and other poultry (including ground)","Cut into thin, even pieces and cook through. Slice the thickest piece open: no pink, juices clear, flesh opaque and firm all the way through. Prefer small pieces or chicken simmered in sauce over a thick pan-seared breast.","74 °C in the thickest part."],

@@ -4,6 +4,7 @@
   --accent:#2f6b4f; --accent-ink:#ffffff; --tape:#f0c64a; --tape-ink:#3a2f05;
   --batch:#2f6b4f; --hybrid:#a87708; --fresh:#2d5f8b;
   --on:#2f7d4a; --near:#a87708; --off:#b4432f; --on-bg:#e3f1e7; --near-bg:#f8eed2; --off-bg:#f7e1dc;
+  --breakfast:#9e4c00; --breakfast-bg:#fcecd9; --lunch:#086b74; --lunch-bg:#d9f0f1; --dinner:#5a48b8; --dinner-bg:#e7e3f8; --snack:#ad346b; --snack-bg:#f8e0eb;
   --display:"Avenir Next","Segoe UI",system-ui,-apple-system,sans-serif;
   --body:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --mono:ui-monospace,"SF Mono",Consolas,monospace;
@@ -12,11 +13,13 @@
   --bg:#141a16; --surface:#1c2420; --ink:#e4ebe5; --muted:#9aaa9f; --line:#2f3a33;
   --accent:#6fbf93; --accent-ink:#0f1a13; --tape:#d9b13c; --tape-ink:#231c02;
   --batch:#6fbf93; --hybrid:#e0b44a; --fresh:#7fb0dd;
+  --breakfast:#f2a65a; --breakfast-bg:#3b2a16; --lunch:#5cc8d0; --lunch-bg:#133238; --dinner:#aa9df4; --dinner-bg:#28233f; --snack:#ef8fbc; --snack-bg:#3c1f2e;
   --on:#78c895; --near:#e0b44a; --off:#ec8a76; --on-bg:#1f3428; --near-bg:#3a3118; --off-bg:#3d241f; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#141a16; --surface:#1c2420; --ink:#e4ebe5; --muted:#9aaa9f; --line:#2f3a33;
   --accent:#6fbf93; --accent-ink:#0f1a13; --tape:#d9b13c; --tape-ink:#231c02;
   --batch:#6fbf93; --hybrid:#e0b44a; --fresh:#7fb0dd;
+  --breakfast:#f2a65a; --breakfast-bg:#3b2a16; --lunch:#5cc8d0; --lunch-bg:#133238; --dinner:#aa9df4; --dinner-bg:#28233f; --snack:#ef8fbc; --snack-bg:#3c1f2e;
   --on:#78c895; --near:#e0b44a; --off:#ec8a76; --on-bg:#1f3428; --near-bg:#3a3118; --off-bg:#3d241f; color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--body);margin:0}
@@ -168,3 +171,36 @@ ul.dealist li.deal:first-child{border-top:0}
 .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
 @media (max-width:700px){.chipbtn{padding:8px 11px}}
 .chip.wrap{white-space:normal;line-height:1.35;border-radius:10px}
+
+/* meal-type colours on the Cook views (day and night palettes are set with the other colours at the top) */
+[data-cat="breakfast"]{--cat:var(--breakfast);--cat-bg:var(--breakfast-bg)} [data-cat="lunch"]{--cat:var(--lunch);--cat-bg:var(--lunch-bg)}
+[data-cat="dinner"]{--cat:var(--dinner);--cat-bg:var(--dinner-bg)} [data-cat="snack"]{--cat:var(--snack);--cat-bg:var(--snack-bg)}
+.mtype{display:inline-block;font:700 .72rem/1 var(--mono);text-transform:uppercase;letter-spacing:.05em;padding:5px 8px;border-radius:999px;background:var(--cat-bg);color:var(--cat);white-space:nowrap}
+.legend{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;margin:-6px 0 14px}
+.legend .small{flex-basis:100%;margin-top:2px}
+.dish[data-cat]{border-left:4px solid var(--cat);padding-left:12px;margin-left:-2px}
+.dish[data-cat]:first-of-type{padding-top:2px}
+.dish[data-cat] h3{color:var(--ink)}
+.tickreset{margin-left:auto}
+/* tickable steps */
+ol.steps.tick{list-style:none;padding-left:0;counter-reset:st}
+ol.steps.tick li{counter-increment:st;margin-bottom:2px}
+ol.steps.tick label{display:flex;gap:10px;align-items:flex-start;cursor:pointer;padding:6px 8px;border-radius:8px;-webkit-tap-highlight-color:transparent}
+ol.steps.tick label:hover{background:var(--cat-bg,var(--line))}
+ol.steps.tick input{appearance:none;-webkit-appearance:none;flex:none;width:22px;height:22px;margin:0;border:2px solid var(--cat,var(--muted));border-radius:50%;display:grid;place-items:center;cursor:pointer;background:var(--surface)}
+ol.steps.tick input::before{content:counter(st);font:700 .7rem/1 var(--mono);color:var(--cat,var(--muted))}
+ol.steps.tick input:checked{background:var(--cat,var(--accent))}
+ol.steps.tick input:checked::before{content:"✓";color:var(--surface);font-size:.85rem}
+ol.steps.tick input:focus-visible{outline:2px solid var(--cat,var(--accent));outline-offset:2px}
+ol.steps.tick input:checked+span{text-decoration:line-through;text-decoration-color:var(--cat);color:var(--muted)}
+/* ingredients that follow the ticks */
+ul.ings li[data-ik],table tr[data-ik]{cursor:pointer;-webkit-tap-highlight-color:transparent}
+ul.ings li[data-ik]:focus-visible,tr[data-ik]:focus-visible{outline:2px solid var(--cat,var(--accent));outline-offset:1px}
+[data-ik].done>span,[data-ik].done>b,tr[data-ik].done td{text-decoration:line-through;text-decoration-color:var(--cat);color:var(--muted)}
+[data-ik].done .uses{text-decoration:none}
+[data-ik].partial b,tr[data-ik].partial td.num{color:var(--cat)}
+small.uses{display:block;font:500 .74rem/1.3 var(--body);color:var(--muted)}
+small.uses:empty{display:none}
+small.uses.two{color:var(--cat,var(--muted));font-weight:600}
+@media (max-width:700px){ol.steps.tick label{padding:8px 6px}ol.steps.tick input{width:26px;height:26px}}
+@media print{ol.steps.tick input{border-color:#000}.tickreset,.legend .small{display:none}}

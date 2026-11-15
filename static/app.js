@@ -222,7 +222,7 @@ function cookView(v){
   <details class="panel" style="margin-bottom:16px;padding:12px"><summary style="cursor:pointer"><b>Link for Annie</b> <span class="muted small">· opens this Cook page, no password</span></summary>
     <p class="small" style="margin:8px 0">Anyone with this link can see this week's cooking steps (not your shopping list, recipes library or settings). Send it to Annie once and she can keep it as a bookmark. <b>New link</b> switches the old one off.</p>
     <div class="row"><input id="cook-url" readonly value="${esc(url)}" style="flex:1 1 280px" onfocus="this.select()"><button class="btn primary" data-act="copyLink">Copy link</button><button class="btn danger" data-act="newLink">New link…</button></div></details>
-  <div id="cookbody">${ui.cookMode==="prep"?prepHTML():ui.cookMode==="day"?eachDayHTML():ui.cookMode==="week"?weekRecipesHTML():safetyHTML(true)}</div>`}
+  <div id="cookbody">${ui.cookMode==="prep"?prepHTML():ui.cookMode==="day"?eachDayHTML():ui.cookMode==="week"?weekRecipesHTML():safetyHTML(true)}</div>`;applyTicks(v)}
 
 /* ---------- SETTINGS ---------- */
 async function loadBackups(){try{ui.backups=(await (await fetch("/api/backups")).json()).files}catch(e){ui.backups=[]}render()}
