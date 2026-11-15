@@ -14,7 +14,7 @@ try:
 except ImportError:  # falls back to the htpasswd program
     bcrypt = None
 
-APP_VERSION = "0.4.1"
+APP_VERSION = "0.4.2"
 DATA_DIR = os.environ.get("MEALPREP_DATA_DIR", os.path.join(os.path.dirname(os.path.abspath(__file__)), "_data"))
 PORT = int(os.environ.get("MEALPREP_PORT", "5020"))
 HTPASSWD = os.environ.get("MEALPREP_HTPASSWD", "/etc/nginx/.mealprep-htpasswd")
@@ -386,6 +386,54 @@ def api_password():
     except Exception as e:
         return jsonify({"error": "Couldn't change the password on this server."}), 500
     return set_session(jsonify({"ok": True}), u)  # keep this device signed in; other devices must sign in again
+
+
+# ---- server status for Settings: what is running and why an update or the nginx switch did not happen ----
+APP_DIR = os.path.dirname(os.path.abspath(__file__))
+UPDATE_LOG = "/var/log/mealprep-update.log"
+NGINX_SITE = "/etc/nginx/sites-available/mealprep"
+
+
+def _read(path, limit=None):
+    try:
+        with open(path, "r", encoding="utf-8", errors="replace") as f:
+            return f.read() if limit is None else f.read()[-limit:]
+    except OSError as e:
+        return None
+
+
+def _disk_commit():
+    """Commit checked out in the app folder, read from .git directly (www-data can't run git in root's clone)."""
+    head = (_read(os.path.join(APP_DIR, ".git", "HEAD")) or "").strip()
+    if head.startswith("ref: "):
+        ref = head[5:]
+        c = (_read(os.path.join(APP_DIR, ".git", ref)) or "").strip()
+        if not c:
+            for line in (_read(os.path.join(APP_DIR, ".git", "packed-refs")) or "").splitlines():
+                if line.endswith(" " + ref):
+                    c = line.split(" ")[0]
+        return c[:7] or None
+    return head[:7] or None
+
+
+STARTED_COMMIT = _disk_commit()
+STARTED_AT = now()
+
+
+@app.get("/api/server-status")
+def server_status():
+    site = _read(NGINX_SITE)
+    log = _read(UPDATE_LOG, 6000)
+    return jsonify({
+        "version": APP_VERSION,
+        "runningCommit": STARTED_COMMIT,
+        "diskCommit": _disk_commit(),
+        "startedAt": STARTED_AT,
+        "nginxPopup": None if site is None else bool(re.search(r"^\s*auth_basic", site, re.M)),
+        "passwordFile": os.path.exists(HTPASSWD),
+        "signInOn": auth_on(),
+        "updateLog": None if log is None else log.strip().splitlines()[-25:],
+    })
 
 
 @app.get("/api/health")

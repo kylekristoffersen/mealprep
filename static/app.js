@@ -226,7 +226,18 @@ function cookView(v){
 
 /* ---------- SETTINGS ---------- */
 async function loadBackups(){try{ui.backups=(await (await fetch("/api/backups")).json()).files}catch(e){ui.backups=[]}render()}
-function settingsView(v){if(ui.backups===null||ui.backups===undefined){loadBackups();ui.backups=[]}
+async function loadStatus(){try{ui.status=await (await fetch("/api/server-status")).json()}catch(e){ui.status={error:String(e)}}render()}
+function statusHTML(){const s=ui.status;if(!s)return`<p class="muted small">Checking…</p>`;if(s.error)return`<p class="note">Couldn't read the status: ${esc(s.error)}</p>`;
+  const yn=(v,yes,no,unk)=>v==null?`<span class="chip near">${unk}</span>`:v?`<span class="chip off">${yes}</span>`:`<span class="chip on">${no}</span>`;
+  const behind=s.diskCommit&&s.runningCommit&&s.diskCommit!==s.runningCommit;
+  return`<table><tbody>
+  <tr><td>Running version</td><td><b>v${esc(s.version)}</b> <span class="muted small">(${esc(s.runningCommit||"?")}, started ${esc((s.startedAt||"").replace("T"," ").replace("Z"," UTC"))})</span></td></tr>
+  <tr><td>Code on the server</td><td>${esc(s.diskCommit||"?")} ${behind?`<span class="chip off">newer code is waiting for a restart</span>`:`<span class="chip on">running</span>`}</td></tr>
+  <tr><td>Browser password popup</td><td>${yn(s.nginxPopup,"still on","off (in-page sign-in)","can't read the nginx file")}</td></tr>
+  <tr><td>In-page sign-in</td><td>${s.signInOn?`<span class="chip on">on</span>`:`<span class="chip off">off: password file not found</span>`}</td></tr></tbody></table>
+  <h3 style="margin-top:12px">Last update messages</h3>${s.updateLog==null?`<p class="muted small">The update log can't be read.</p>`:s.updateLog.length?`<pre class="logbox">${esc(s.updateLog.join("\n"))}</pre>`:`<p class="muted small">Nothing logged yet.</p>`}
+  <div class="actions" style="margin-top:8px"><button class="btn" data-act="statusRefresh">Check again</button></div>`}
+function settingsView(v){if(ui.backups===null||ui.backups===undefined){loadBackups();ui.backups=[]}if(ui.status===undefined){ui.status=null;loadStatus()}
   const when=f=>{const m=f.match(/mealprep-(\d{4})(\d\d)(\d\d)-(\d\d)(\d\d)(\d\d)-(.*)\.json/);return m?`${m[3]}.${m[2]}.${m[1]} ${m[4]}:${m[5]} UTC · ${m[7].replace(/-/g," ")}`:f};
   v.innerHTML=`<div class="grid2">
   <section class="panel"><h2>Backup</h2><p class="muted small">The app saves a backup by itself every night and keeps the last 14. You can also keep your own copy.</p>
@@ -237,6 +248,7 @@ function settingsView(v){if(ui.backups===null||ui.backups===undefined){loadBacku
     <input type="file" id="imp-file" accept=".json,application/json"><div id="imp-msg" class="small" style="margin-top:8px"></div></section>
   <section class="panel"><h2>Password</h2><p class="muted small">Change the password for ${esc(ME&&ME!=="dev"?ME:"your login")}. Your browser will ask you to sign in again.</p>
     ${ui.pw?`<div class="row"><input id="pw1" type="password" autocomplete="new-password" placeholder="New password (8+ characters)" style="flex:1 1 220px"><button class="btn primary" data-act="pwSave">Save</button><button class="btn" data-act="pwCancel">Cancel</button></div>`:`<button class="btn" data-act="pwOpen">Change my password</button> <form method="post" action="/logout" style="display:inline"><button class="btn" type="submit">Sign out</button></form>`}</section>
+  <section class="panel"><h2>Server status</h2><p class="muted small">What the server is running, and why an update or the sign-in switch hasn't happened. Updates arrive within about a minute of a change.</p>${statusHTML()}</section>
   <section class="panel"><h2>About</h2><p class="small">Meal Prep Planner v${esc(APPV)}. Two logins (Kyle and Annie) share one plan. The Cook page can also be opened without a password through the link on the Cook tab.</p></section></div>`;
   const f=$("#imp-file");if(f)f.onchange=()=>importAll(f.files[0])}
 async function importAll(file){const msg=$("#imp-msg");if(!file)return;
@@ -306,6 +318,7 @@ document.addEventListener("click",e=>{const t=e.target.closest("button,[data-ope
   else if(d.cookmode){ui.cookMode=d.cookmode;render()}
   else if(d.act==="copyLink"){copyText(location.origin+ui.link,"Link copied")}
   else if(d.act==="newLink"){if(!confirm("Switch off the old link and make a new one? Annie will need the new link."))return;fetch("/api/cook-link/new",{method:"POST"}).then(r=>r.json()).then(j=>{ui.link=j.path;render();toast("New link made")})}
+  else if(d.act==="statusRefresh"){ui.status=null;render();loadStatus()}
   else if(d.act==="backupNow"){fetch("/api/backup-now",{method:"POST"}).then(()=>{ui.backups=null;render();toast("Backup saved on the server")})}
   else if(d.restore){$("#restore-confirm").innerHTML=`<div class="confirm" style="margin-top:8px"><span>Replace everything with this backup? (A backup of the current data is saved first.)</span><button class="btn danger" data-restoreyes="${esc(d.restore)}">Restore</button></div>`}
   else if(d.restoreyes){fetch("/api/restore/"+d.restoreyes,{method:"POST"}).then(async r=>{if(!r.ok){toast("Restore failed");return}ui.backups=null;await reloadAll();toast("Restored")})}

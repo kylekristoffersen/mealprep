@@ -204,3 +204,4 @@ small.uses:empty{display:none}
 small.uses.two{color:var(--cat,var(--muted));font-weight:600}
 @media (max-width:700px){ol.steps.tick label{padding:8px 6px}ol.steps.tick input{width:26px;height:26px}}
 @media print{ol.steps.tick input{border-color:#000}.tickreset,.legend .small{display:none}}
+.logbox{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px;font:.74rem/1.45 var(--mono);white-space:pre-wrap;word-break:break-word;max-height:260px;overflow:auto;margin:6px 0 0}
