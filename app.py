@@ -14,7 +14,7 @@ try:
 except ImportError:  # falls back to the htpasswd program
     bcrypt = None
 
-APP_VERSION = "0.6.6"
+APP_VERSION = "0.6.7"
 DATA_DIR = os.environ.get("MEALPREP_DATA_DIR", os.path.join(os.path.dirname(os.path.abspath(__file__)), "_data"))
 PORT = int(os.environ.get("MEALPREP_PORT", "5020"))
 HTPASSWD = os.environ.get("MEALPREP_HTPASSWD", "/etc/nginx/.mealprep-htpasswd")
@@ -569,6 +569,12 @@ def rohlik_check(ids):
     return out
 
 
+def kosik_link(url, pid):
+    """The pasted Košík link without tracking bits, keeping the name slug (kosik.cz/p<id> on its own is a 404)."""
+    m = re.search(r"kosik\.cz/(p%s(?:-[^/?#\s]*)?)" % re.escape(pid), url or "")
+    return "https://www.kosik.cz/" + (m.group(1) if m else "p" + pid)
+
+
 def kosik_one(pid):
     try:
         p = _get_json("https://www.kosik.cz/api/front/product/" + pid).get("product") or {}
@@ -578,6 +584,8 @@ def kosik_one(pid):
         return {"gone": True}
     r = {"price": p.get("price"), "perUnit": (p.get("pricePerUnit") or {}).get("price"), "unitBase": p.get("price"), "name": p.get("name"),
          "inStock": True if (p.get("maxInCart") or 0) > 0 else None}  # Košík hides stock for some fresh items without a delivery address
+    if str(p.get("url") or "").startswith("/p"):
+        r["url"] = "https://www.kosik.cz" + p["url"]  # the full link with the name slug; kosik.cz/p<id> alone is a 404
     reg = p.get("recommendedPrice")
     if p.get("isSale") or (reg and p.get("price") and p["price"] < reg - 0.01):
         r["sale"] = {"price": p["price"], "text": f"−{p.get('percentageDiscount')} %" if p.get("percentageDiscount") else "sale", "minQty": None}
@@ -686,7 +694,7 @@ def api_product_lookup():
             r = kosik_one(pid)
             if r.get("gone"):
                 return jsonify({"error": "Košík doesn't know that product (any more)."}), 404
-            return jsonify({"shop": shop, "id": pid, "url": f"https://www.kosik.cz/p{pid}", "name": r.get("name"),
+            return jsonify({"shop": shop, "id": pid, "url": r.get("url") or kosik_link(url, pid), "name": r.get("name"),
                             "packG": r.get("pack"), "perKg": False, "price": r.get("price")})
     except Exception as e:
         return jsonify({"error": "Couldn't reach the shop: " + str(e)[:120]}), 502
