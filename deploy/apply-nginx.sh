@@ -1,4 +1,5 @@
 #!/bin/sh
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"  # cron starts with a short PATH that has no nginx
 # Switches the live nginx site from the browser password popup to the app's own sign-in page.
 # Safe by design: edits the live file in place (keeps the HTTPS settings certbot added), only does it
 # once the app itself refuses unsigned requests, and puts the old file back if nginx rejects the change.

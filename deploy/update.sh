@@ -1,4 +1,5 @@
 #!/bin/sh
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"  # cron starts with a short PATH that has no nginx
 # Runs every minute from /etc/cron.d/mealprep: pull the repo, restart the app only if something changed.
 exec 9>/var/lock/mealprep-update.lock
 flock -n 9 || exit 0
