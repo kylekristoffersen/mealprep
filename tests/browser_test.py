@@ -49,8 +49,10 @@ with sync_playwright() as p:
     lines=d.locator("[data-ik]");tot=lines.count()
     d.locator("ol.tick label").first.click();p2.wait_for_timeout(100)
     done1=d.locator("[data-ik].done").count();check("ticking step 1 crosses off some, not all, ingredients",0<done1<tot or n==1,(done1,tot,n))
+    check("an ingredient mentioned again is not left part-used",d.locator("[data-ik].partial").count()==0)
     for i in range(1,n):d.locator("ol.tick label").nth(i).click()
-    p2.wait_for_timeout(100);check("all steps ticked crosses off everything",d.locator("[data-ik].done").count()==tot,(d.locator("[data-ik].done").count(),tot))
+    linked=d.locator("[data-ik]:not([data-uses=''])").count();hyb=d.locator(".prep.hybrid").count()>0
+    p2.wait_for_timeout(100);check("all steps ticked crosses off everything they use",d.locator("[data-ik].done").count()==(linked if hyb else tot),(d.locator("[data-ik].done").count(),linked,tot,hyb))
     p2.reload();p2.wait_for_selector(".dish");d=p2.locator(".dish[data-dk]").first
     check("ticks survive a reload",d.locator("[data-ck]:checked").count()==n)
     d.locator("ol.tick label").first.click();p2.wait_for_timeout(100);check("unticking a step brings its ingredients back",d.locator("[data-ik].done").count()<tot)
@@ -123,6 +125,8 @@ with sync_playwright() as p:
     pg.click("[data-tabgo=recipes]");pg.click("[data-act=openImport]")
     good=json.dumps({"meals":[{"name":"Test omelette","cat":"breakfast","prep":"fresh","items":[{"ing":"vejce","g":3},{"name":"Cibule","g":30,"kcal":40,"p":1.1,"c":9,"f":0.1,"fib":1.7}],"daySteps":["Whisk {=vejce} and fry."]},
        {"name":"Bad one","cat":"lunch","items":[{"name":"Unobtainium","g":50}]}]})
+    bad2=json.dumps({"meals":[{"name":"Split test","cat":"lunch","prep":"batch","items":[{"ing":"olej","g":10}],"prepSteps":["Fry in {=olej:80%|tbsp}.","Add {=olej:30%}."]}]})
+    pg.fill("#imp-text",bad2);pg.wait_for_timeout(900);check("import refuses portions over 100 %","more than 100" in pg.inner_text("#imp-preview"),pg.inner_text("#imp-preview")[:300])
     pg.fill("#imp-text",good);pg.wait_for_timeout(900)
     pv=pg.inner_text("#imp-preview");check("import preview flags unknown ingredient",("Unknown ingredient" in pv) and ("Test omelette" in pv),pv[:300])
     check("import preview flags new ingredient est","New ingredients" in pv)

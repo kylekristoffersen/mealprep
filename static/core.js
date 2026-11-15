@@ -50,14 +50,32 @@ function fmtQty(v,u){if(/^(tsp|tbsp|lžič|lžíc|cup)/i.test(u)||!u){const opts
     const best=opts.reduce((a,b)=>Math.abs(b[0]-f)<Math.abs(a[0]-f)?b:a);if(best[0]===1)w++;const txt=`${w||(best[1]?"":"0")}${best[0]===1?"":best[1]}`;return txt==="0"?`a pinch${u?" of":""}`:`${txt}${u?" "+u:""}`}
   const step=v<20?1:v<100?5:v<500?10:50;return`${Math.round(v/step)*step} ${u}`}
 /* {@ingredient-id}  prints nothing; only tells the Cook page that this step uses that ingredient (for crossing it off).
+   {=id:40%} {=id:1/3} {=id:rest}  a portion of the ingredient: that share of the total, or the total minus every other portion
+     in the meal's steps. A portion token also tells the Cook page the ingredient is split, so it stays part-used until the rest goes in.
+   {=id|tbsp} {=id|tsp} {=id|ml}  show the amount in spoons or millilitres too (also with a portion: {=id:rest|tbsp}).
    An ingredient listed twice in a meal: {=id} shows the total, unless the steps have exactly one {=id} per row, in which case
    the first token shows the first row's amount, the second the second's, and so on (occ carries the count across steps). */
-const tokenCount=(m,id)=>[...(m.prepSteps||[]),...(m.daySteps||[])].reduce((c,st)=>c+(String(st).split(`{=${id}}`).length-1),0);
-function occFor(m,phase){const o={};if(phase==="day")for(const st of m.prepSteps||[])for(const t of String(st).matchAll(/\{=([a-z0-9-]+)\}/g))o[t[1]]=(o[t[1]]||0)+1;return o}
+const TOK=/\{=([a-z0-9-]+)(?::([^}|]+))?(?:\|(tbsp|tsp|ml))?\}/g;
+const allSteps=m=>[...(m.prepSteps||[]),...(m.daySteps||[])];
+const tokensOf=st=>[...String(st).matchAll(TOK)].map(t=>({id:t[1],part:(t[2]||"").trim(),unit:t[3]||""}));
+const tokenCount=(m,id)=>allSteps(m).reduce((c,st)=>c+tokensOf(st).filter(t=>t.id===id&&!t.part).length,0);
+function occFor(m,phase){const o={};if(phase==="day")for(const st of m.prepSteps||[])for(const t of tokensOf(st))if(!t.part)o[t.id]=(o[t.id]||0)+1;return o}
+function partShare(p){p=String(p).trim().replace(",",".");let m;if((m=p.match(/^(\d+(?:\.\d+)?)\s*%$/)))return+m[1]/100;if((m=p.match(/^(\d+)\s*\/\s*(\d+)$/)))return+m[1]/+m[2];
+  if(/^(half|½)$/i.test(p))return .5;const v=parseFloat(p);return v>0&&v<=1?v:null}
+function portionShare(m,id,part){if(part!=="rest")return partShare(part);let used=0;for(const st of allSteps(m))for(const t of tokensOf(st))if(t.id===id&&t.part&&t.part!=="rest")used+=partShare(t.part)||0;return Math.max(0,1-used)}
+/* grams in one tablespoon; a meal ingredient can set its own with "tbsp" in the ingredients library */
+const TBSP_G=[[/olej/,13.5],[/arasid|burak|kesu|mandl.*masl/,16],[/maslo/,14],[/\bmed\b/,21],[/soj.*omack|omack.*soj/,16],[/ocet|octa/,15],[/kecup/,17],[/horcic/,15],[/mouk/,8],[/cukr/,12.5],[/\bsul\b/,18],
+  [/protlak|pyre/,16],[/jogurt|skyr|smetan|kefir|mlek|napoj|vyvar/,15],[/tvaroh/,16],[/vlakn|slupk|kakao/,7],[/vlock/,5],[/sirup/,20]];
+function tbspG(id){const x=ING[id];if(!x)return 15;if(x.tbsp>0)return+x.tbsp;const n=fold(x.name)+" "+id;for(const[re,g] of TBSP_G)if(re.test(n))return g;return x.spice?7:15}
+function fmtUnitAmt(g,id,unit){const x=ING[id];const base=fmtAmt(g,x.unit);if(!unit||x.unit==="ks")return base;const d=tbspG(id);
+  if(unit==="ml"){const ml=g/(d/15);return`${Math.round(ml/(ml<50?5:10))*(ml<50?5:10)||Math.round(ml)} ml (${base})`}
+  const v=unit==="tsp"?g/(d/3):g/d;return`${fmtQty(v,unit)} (${base})`}
 function renderStep(txt,m,n,occ){const k=n/(m.stepBatch||4)*(m.stepScale||1);
-  return String(txt).replace(/\{=([a-z0-9-]+)\}/g,(all,id)=>{const rows=(m.items||[]).filter(x=>x[0]===id);if(!rows.length||!ING[id])return all;
-      let a=rows.reduce((t,x)=>t+x[1],0);if(rows.length>1&&occ){const j=occ[id]||0;occ[id]=j+1;if(tokenCount(m,id)===rows.length&&rows[j])a=rows[j][1]}
-      return fmtAmt(a*n,ING[id].unit)})
+  return String(txt).replace(TOK,(all,id,part,unit)=>{const rows=(m.items||[]).filter(x=>x[0]===id);if(!rows.length||!ING[id])return all;
+      let a=rows.reduce((t,x)=>t+x[1],0);
+      if(part){const sh=portionShare(m,id,part.trim());if(sh==null)return all;a*=sh}
+      else if(rows.length>1&&occ){const j=occ[id]||0;occ[id]=j+1;if(tokenCount(m,id)===rows.length&&rows[j])a=rows[j][1]}
+      return fmtUnitAmt(a*n,id,unit)})
     .replace(/\{q:([^}]+)\}/g,(all,q)=>{const p=parseQty(q);return p?fmtQty(p.v*k,p.u):q})
     .replace(/\s*\{@[a-z0-9-]+\}/g,"").replace(/ {2,}/g," ")}
 
@@ -237,10 +255,14 @@ const reEsc=s=>s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
 function stepLinks(m,steps){const ids=[...new Set((m.items||[]).map(x=>x[0]))].filter(id=>ING[id]);
   const byWord=new Map();for(const id of ids)for(const w of ingWords(id)){const f=fold(w);if(!byWord.has(f))byWord.set(f,new Set());byWord.get(f).add(id)}
   const words=[...byWord.keys()].sort((a,b)=>b.length-a.length); // longest first, so "black pepper" is taken before "pepper"
-  return steps.map(st=>{const found=new Set();
-    let t=String(st).replace(/\{([=@])([a-z0-9-]+)\}/g,(a,k,id)=>{if(ids.includes(id))found.add(id);return" "}).replace(/\{q:[^}]*\}/g," ");t=" "+fold(t)+" ";
-    for(const w of words){const re=new RegExp("([^a-z0-9])"+reEsc(w)+"(?=[^a-z0-9])","g");if(re.test(t)){byWord.get(w).forEach(id=>found.add(id));t=t.replace(re,(a,p)=>p+"#".repeat(w.length))}}
-    return found})}
+  return steps.map(st=>{const found=new Set(),part=new Set();
+    let t=String(st).replace(/\{([=@])([a-z0-9-]+)(:[^}|]+)?(\|[a-z]+)?\}/g,(a,k,id,pt)=>{if(ids.includes(id)){found.add(id);if(pt)part.add(id)}return" "}).replace(/\{q:[^}]*\}/g," ");t=" "+fold(t)+" ";
+    for(const w of words){const re=new RegExp("([^a-z0-9])"+reEsc(w)+"(?=[^a-z0-9])","g");
+      if(re.test(t)){re.lastIndex=0;for(const mm of t.matchAll(re)){const before=t.slice(Math.max(0,mm.index-40),mm.index+1);if(SPLIT_RE.test(before))byWord.get(w).forEach(id=>part.add(id))}
+        byWord.get(w).forEach(id=>found.add(id));t=t.replace(re,(a,p)=>p+"#".repeat(w.length))}}
+    found.part=part;return found})}
+/* words just before an ingredient that mean only part of it goes in here, so it isn't finished until the rest is used */
+const SPLIT_RE=/\b(half|halves|most|some|part|rest|remaining|remainder|another|other|reserve|reserved|leftover|third|quarter|a little|a bit|little more|more of|extra)\b[^.;]*$/;
 const hashStr=s=>{let h=5381;for(const c of String(s))h=(h*33+c.charCodeAt(0))|0;return(h>>>0).toString(36)};
 
 const TICK_KEY="mealprep-ticks";let TICKS=new Map();
@@ -249,14 +271,20 @@ function tickSave(){try{localStorage.setItem(TICK_KEY,JSON.stringify(Object.from
 tickLoad();
 const phaseScope=ph=>ph==="prep"?"w"+weekKey():"d"+todayISO();
 /* phases: [[phase, steps]] shown on this card; info: phases not shown, used only to say "used on the day" */
-function tickCtx(b,s,mid,m,phases,info){const c={keys:{},label:{},uses:{},all:[],later:new Set()};const both=phases.filter(p=>p[1].length).length>1;
+/* An ingredient is used at the first step that names it; later mentions are the same food being handled again.
+   Only when a step takes a portion ({=id:…} or words like "half", "the rest", "remaining" before it) is the ingredient split:
+   then it stays part-used until every portion step is ticked. Phases not shown on this card (info) only add "rest on the day". */
+function tickCtx(b,s,mid,m,phases,info){const c={keys:{},label:{},uses:{},all:[],later:new Set(),laterPart:new Set()};const both=phases.filter(p=>p[1].length).length>1;
+  const first={},parts={};
   for(const[ph,steps] of phases){const links=stepLinks(m,steps);steps.forEach((st,i)=>{const k=`${phaseScope(ph)}|${b}|${s}|${mid}|${ph}|${i}|${hashStr(st)}`;
-    c.keys[ph+i]=k;c.label[k]=(both?(ph==="prep"?"prep ":"day "):"step ")+(i+1);c.all.push(k);for(const id of links[i])(c.uses[id]=c.uses[id]||[]).push(k)})}
-  for(const[,steps] of info||[])for(const set of stepLinks(m,steps))for(const id of set)if(!c.uses[id])c.later.add(id);
+    c.keys[ph+i]=k;c.label[k]=(both?(ph==="prep"?"prep ":"day "):"step ")+(i+1);c.all.push(k);
+    for(const id of links[i]){if(!first[id])first[id]=k;if(links[i].part.has(id))(parts[id]=parts[id]||[]).push(k)}})}
+  for(const id in first){const u=[first[id],...(parts[id]||[]).filter(k=>k!==first[id])];c.uses[id]=c.all.filter(k=>u.includes(k))}
+  for(const[,steps] of info||[])for(const set of stepLinks(m,steps))for(const id of set){if(!c.uses[id])c.later.add(id);else if(set.part.has(id))c.laterPart.add(id)}
   return c}
 /* attributes for one ingredient row; a meal can list the same ingredient twice (row j of k): split its steps between the rows in order */
 function ingTick(c,dk,id,j,k){let u=c.uses[id]||[];if(k>1&&u.length>=k)u=j<k-1?[u[j]]:u.slice(k-1);
-  return` data-ik="${esc(dk)}|i|${esc(id)}|${j}" data-uses="${esc(u.join(" "))}" data-lbl="${esc(u.map(x=>c.label[x]).join("|"))}"${!u.length&&c.later.has(id)?" data-later=\"1\"":""} tabindex="0" title="Tap to cross off or bring back"`}
+  return` data-ik="${esc(dk)}|i|${esc(id)}|${j}" data-uses="${esc(u.join(" "))}" data-lbl="${esc(u.map(x=>c.label[x]).join("|"))}"${!u.length&&c.later.has(id)?" data-later=\"1\"":""}${u.length&&c.laterPart.has(id)?" data-laterpart=\"1\"":""} tabindex="0" title="Tap to cross off or bring back"`}
 function ingRowsInfo(m){const cnt={},seen={};for(const[id] of m.items||[])cnt[id]=(cnt[id]||0)+1;return(m.items||[]).filter(([id])=>ING[id]).map(([id,a])=>{const j=seen[id]=(seen[id]??-1)+1;return{id,a,j,k:cnt[id]}})}
 const usesSpan=`<small class="uses" data-ul></small>`;
 function tickSteps(c,ph,steps,m,n){const occ=occFor(m,ph);return`<ol class="steps tick">${steps.map((st,i)=>{const k=c.keys[ph+i];
@@ -265,10 +293,10 @@ const resetBtn=`<button class="linkbtn tickreset" data-tickreset hidden>Clear ti
 function applyTicks(root){(root||document).querySelectorAll(".dish[data-dk]").forEach(d=>{
   const on=new Set([...d.querySelectorAll("[data-ck]")].filter(x=>x.checked).map(x=>x.dataset.ck));const fb=(d.dataset.fallback||"").split(" ").filter(Boolean);let any=on.size>0;
   d.querySelectorAll("[data-ik]").forEach(el=>{const own=(el.dataset.uses||"").split(" ").filter(Boolean);const uses=own.length?own:el.dataset.later?[]:fb;
-    const auto=uses.length>0&&uses.every(k=>on.has(k)),some=uses.some(k=>on.has(k));const ov=TICKS.get(el.dataset.ik);if(ov)any=true;const done=ov?ov.v==="1":auto;
-    el.classList.toggle("done",done);el.classList.toggle("partial",!done&&some&&own.length>1);el.setAttribute("aria-pressed",done);
+    const lp=!!el.dataset.laterpart,all=uses.length>0&&uses.every(k=>on.has(k)),auto=all&&!lp,some=uses.some(k=>on.has(k));const ov=TICKS.get(el.dataset.ik);if(ov)any=true;const done=ov?ov.v==="1":auto;
+    el.classList.toggle("done",done);el.classList.toggle("partial",!done&&some&&(own.length>1||lp));el.setAttribute("aria-pressed",done);
     const ul=el.querySelector("[data-ul]");if(ul){const lb=(el.dataset.lbl||"").split("|");
-      ul.textContent=own.length>1?(some&&!done?"Part used: ":"Used in ")+own.map((k,i)=>lb[i]+(on.has(k)?" ✓":"")).join(", "):el.dataset.later?"used on the day":"";ul.classList.toggle("two",own.length>1)}});
+      ul.textContent=own.length>1?(some&&!done?"Part used: ":"Split over ")+own.map((k,i)=>lb[i]+(on.has(k)?" ✓":"")).join(", "):lp?(all&&!done?"Part used, the rest goes in on the day":"Part now, the rest on the day"):el.dataset.later?"used on the day":"";ul.classList.toggle("two",own.length>1||lp)}});
   const r=d.querySelector("[data-tickreset]");if(r)r.hidden=!any})}
 function tickStep(cb){const d=cb.closest(".dish");const k=cb.dataset.ck;if(cb.checked)TICKS.set(k,{t:Date.now()});else TICKS.delete(k);
   if(d){const fb=(d.dataset.fallback||"").split(" ");d.querySelectorAll("[data-ik]").forEach(el=>{const u=(el.dataset.uses||"").split(" ").filter(Boolean);if((u.length?u:fb).includes(k))TICKS.delete(el.dataset.ik)})}

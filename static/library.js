@@ -18,9 +18,12 @@ function recipesView(v){
   <div class="filters">${[["all","All"],...CATS].map(([k,l])=>`<button data-cat="${k}" aria-pressed="${ui.cat===k}">${l}</button>`).join("")}</div>
   <div class="cards">${list.map(([id,m])=>`<button class="card" data-open="${esc(id)}"><div class="row" style="justify-content:space-between"><h3>${esc(m.name)}</h3><span class="prep ${m.prep}">${m.prep}</span></div><div class="row">${chipFor(m)}</div></button>`).join("")||`<p class="muted">No meals match.</p>`}</div>`;
   const q=$("#rq");if(q)q.oninput=()=>{ui.q=q.value;const pos=q.selectionStart;recipesView($("#view"));const n=$("#rq");n.focus();n.setSelectionRange(pos,pos)}}
-/* shows which ingredients the Cook page will cross off for each step, so a wrong match can be fixed with {@ingredient-id} */
-function linkNote(m,steps,i){const l=(linkNote.c?.m===m&&linkNote.c.steps===steps?linkNote.c:(linkNote.c={m,steps,links:stepLinks(m,steps)})).links[i];
-  return`<br><small class="uses">${l.size?"crosses off: "+[...l].map(id=>esc(ING[id].name)).join(", "):"crosses off: nothing named (done when the last step is ticked)"}</small>`}
+/* shows what the Cook page does with each step, so a wrong match can be fixed with {@ingredient-id} or a portion token */
+function crossNotes(m){const out={},first={};for(const ph of ["prepSteps","daySteps"]){const st=m[ph]||[];stepLinks(m,st).forEach((l,i)=>{const r=out[ph+i]={cross:[],part:[],again:[]};
+  for(const id of l){if(l.part.has(id))r.part.push(id);else if(!first[id]){first[id]=1;r.cross.push(id)}else r.again.push(id);first[id]=1}})}return out}
+function linkNote(m,ph,i){const c=linkNote.c?.m===m?linkNote.c:(linkNote.c={m,notes:crossNotes(m)});const r=c.notes[ph+i];if(!r)return"";const nm=a=>a.map(id=>esc(ING[id].name)).join(", ");
+  const bits=[r.cross.length&&"crosses off: "+nm(r.cross),r.part.length&&"portion of: "+nm(r.part),r.again.length&&"mentions again: "+nm(r.again)].filter(Boolean);
+  return`<br><small class="uses">${bits.join(" · ")||"names no ingredient"}</small>`}
 function detailHTML(id){const m=MEALS[id];const n=ui.servings;const t=macros(m);const tg=mealTarget(m.cat);
   const rows=(m.items||[]).map(([iid,a])=>{const x=ING[iid];return x?`<tr><td>${esc(x.name)}${x.est?` <span class="est" title="Estimated nutrition value">est</span>`:""}</td><td class="num">${fmtAmt(a,x.unit)}</td><td class="num">${fmtAmt(a*n,x.unit)}</td></tr>`:""}).join("");
   const tr=k=>tg?`<td class="num"><span class="chip ${rangeStatus(t[k],tg[k][0],tg[k][1])}">${Math.round(t[k])}</span></td><td class="num muted">${tg[k][0]}–${tg[k][1]}</td>`:`<td class="num">${Math.round(t[k])}</td><td></td>`;
@@ -30,8 +33,8 @@ function detailHTML(id){const m=MEALS[id];const n=ui.servings;const t=macros(m);
   <div class="grid2" style="margin-top:14px"><div class="scroll"><table><thead><tr><th>Ingredient</th><th class="num">1 serving</th><th class="num"><span class="step" style="justify-content:flex-end"><button data-sv="-1" aria-label="Fewer">−</button><span style="padding-inline:6px">${n} servings</span><button data-sv="1" aria-label="More">+</button></span></th></tr></thead><tbody>${rows}</tbody></table></div>
   <div class="scroll"><table><thead><tr><th>Per serving</th><th class="num">Actual</th><th class="num">Target</th></tr></thead><tbody>
   <tr><td>Energy (kcal)</td>${tr("kcal")}</tr><tr><td>Protein (g)</td>${tr("p")}</tr><tr><td>Carbs (g)</td>${tr("c")}</tr><tr><td>Fat (g)</td>${tr("f")}</tr><tr><td>Fibre (g)</td><td class="num">${Math.round(t.fib)}</td><td></td></tr></tbody></table></div></div>
-  ${(m.prepSteps||[]).length?`<h3 style="margin-top:18px">On prep day</h3><ol class="steps">${m.prepSteps.map((s,i,a)=>`<li>${esc(renderStep(s,m,n))}${linkNote(m,a,i)}</li>`).join("")}</ol>`:""}
-  ${(m.daySteps||[]).length?`<h3 style="margin-top:14px">${m.prep==="fresh"?"Method":"On the day"}</h3><ol class="steps">${m.daySteps.map((s,i,a)=>`<li>${esc(renderStep(s,m,n))}${linkNote(m,a,i)}</li>`).join("")}</ol>`:""}</section>`}
+  ${(m.prepSteps||[]).length?`<h3 style="margin-top:18px">On prep day</h3><ol class="steps">${m.prepSteps.map((s,i)=>`<li>${esc(renderStep(s,m,n))}${linkNote(m,"prepSteps",i)}</li>`).join("")}</ol>`:""}
+  ${(m.daySteps||[]).length?`<h3 style="margin-top:14px">${m.prep==="fresh"?"Method":"On the day"}</h3><ol class="steps">${m.daySteps.map((s,i)=>`<li>${esc(renderStep(s,m,n))}${linkNote(m,"daySteps",i)}</li>`).join("")}</ol>`:""}</section>`}
 const ingOptions=sel=>Object.entries(ING).sort((a,b)=>a[1].name.localeCompare(b[1].name,"cs")).map(([id,x])=>`<option value="${esc(id)}" ${id===sel?"selected":""}>${esc(x.name)}</option>`).join("");
 function editorHTML(){const{m,id}=ui.edit;
   return`<div class="row" style="margin-bottom:12px"><button class="btn" data-back="1">← Cancel</button></div>
@@ -45,7 +48,7 @@ function editorHTML(){const{m,id}=ui.edit;
   <p style="margin-top:10px">${chipFor({...m})}</p>
   <div class="form-grid" style="margin-top:12px"><label>Prep-day steps (one per line)<textarea id="e-ps">${esc((m.prepSteps||[]).join("\n"))}</textarea></label>
   <label>On-the-day steps (one per line)<textarea id="e-ds">${esc((m.daySteps||[]).join("\n"))}</textarea></label></div>
-  <p class="muted small" style="margin:6px 0 0">In steps, <code>{=ingredient-id}</code> shows that ingredient's total for the servings being cooked, and <code>{q:1 tsp}</code> is an amount written for ${m.stepBatch||4} servings that scales with them. <code>{@ingredient-id}</code> prints nothing but tells the Cook page the step uses that ingredient (use it when the step words don't name it clearly).</p>
+  <p class="muted small" style="margin:6px 0 0">In steps, <code>{=ingredient-id}</code> shows that ingredient's total for the servings being cooked, and <code>{q:1 tsp}</code> is an amount written for ${m.stepBatch||4} servings that scales with them. <code>{=ingredient-id:60%}</code> / <code>{=ingredient-id:rest}</code> show a portion and the remainder, and <code>|tbsp</code>, <code>|tsp</code> or <code>|ml</code> at the end adds spoons or millilitres (<code>{=olej:rest|tbsp}</code>). <code>{@ingredient-id}</code> prints nothing but tells the Cook page the step uses that ingredient (use it when the step words don't name it clearly).</p>
   <label style="display:grid;gap:4px;margin-top:10px;font-size:.82rem;color:var(--muted)">Note<input id="e-note" value="${esc(m.note||"")}"></label>
   <div class="actions"><button class="btn primary" id="e-save">Save meal</button>${id?`<button class="btn danger" id="e-del">Delete meal</button>`:""}</div><div id="e-confirm"></div></section>`}
 function readEditor(){const m=ui.edit.m;m.name=$("#e-name").value.trim();m.cat=$("#e-cat").value;m.prep=$("#e-prep").value;m.keeps=$("#e-keeps").value.trim();m.note=$("#e-note").value.trim();
@@ -91,7 +94,9 @@ function parseImport(text){const out={meals:[],newIngs:{},errors:[]};let j;
     const meal={name,cat,prep,keeps:String(raw.keeps||"").trim(),note:String(raw.note||"").trim(),items,prepSteps:steps("prepSteps"),daySteps:steps("daySteps")};
     if(raw.stepBatch>0)meal.stepBatch=+raw.stepBatch;if(raw.stepScale>0)meal.stepScale=+raw.stepScale;if(raw.chicken==="fresh")meal.chicken="fresh";
     // step placeholders must point at ingredients that are in the meal
-    for(const s of [...meal.prepSteps,...meal.daySteps])for(const mm of s.matchAll(/\{[=@]([a-z0-9-]+)\}/g))if(!items.some(x=>x[0]===mm[1]))r.errors.push(`Step uses ${mm[0]} but that ingredient isn't in the meal`);
+    for(const s of [...meal.prepSteps,...meal.daySteps])for(const mm of s.matchAll(/\{[=@]([a-z0-9-]+)[^}]*\}/g))if(!items.some(x=>x[0]===mm[1]))r.errors.push(`Step uses ${mm[0]} but that ingredient isn't in the meal`);
+    {const sum={};for(const st of [...meal.prepSteps,...meal.daySteps])for(const t of tokensOf(st))if(t.part&&t.part!=="rest"){const v=partShare(t.part);if(v==null)r.errors.push(`Can't read the portion in {=${t.id}:${t.part}}`);else sum[t.id]=(sum[t.id]||0)+v}
+     for(const id in sum)if(sum[id]>1.001)r.errors.push(`The portions of ${id} add up to more than 100 %`)}
     let id=slug(name);if(used.has(id))id+="-"+(i+1);used.add(id);
     r.id=id;r.meal=meal;r.replaces=!!MEALS[id];out.meals.push(r)});
   return out}
