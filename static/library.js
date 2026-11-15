@@ -134,7 +134,7 @@ async function mergeIngredients(src,tgt,factor){
   if(!ING[src]||!ING[tgt]||src===tgt)throw new Error("Pick two different ingredients.");
   for(const[mid,m] of Object.entries(MEALS))if((m.items||[]).some(([id])=>id===src)){const nm={...m,items:mergedItems(m.items,src,tgt,factor)};if(!await saveMeal(mid,nm))throw new Error("a meal couldn't be saved")}
   EDITS=remapObj(EDITS,src,tgt);SWAPS=remapObj(SWAPS,src,tgt);DISMISSED=remapObj(DISMISSED,src,tgt);USEUP=USEUP.map(u=>u.id===src?{...u,id:tgt}:u);
-  if(SHOPSET){const S={...SHOPSET};for(const k of["lidlPick","kauflandPick"])if(S[k]&&src in S[k]){S[k]={...S[k]};if(!(tgt in S[k]))S[k][tgt]=S[k][src];delete S[k][src]}SHOPSET=S;await putDoc("settings/shopping",S)}
+  if(SHOPSET){const S={...SHOPSET};for(const k of PICKUPS.map(([p])=>p+"Pick"))if(S[k]&&src in S[k]){S[k]={...S[k]};if(!(tgt in S[k]))S[k][tgt]=S[k][src];delete S[k][src]}SHOPSET=S;await putDoc("settings/shopping",S)}
   await movePinnedProducts(src,tgt);
   delete ING[src];await putDoc("lib/ingredients",{items:ING});flushPlan()}
 /* pinned shop products (and their last prices) follow the merge; a product already pinned for the kept ingredient isn't duplicated */

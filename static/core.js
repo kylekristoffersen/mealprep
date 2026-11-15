@@ -205,7 +205,9 @@ function randBlocks(bl){for(const b of bl)for(const[s] of SLOTS)if(!PLAN[b][s].l
 function chickenSplit(){let fz=0,fr=0;for(const[b] of BLOCKS)for(const[s] of SLOTS){const m=PM(PLAN[b][s].meal),sl=PLAN[b][s];if(!m)continue;const a=(m.items||[]).find(x=>x[0]==="kureci-prsa");if(!a)continue;const g=a[1]*sl.n;if(isFresh(m)||sl.fresh)fr+=g;else fz+=g}return{fz,fr}}
 
 /* ---------- shopping ---------- */
-const isLidlPick=id=>!!SHOPSET?.lidlPick?.[id], isKauflandPick=id=>!!SHOPSET?.kauflandPick?.[id];
+// Shops you pick up from in person: [key, button label, store name used on deals]. Choice saved as SHOPSET[key+"Pick"][id].
+const PICKUPS=[["lidl","Lidl","Lidl"],["kaufland","Kaufland","Kaufland"],["billa","BILLA","Billa"],["albert","Albert","Albert"]];
+const pickStore=id=>(PICKUPS.find(([k])=>SHOPSET?.[k+"Pick"]?.[id])||[""])[0];
 function shoppingData(){const reg={},b2={},spice={};
   for(const[b] of BLOCKS)for(const[s] of SLOTS){const sel=PLAN[b][s];const m=PM(sel.meal);if(!m||!sel.n)continue;
     for(const[id,a] of m.items||[]){const x=ING[id];if(!x)continue;const tgt=x.spice?spice:(b==="block2"&&x.bakery)?b2:reg;tgt[id]=(tgt[id]||0)+a*sel.n}}
@@ -217,18 +219,17 @@ function shoppingData(){const reg={},b2={},spice={};
   const byName=(x,y)=>x.name.localeCompare(y.name,"cs");
   const toList=(o,pre,src)=>Object.entries(o).map(([id,a])=>({id,key:pre+id,name:ING[id].name,amt:a,orig:src[id],home:editFor(pre,id,orig.reg)?src[id]-a:0,edited:!!EDITS[pre+id],unit:ING[id].unit,b2:pre==="b:"})).sort(byName);
   const all=[...toList(reg,"r:",orig.reg),...toList(b2,"b:",orig.b2)];
-  const kaufland=all.filter(x=>isKauflandPick(x.id)&&!dealPickStore(x.id)).sort(byName);
-  const lidl=all.filter(x=>isLidlPick(x.id)&&!isKauflandPick(x.id)&&!dealPickStore(x.id)).sort(byName);
-  const away=id=>isLidlPick(id)||isKauflandPick(id)||!!dealPickStore(id);
+  const pickups=PICKUPS.map(([k,label])=>({key:k,label,items:all.filter(x=>pickStore(x.id)===k&&!dealPickStore(x.id)).sort(byName)}));
+  const away=id=>!!pickStore(id)||!!dealPickStore(id);
   const groups={};for(const x of all){const st=dealPickStore(x.id);if(st)(groups[st]=groups[st]||[]).push(x)}
   const dealGroups=Object.keys(groups).sort((a,b)=>a.localeCompare(b,"cs")).map(store=>({store,items:groups[store].sort(byName)}));
-  return{reg:toList(reg,"r:",orig.reg).filter(x=>!away(x.id)),b2:toList(b2,"b:",orig.b2).filter(x=>!away(x.id)),lidl,kaufland,dealGroups,
+  return{reg:toList(reg,"r:",orig.reg).filter(x=>!away(x.id)),b2:toList(b2,"b:",orig.b2).filter(x=>!away(x.id)),pickups,dealGroups,
     spices:Object.entries(spice).map(([id,a])=>({id,name:ING[id].name,amt:a})).sort(byName),removed:removed.sort(byName)}}
 
 // Plain-text list for the Tesco skill or for pasting into a chat. One line per item: name, amount, unit.
-function listText(){const{reg,b2,lidl,kaufland,dealGroups}=shoppingData();const line=x=>`${x.name}${x.b2?" (Block 2, buy fresh)":""}\t${fmtPlain(x.amt,x.unit)}\t${x.unit==="ks"?"ks":"g"}`;let t="";
+function listText(){const{reg,b2,pickups,dealGroups}=shoppingData();const line=x=>`${x.name}${x.b2?" (Block 2, buy fresh)":""}\t${fmtPlain(x.amt,x.unit)}\t${x.unit==="ks"?"ks":"g"}`;let t="";
   const sec=(title,a)=>{if(a.length)t+=(t?"\n":"")+title+"\n"+a.map(line).join("\n")+"\n"};
-  sec("ONLINE (Rohlík / Košík / Tesco)",reg);sec("ONLINE, BLOCK 2 BAKERY (buy fresh)",b2);sec("LIDL",lidl);sec("KAUFLAND",kaufland);for(const g of dealGroups)sec(g.store.toUpperCase()+" (THIS WEEK'S DEAL)",g.items);return t.trim()}
+  sec("ONLINE (Rohlík / Košík / Tesco)",reg);sec("ONLINE, BLOCK 2 BAKERY (buy fresh)",b2);for(const p of pickups)sec(p.label.toUpperCase(),p.items);for(const g of dealGroups)sec(g.store.toUpperCase()+" (THIS WEEK'S DEAL)",g.items);return t.trim()}
 function planText(){let t=`Prep ${fmtDate(prepDay())} · Block 1 ${blockDays("block1")} · Block 2 ${blockDays("block2")}\n`;for(const[s,label] of SLOTS){const f=b=>{const m=MEALS[PLAN[b][s].meal];return`${label}: ${m&&PLAN[b][s].n?m.name:"None"} (${PLAN[b][s].n})`};t+=`${f("block1")}\t\t${f("block2")}\n`}return t.trim()}
 
 /* ---------- loading from the server's documents ---------- */
