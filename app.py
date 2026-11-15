@@ -14,7 +14,7 @@ try:
 except ImportError:  # falls back to the htpasswd program
     bcrypt = None
 
-APP_VERSION = "0.4.2"
+APP_VERSION = "0.4.3"
 DATA_DIR = os.environ.get("MEALPREP_DATA_DIR", os.path.join(os.path.dirname(os.path.abspath(__file__)), "_data"))
 PORT = int(os.environ.get("MEALPREP_PORT", "5020"))
 HTPASSWD = os.environ.get("MEALPREP_HTPASSWD", "/etc/nginx/.mealprep-htpasswd")
@@ -433,6 +433,7 @@ def server_status():
         "passwordFile": os.path.exists(HTPASSWD),
         "signInOn": auth_on(),
         "updateLog": None if log is None else log.strip().splitlines()[-25:],
+        "switchStatus": (_read(os.path.join(DATA_DIR, "nginx-switch-status")) or "").strip() or None,
     })
 
 

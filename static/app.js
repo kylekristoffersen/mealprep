@@ -234,6 +234,7 @@ function statusHTML(){const s=ui.status;if(!s)return`<p class="muted small">Chec
   <tr><td>Running version</td><td><b>v${esc(s.version)}</b> <span class="muted small">(${esc(s.runningCommit||"?")}, started ${esc((s.startedAt||"").replace("T"," ").replace("Z"," UTC"))})</span></td></tr>
   <tr><td>Code on the server</td><td>${esc(s.diskCommit||"?")} ${behind?`<span class="chip off">newer code is waiting for a restart</span>`:`<span class="chip on">running</span>`}</td></tr>
   <tr><td>Browser password popup</td><td>${yn(s.nginxPopup,"still on","off (in-page sign-in)","can't read the nginx file")}</td></tr>
+  <tr><td>Popup switch</td><td class="small">${s.switchStatus?esc(s.switchStatus):`<span class="muted">No report yet. It appears within a minute of this version going live.</span>`}</td></tr>
   <tr><td>In-page sign-in</td><td>${s.signInOn?`<span class="chip on">on</span>`:`<span class="chip off">off: password file not found</span>`}</td></tr></tbody></table>
   <h3 style="margin-top:12px">Last update messages</h3>${s.updateLog==null?`<p class="muted small">The update log can't be read.</p>`:s.updateLog.length?`<pre class="logbox">${esc(s.updateLog.join("\n"))}</pre>`:`<p class="muted small">Nothing logged yet.</p>`}
   <div class="actions" style="margin-top:8px"><button class="btn" data-act="statusRefresh">Check again</button></div>`}
