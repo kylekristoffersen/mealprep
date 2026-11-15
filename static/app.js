@@ -190,7 +190,7 @@ function dealUnplace(mid){let n=0,locked=0;for(const[b] of BLOCKS)for(const[s] o
   savePlan();render();toast(locked?"That slot is locked. Unlock it on the Plan tab first.":`${MEALS[mid]?.name||"Meal"} taken out of the plan`)}
 
 /* ---------- LETÁKY: links to each shop's leták page, always shown on the Deals tab. Edit the URLs here if a shop moves its page. ---------- */
-const LETAKY=[["Kaufland","https://www.kaufland.cz/letak.html"],["Tesco","https://www.itesco.cz/akcni-nabidky/letaky-a-katalogy/tesco-hypermarket-brno-kralovo-pole"],["Albert","https://www.albert.cz/aktualni-letaky"],["Lidl","https://www.lidl.cz/c/akcni-letak/s10008644"]];
+const LETAKY=[["Kaufland","https://www.kaufland.cz/letak.html"],["Tesco","https://www.itesco.cz/akcni-nabidky/letaky-a-katalogy/tesco-hypermarket-brno-kralovo-pole"],["Albert","https://www.albert.cz/aktualni-letaky"],["Lidl","https://www.lidl.cz/c/akcni-letak/s10008644"],["Billa","https://www.billa.cz/letaky-billa?tab=letaky-billa/velky-letak-nasledujici"]];
 function letakyHTML(){return`<div class="panel" style="margin-bottom:12px"><div class="row" style="gap:8px"><b class="small">Letáky</b>${LETAKY.map(([n,u])=>`<a class="btn" href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(n)}</a>`).join("")}</div></div>`}
 
 /* ---------- SHOP ---------- */
