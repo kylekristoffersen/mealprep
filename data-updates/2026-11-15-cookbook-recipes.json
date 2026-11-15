@@ -1,0 +1,660 @@
+{
+ "id": "2026-11-15-cookbook-recipes",
+ "note": "Six cookbook recipes as 7 meals: chickpea curry w/chicken & cucumber salad (lunch, dinner), carrot chilli soup w/chicken (lunch, dinner), chilli con carne w/brown rice (dinner), sheet-pan pancakes (breakfast), sardine spread (snack); 10 new ingredients",
+ "docs": {
+  "lib/ingredients": {
+   "add": {
+    "items": {
+     "kokosovy-olej": {
+      "name": "Kokosový olej",
+      "unit": "g",
+      "kcal": 884,
+      "p": 0,
+      "c": 0,
+      "f": 100,
+      "fib": 0,
+      "bakery": false,
+      "est": true
+     },
+     "kari-koreni": {
+      "name": "Kari koření",
+      "unit": "g",
+      "kcal": 325,
+      "p": 14.3,
+      "c": 2.6,
+      "f": 14,
+      "fib": 53.2,
+      "spice": true,
+      "bakery": false,
+      "est": true
+     },
+     "kopr": {
+      "name": "Kopr čerstvý",
+      "unit": "g",
+      "kcal": 43,
+      "p": 3.5,
+      "c": 4.9,
+      "f": 1.1,
+      "fib": 2.1,
+      "bakery": false,
+      "est": true
+     },
+     "kypriciho-prasek": {
+      "name": "Kypřicí prášek do pečiva",
+      "unit": "g",
+      "kcal": 53,
+      "p": 0,
+      "c": 27.5,
+      "f": 0,
+      "fib": 0.2,
+      "spice": true,
+      "tbsp": 13.8,
+      "bakery": false,
+      "est": true
+     },
+     "sardinky-ve-vlastni-stave": {
+      "name": "Sardinky bez kostí ve vlastní šťávě",
+      "unit": "g",
+      "kcal": 160,
+      "p": 24,
+      "c": 0,
+      "f": 7,
+      "fib": 0,
+      "note": "Weights are drained.",
+      "bakery": false,
+      "est": true
+     },
+     "salotka": {
+      "name": "Šalotka",
+      "unit": "g",
+      "kcal": 72,
+      "p": 2.5,
+      "c": 13.6,
+      "f": 0.1,
+      "fib": 3.2,
+      "bakery": false,
+      "est": true
+     },
+     "tymian-suseny": {
+      "name": "Tymián sušený",
+      "unit": "g",
+      "kcal": 276,
+      "p": 9.1,
+      "c": 26.9,
+      "f": 7.4,
+      "fib": 37,
+      "spice": true,
+      "tbsp": 3,
+      "bakery": false,
+      "est": true
+     },
+     "chilli-papricka": {
+      "name": "Chilli paprička čerstvá",
+      "unit": "g",
+      "kcal": 40,
+      "p": 1.9,
+      "c": 7.3,
+      "f": 0.4,
+      "fib": 1.5,
+      "bakery": false,
+      "est": true
+     },
+     "limetka": {
+      "name": "Limetka",
+      "unit": "ks",
+      "kcal": 2,
+      "p": 0,
+      "c": 0.5,
+      "f": 0,
+      "fib": 0.2,
+      "note": "Nutrition counts the zest only (that's all the recipes use).",
+      "bakery": false,
+      "est": true
+     },
+     "vyvar-hovezi": {
+      "name": "Vývar hovězí",
+      "unit": "g",
+      "kcal": 5,
+      "p": 0.5,
+      "c": 0.3,
+      "f": 0.2,
+      "fib": 0,
+      "bakery": false,
+      "est": true
+     }
+    }
+   }
+  },
+  "meals/chickpea-curry-chicken-lunch": {
+   "base": 0,
+   "data": {
+    "cat": "lunch",
+    "prep": "batch",
+    "keeps": "4 days",
+    "name": "Chickpea Curry w/Chicken & Cucumber Salad",
+    "items": [
+     [
+      "kureci-prsa",
+      150
+     ],
+     [
+      "ryze",
+      60
+     ],
+     [
+      "cizrna-vapeur-bonduelle",
+      60
+     ],
+     [
+      "kokosove-mleko-light",
+      75
+     ],
+     [
+      "vyvar-zeleninovy",
+      100
+     ],
+     [
+      "paprika",
+      37.5
+     ],
+     [
+      "baby-spenat",
+      17.5
+     ],
+     [
+      "kokosovy-olej",
+      3.4
+     ],
+     [
+      "cesnek",
+      6.25
+     ],
+     [
+      "kari-koreni",
+      1.75
+     ],
+     [
+      "limetkova-stava",
+      7.5
+     ],
+     [
+      "sul",
+      1.5
+     ],
+     [
+      "pepr-cerny",
+      0.2
+     ],
+     [
+      "okurka-salatova",
+      75
+     ],
+     [
+      "jogurt-selsky-bily-hollandia",
+      35
+     ],
+     [
+      "kopr",
+      2.5
+     ],
+     [
+      "citronova-stava",
+      5
+     ]
+    ],
+    "note": "From the cookbook: Kari s cizrnou (p. 190, Rychlé obědy a večeře) with its own two tips built in (jasmine rice, chicken for extra protein), plus Okurkový salát s koprem (p. 236, Saláty ap.) as the cool side. Chicken is 150 g per serving, so one 900 g freezer pack makes 6 lunches. Onion swapped for bell pepper (Anna). Light coconut milk instead of regular. The cucumber salad's dressing is made on prep day and mixed with the cucumber on the day, so it doesn't go watery.",
+    "prepSteps": [
+     "Cut the chicken ({=kureci-prsa}) into 2–3 cm cubes. Dice the bell pepper ({=paprika}, instead of onion) and slice the garlic thinly ({=cesnek:80%|cloves}). Drain and rinse the chickpeas ({=cizrna-vapeur-bonduelle}).",
+     "In a large pot (at least 5 l) melt the coconut oil ({=kokosovy-olej|spoon}) over low heat and cook the pepper for 6–8 minutes until soft. Add the garlic and the curry powder ({=kari-koreni|tsp}) and cook 2–3 minutes more, still on low heat, stirring so the spices don't catch.",
+     "Pour in the stock ({=vyvar-zeleninovy|ml}) and add the raw chicken. Bring to a boil and simmer uncovered on medium-high heat for about 15 minutes, until the stock has reduced by about half and the chicken is cooked through (cut the biggest piece open: no pink, juices clear).",
+     "Add the chickpeas and the coconut milk ({=kokosove-mleko-light|ml}), season with the salt ({=sul:67%}) and pepper ({=pepr-cerny}) and simmer 9–10 minutes on medium heat until it thickens.",
+     "Take the pot off the heat and stir in the baby spinach ({=baby-spenat}) and the lime juice ({=limetkova-stava|tbsp}); the spinach wilts in the heat.",
+     "Meanwhile cook the rice ({=ryze}) according to the pack.",
+     "Cucumber salad, part 1: wash the cucumber ({=okurka-salatova}) and dice it small (dicing keeps better than grating). Keep it in its own box. For the dressing, mix the yogurt ({=jogurt-selsky-bily-hollandia}) with the crushed garlic ({=cesnek:rest|cloves}), the finely chopped dill ({=kopr}), the lemon juice ({=citronova-stava|tbsp}) and the rest of the salt ({=sul:rest}). Keep it in a separate jar in the fridge.",
+     "Divide the curry and rice into boxes. Keep the boxes open with the food no more than about 4 cm deep and leave it until it stops steaming, about 30 min. Rice must be in the fridge within 1 hour of cooking. Refrigerate within 2 hours of cooking and close the lids once cool, not while warm."
+    ],
+    "daySteps": [
+     "Reheat the curry and rice in the microwave or a pan with a splash of water. Make sure it is steaming hot all the way through (stir halfway), and reheat only the portion you will eat.",
+     "Stir a portion of the diced cucumber into a portion of the dill dressing, season with pepper and eat it cold alongside the curry."
+    ]
+   }
+  },
+  "meals/chickpea-curry-chicken-dinner": {
+   "base": 0,
+   "data": {
+    "cat": "dinner",
+    "prep": "batch",
+    "keeps": "4 days",
+    "name": "Chickpea Curry w/Chicken & Cucumber Salad",
+    "items": [
+     [
+      "kureci-prsa",
+      100
+     ],
+     [
+      "ryze",
+      42
+     ],
+     [
+      "cizrna-vapeur-bonduelle",
+      60
+     ],
+     [
+      "kokosove-mleko-light",
+      75
+     ],
+     [
+      "vyvar-zeleninovy",
+      100
+     ],
+     [
+      "paprika",
+      37.5
+     ],
+     [
+      "baby-spenat",
+      17.5
+     ],
+     [
+      "kokosovy-olej",
+      3.4
+     ],
+     [
+      "cesnek",
+      6.25
+     ],
+     [
+      "kari-koreni",
+      1.75
+     ],
+     [
+      "limetkova-stava",
+      7.5
+     ],
+     [
+      "sul",
+      1.5
+     ],
+     [
+      "pepr-cerny",
+      0.2
+     ],
+     [
+      "okurka-salatova",
+      75
+     ],
+     [
+      "jogurt-selsky-bily-hollandia",
+      35
+     ],
+     [
+      "kopr",
+      2.5
+     ],
+     [
+      "citronova-stava",
+      5
+     ]
+    ],
+    "note": "From the cookbook: Kari s cizrnou (p. 190, Rychlé obědy a večeře) with its own two tips built in (jasmine rice, chicken for extra protein), plus Okurkový salát s koprem (p. 236, Saláty ap.) as the cool side. Chicken is 100 g per serving, so one 600 g freezer pack makes 6 dinners. Onion swapped for bell pepper (Anna). Light coconut milk instead of regular. The cucumber salad's dressing is made on prep day and mixed with the cucumber on the day, so it doesn't go watery.",
+    "prepSteps": [
+     "Cut the chicken ({=kureci-prsa}) into 2–3 cm cubes. Dice the bell pepper ({=paprika}, instead of onion) and slice the garlic thinly ({=cesnek:80%|cloves}). Drain and rinse the chickpeas ({=cizrna-vapeur-bonduelle}).",
+     "In a large pot (at least 5 l) melt the coconut oil ({=kokosovy-olej|spoon}) over low heat and cook the pepper for 6–8 minutes until soft. Add the garlic and the curry powder ({=kari-koreni|tsp}) and cook 2–3 minutes more, still on low heat, stirring so the spices don't catch.",
+     "Pour in the stock ({=vyvar-zeleninovy|ml}) and add the raw chicken. Bring to a boil and simmer uncovered on medium-high heat for about 15 minutes, until the stock has reduced by about half and the chicken is cooked through (cut the biggest piece open: no pink, juices clear).",
+     "Add the chickpeas and the coconut milk ({=kokosove-mleko-light|ml}), season with the salt ({=sul:67%}) and pepper ({=pepr-cerny}) and simmer 9–10 minutes on medium heat until it thickens.",
+     "Take the pot off the heat and stir in the baby spinach ({=baby-spenat}) and the lime juice ({=limetkova-stava|tbsp}); the spinach wilts in the heat.",
+     "Meanwhile cook the rice ({=ryze}) according to the pack.",
+     "Cucumber salad, part 1: wash the cucumber ({=okurka-salatova}) and dice it small (dicing keeps better than grating). Keep it in its own box. For the dressing, mix the yogurt ({=jogurt-selsky-bily-hollandia}) with the crushed garlic ({=cesnek:rest|cloves}), the finely chopped dill ({=kopr}), the lemon juice ({=citronova-stava|tbsp}) and the rest of the salt ({=sul:rest}). Keep it in a separate jar in the fridge.",
+     "Divide the curry and rice into boxes. Keep the boxes open with the food no more than about 4 cm deep and leave it until it stops steaming, about 30 min. Rice must be in the fridge within 1 hour of cooking. Refrigerate within 2 hours of cooking and close the lids once cool, not while warm."
+    ],
+    "daySteps": [
+     "Reheat the curry and rice in the microwave or a pan with a splash of water. Make sure it is steaming hot all the way through (stir halfway), and reheat only the portion you will eat.",
+     "Stir a portion of the diced cucumber into a portion of the dill dressing, season with pepper and eat it cold alongside the curry."
+    ]
+   }
+  },
+  "meals/carrot-chilli-soup-chicken-lunch": {
+   "base": 0,
+   "data": {
+    "cat": "lunch",
+    "prep": "batch",
+    "keeps": "4 days (soup freezes well)",
+    "name": "Carrot Chilli Soup w/Chicken",
+    "items": [
+     [
+      "kureci-prsa",
+      150
+     ],
+     [
+      "mrkev",
+      125
+     ],
+     [
+      "kokosove-mleko-light",
+      75
+     ],
+     [
+      "vyvar-zeleninovy",
+      200
+     ],
+     [
+      "paprika",
+      12.5
+     ],
+     [
+      "chilli-papricka",
+      3.75
+     ],
+     [
+      "olivovy-olej",
+      3.4
+     ],
+     [
+      "limetka",
+      0.25
+     ],
+     [
+      "sul",
+      1.5
+     ],
+     [
+      "pepr-cerny",
+      0.2
+     ],
+     [
+      "chleb",
+      120
+     ]
+    ],
+    "note": "From the cookbook: Mrkvová polévka s chilli (p. 54, Polévky). On its own it's 305 kcal with 5 g protein, so chicken is simmered in it to make it a full lunch. Chicken is 150 g per serving, so one 900 g freezer pack makes 6 lunches. More toasted wholegrain bread than the book's ½ slice, to reach the lunch target. Onion swapped for bell pepper (Anna). Light coconut milk instead of regular. Tip from the book: top with toasted pumpkin or sesame seeds.",
+    "prepSteps": [
+     "Peel the carrots ({=mrkev}) and cut them into small cubes. Finely chop the bell pepper ({=paprika}, instead of onion) and the chilli ({=chilli-papricka}; leave the seeds out for less heat).",
+     "In a large pot (at least 5 l) heat the olive oil ({=olivovy-olej|spoon}) and cook the pepper until soft, about 4 minutes. Add the carrots and the chilli and cook 1 minute.",
+     "Pour in the stock ({=vyvar-zeleninovy|ml}), bring to a boil and simmer about 30 minutes until the carrots are soft.",
+     "Take the pot off the heat, add the coconut milk ({=kokosove-mleko-light|ml}) and blend smooth with a stick blender. Pour it through a sieve back into the pot.",
+     "Cut the chicken ({=kureci-prsa}) into 2 cm pieces. Bring the soup back to a gentle simmer, add the chicken and simmer 10–12 minutes, stirring now and then, until cooked through (cut the biggest piece open: no pink, juices clear).",
+     "Grate in the zest of the lime ({=limetka}) and season with the salt ({=sul}) and pepper ({=pepr-cerny}).",
+     "Divide into boxes. Keep the boxes open with the food no more than about 4 cm deep and leave it until it stops steaming, about 30 min. Refrigerate within 2 hours of cooking and close the lids once cool, not while warm."
+    ],
+    "daySteps": [
+     "Reheat the soup in a pot or the microwave. Make sure it is steaming hot all the way through (stir halfway), and reheat only the portion you will eat.",
+     "Toast the bread ({=chleb}) dry in a toaster or pan and eat it with the soup."
+    ]
+   }
+  },
+  "meals/carrot-chilli-soup-chicken-dinner": {
+   "base": 0,
+   "data": {
+    "cat": "dinner",
+    "prep": "batch",
+    "keeps": "4 days (soup freezes well)",
+    "name": "Carrot Chilli Soup w/Chicken",
+    "items": [
+     [
+      "kureci-prsa",
+      100
+     ],
+     [
+      "mrkev",
+      125
+     ],
+     [
+      "kokosove-mleko-light",
+      75
+     ],
+     [
+      "vyvar-zeleninovy",
+      200
+     ],
+     [
+      "paprika",
+      12.5
+     ],
+     [
+      "chilli-papricka",
+      3.75
+     ],
+     [
+      "olivovy-olej",
+      3.4
+     ],
+     [
+      "limetka",
+      0.25
+     ],
+     [
+      "sul",
+      1.5
+     ],
+     [
+      "pepr-cerny",
+      0.2
+     ],
+     [
+      "chleb",
+      95
+     ]
+    ],
+    "note": "From the cookbook: Mrkvová polévka s chilli (p. 54, Polévky). On its own it's 305 kcal with 5 g protein, so chicken is simmered in it to make it a full dinner. Chicken is 100 g per serving, so one 600 g freezer pack makes 6 dinners. More toasted wholegrain bread than the book's ½ slice, to reach the dinner target. Onion swapped for bell pepper (Anna). Light coconut milk instead of regular. Tip from the book: top with toasted pumpkin or sesame seeds.",
+    "prepSteps": [
+     "Peel the carrots ({=mrkev}) and cut them into small cubes. Finely chop the bell pepper ({=paprika}, instead of onion) and the chilli ({=chilli-papricka}; leave the seeds out for less heat).",
+     "In a large pot (at least 5 l) heat the olive oil ({=olivovy-olej|spoon}) and cook the pepper until soft, about 4 minutes. Add the carrots and the chilli and cook 1 minute.",
+     "Pour in the stock ({=vyvar-zeleninovy|ml}), bring to a boil and simmer about 30 minutes until the carrots are soft.",
+     "Take the pot off the heat, add the coconut milk ({=kokosove-mleko-light|ml}) and blend smooth with a stick blender. Pour it through a sieve back into the pot.",
+     "Cut the chicken ({=kureci-prsa}) into 2 cm pieces. Bring the soup back to a gentle simmer, add the chicken and simmer 10–12 minutes, stirring now and then, until cooked through (cut the biggest piece open: no pink, juices clear).",
+     "Grate in the zest of the lime ({=limetka}) and season with the salt ({=sul}) and pepper ({=pepr-cerny}).",
+     "Divide into boxes. Keep the boxes open with the food no more than about 4 cm deep and leave it until it stops steaming, about 30 min. Refrigerate within 2 hours of cooking and close the lids once cool, not while warm."
+    ],
+    "daySteps": [
+     "Reheat the soup in a pot or the microwave. Make sure it is steaming hot all the way through (stir halfway), and reheat only the portion you will eat.",
+     "Toast the bread ({=chleb}) dry in a toaster or pan and eat it with the soup."
+    ]
+   }
+  },
+  "meals/chilli-con-carne-brown-rice-dinner": {
+   "base": 0,
+   "data": {
+    "cat": "dinner",
+    "prep": "batch",
+    "keeps": "4 days (freezes well)",
+    "name": "Chilli con Carne w/Brown Rice",
+    "items": [
+     [
+      "hovezi-mlete-libove-5",
+      110
+     ],
+     [
+      "ryze-natural",
+      50
+     ],
+     [
+      "rajcata-v-plechovce",
+      100
+     ],
+     [
+      "fazole-cervene-v-mirne-slanem-nalevu",
+      60
+     ],
+     [
+      "paprika",
+      50
+     ],
+     [
+      "vyvar-hovezi",
+      75
+     ],
+     [
+      "olivovy-olej",
+      3.4
+     ],
+     [
+      "cesnek",
+      1.25
+     ],
+     [
+      "paprika-sladka",
+      0.58
+     ],
+     [
+      "chilli-mlete",
+      0.58
+     ],
+     [
+      "sul",
+      0.4
+     ],
+     [
+      "pepr-cerny",
+      0.1
+     ]
+    ],
+    "note": "From the cookbook: Chilli con carne (p. 62, Obědy a večeře). Dinner only, since the planner already has the nutritionist's Chilli Con Carne as a lunch. Mince raised from 100 to 110 g and rice cut from 60 to 50 g per serving to fit the dinner target. Red onion swapped for extra bell pepper (Anna). Cayenne is the ground chilli in the list. Book tip: a teaspoon of smoked paprika adds a lot of flavour. Beef stock can be chicken stock.",
+    "prepSteps": [
+     "Start the brown rice ({=ryze-natural}) according to the pack, about 25 minutes.",
+     "Meanwhile cut the bell peppers ({=paprika}, instead of the red onion) into short strips and slice the garlic ({=cesnek|cloves}).",
+     "Pan plan: {=hovezi-mlete-libove-5} of mince is more than one pan can brown. Brown it in two rounds in a large deep pan (or use two pans), breaking it up, about 8–10 minutes per round until no pink is left. Keep each finished round in a bowl. If the browned bits on the pan turn dark brown or burn between rounds, deglaze with a splash of the stock and pour that into the bowl with the meat.",
+     "In the same pan heat the olive oil ({=olivovy-olej|spoon}), add the peppers, garlic, sweet paprika ({=paprika-sladka|tsp}) and cayenne ({=chilli-mlete|tsp}) and fry 3 minutes, stirring.",
+     "Return the mince, pour in the stock ({=vyvar-hovezi|ml}), add the tomatoes ({=rajcata-v-plechovce}) and the drained beans ({=fazole-cervene-v-mirne-slanem-nalevu}). Season with the salt ({=sul}) and pepper ({=pepr-cerny}).",
+     "Cover and simmer 20 minutes, stirring now and then.",
+     "Divide the chilli and the rice into boxes. Keep the boxes open with the food no more than about 4 cm deep and leave it until it stops steaming, about 30 min. Rice must be in the fridge within 1 hour of cooking. Refrigerate within 2 hours of cooking and close the lids once cool, not while warm."
+    ],
+    "daySteps": [
+     "Reheat in the microwave or a pan with a splash of water. Make sure it is steaming hot all the way through (stir halfway), and reheat only the portion you will eat."
+    ]
+   }
+  },
+  "meals/sheet-pan-pancakes": {
+   "base": 0,
+   "data": {
+    "cat": "breakfast",
+    "prep": "batch",
+    "keeps": "3 days in the fridge",
+    "name": "Sheet-Pan Pancakes w/Yogurt",
+    "items": [
+     [
+      "mouka-spaldova",
+      50
+     ],
+     [
+      "mleko-polotucne-1-5",
+      62.5
+     ],
+     [
+      "vejce",
+      0.5
+     ],
+     [
+      "kokosovy-olej",
+      7.5
+     ],
+     [
+      "med",
+      7.5
+     ],
+     [
+      "kypriciho-prasek",
+      2.3
+     ],
+     [
+      "skorice",
+      1.17
+     ],
+     [
+      "jahody-cerstve",
+      25
+     ],
+     [
+      "boruvky",
+      25
+     ],
+     [
+      "recky-jogurt-milko-0-3",
+      150
+     ],
+     [
+      "kesu-nutella-maslo-orechove-maslo",
+      10
+     ]
+    ],
+    "note": "From the cookbook: Palačinky z plechu (p. 18, Snídaně), 360 kcal and 13 g protein per piece. The book serves it with white yogurt; Greek yogurt (0.3 %) and a spoon of nut butter bring it to the breakfast target. The book's 20 × 20 cm tin is for 4 pieces: for 6 use a tin of about 30 × 20 cm (or 25 × 25 cm). Strawberries and blueberries can be frozen. Cinnamon is optional.",
+    "prepSteps": [
+     "Heat the oven to 210 °C. Line a baking tin with baking paper: about 30 × 20 cm for 6 pieces (20 × 20 cm for 4).",
+     "Melt the coconut oil ({=kokosovy-olej|spoon}) if it's solid. Slice the strawberries ({=jahody-cerstve}) into rounds.",
+     "In a medium bowl mix the spelt flour ({=mouka-spaldova}), the baking powder ({=kypriciho-prasek|tsp}) and the cinnamon ({=skorice|tsp}).",
+     "Add the honey ({=med|tbsp}), the milk ({=mleko-polotucne-1-5|ml}), the eggs ({=vejce}) and the melted coconut oil, and whisk into a smooth batter.",
+     "Pour the batter into the tin and scatter the strawberries and blueberries ({=boruvky}) on top.",
+     "Bake 15–20 minutes at 200–210 °C until golden and set in the middle. Let it cool 10 minutes, then cut into pieces.",
+     "Once fully cool, box the pieces and refrigerate."
+    ],
+    "daySteps": [
+     "Eat cold or warm a piece in the microwave for 30–40 seconds.",
+     "Serve with the Greek yogurt ({=recky-jogurt-milko-0-3}) and the nut butter ({=kesu-nutella-maslo-orechove-maslo|tsp})."
+    ]
+   }
+  },
+  "meals/sardine-spread-rice-cakes": {
+   "base": 0,
+   "data": {
+    "cat": "snack",
+    "prep": "batch",
+    "keeps": "3 days",
+    "name": "Sardine Spread w/Rice Cakes",
+    "items": [
+     [
+      "sardinky-ve-vlastni-stave",
+      60
+     ],
+     [
+      "tvaroh-jihocesky-odtucneny-0-8",
+      75
+     ],
+     [
+      "salotka",
+      22.5
+     ],
+     [
+      "limetkova-stava",
+      11.25
+     ],
+     [
+      "horcice",
+      3.75
+     ],
+     [
+      "tymian-suseny",
+      0.375
+     ],
+     [
+      "cesnek",
+      3.75
+     ],
+     [
+      "sul",
+      0.75
+     ],
+     [
+      "pepr-cerny",
+      0.15
+     ],
+     [
+      "racio-bio-chlebicky-ryzove",
+      25
+     ],
+     [
+      "paprika",
+      100
+     ]
+    ],
+    "note": "From the cookbook: Rybičková pomazánka (p. 66, Svačiny), 1½ of the book's portions per snack (the book's portion is 117 kcal). Served on the Racio rice cakes from the pantry with bell pepper; the book suggests wholegrain bread and vegetables. Snacks are Kyle's only, so the shallot stays in. Book tip: sprinkle with fresh herbs, or add chilli flakes.",
+    "prepSteps": [
+     "Drain the sardines ({=sardinky-ve-vlastni-stave}, drained weight), put them in a bowl and mash with a fork.",
+     "Add the very finely chopped shallot ({=salotka}), the low-fat tvaroh ({=tvaroh-jihocesky-odtucneny-0-8}), the lime juice ({=limetkova-stava|tbsp}), the Dijon mustard ({=horcice|tsp}), the dried thyme ({=tymian-suseny|tsp}), the crushed garlic ({=cesnek|cloves}), the salt ({=sul}) and pepper ({=pepr-cerny}). Mix well.",
+     "Keep in a closed box in the fridge and eat within 3 days."
+    ],
+    "daySteps": [
+     "Spread a portion on the rice cakes ({=racio-bio-chlebicky-ryzove}) and eat with the bell pepper ({=paprika}) cut into strips."
+    ]
+   }
+  }
+ }
+}

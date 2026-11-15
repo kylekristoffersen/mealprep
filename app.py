@@ -14,7 +14,7 @@ try:
 except ImportError:  # falls back to the htpasswd program
     bcrypt = None
 
-APP_VERSION = "0.6.8"
+APP_VERSION = "0.6.9"
 DATA_DIR = os.environ.get("MEALPREP_DATA_DIR", os.path.join(os.path.dirname(os.path.abspath(__file__)), "_data"))
 PORT = int(os.environ.get("MEALPREP_PORT", "5020"))
 HTPASSWD = os.environ.get("MEALPREP_HTPASSWD", "/etc/nginx/.mealprep-htpasswd")
@@ -446,6 +446,7 @@ def health():
 # ---- data updates shipped through the repo (data-updates/*.json), applied once each when the app starts ----
 # {"id": "...", "note": "...", "docs": {"meals/x": {"base": <version it was written against>, "data": {...}}}}
 # {"delete": true} instead of "data" removes the doc (same "base" check; base 0 = add only if missing).
+# {"add": {"items": {...}}} instead of "data" adds only the missing keys under that field (e.g. new ingredients in lib/ingredients), no base check.
 # A doc is only replaced if it is still at "base" (nobody changed it in the app since); otherwise it is skipped and reported.
 UPDATES_DIR = os.path.join(APP_DIR, "data-updates")
 
@@ -470,11 +471,33 @@ def apply_updates():
         done, skipped = [], []
         with _lock, db() as c:
             for path, spec in (u.get("docs") or {}).items():
-                if not PATH_RE.match(path) or ("data" not in spec and not spec.get("delete")):
+                if not PATH_RE.match(path) or ("data" not in spec and not spec.get("delete") and not isinstance(spec.get("add"), dict)):
                     skipped.append({"path": path, "why": "bad entry"})
                     continue
-                row = c.execute("SELECT version FROM docs WHERE path=?", (path,)).fetchone()
+                row = c.execute("SELECT version, data FROM docs WHERE path=?", (path,)).fetchone()
                 cur = row["version"] if row else 0
+                if "data" not in spec and isinstance(spec.get("add"), dict):
+                    # add-only merge, no base check: {"add": {"items": {"id": {...}}}} adds keys that are missing, never overwrites
+                    data = json.loads(row["data"]) if row else {}
+                    added = []
+                    for top, sub in spec["add"].items():
+                        if not isinstance(sub, dict):
+                            continue
+                        tgt = data.setdefault(top, {})
+                        if not isinstance(tgt, dict):
+                            continue
+                        for k, v in sub.items():
+                            if k not in tgt:
+                                tgt[k] = v
+                                added.append(k)
+                    if added:
+                        c.execute("INSERT INTO docs(path,data,version,updated_at,updated_by) VALUES(?,?,?,?,?) "
+                                  "ON CONFLICT(path) DO UPDATE SET data=excluded.data,version=excluded.version,updated_at=excluded.updated_at,updated_by=excluded.updated_by",
+                                  (path, json.dumps(data, ensure_ascii=False), cur + 1, now(), "update:" + uid[:40]))
+                        done.append(f"{path} (+{len(added)}: {', '.join(added)})")
+                    else:
+                        skipped.append({"path": path, "why": "nothing to add, all keys already there"})
+                    continue
                 if spec.get("base") is not None and spec["base"] != cur:
                     skipped.append({"path": path, "why": f"changed in the app since (now v{cur}, update written for v{spec['base']})"})
                     continue

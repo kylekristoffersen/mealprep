@@ -21,3 +21,4 @@ Prices tab (v0.5): pinned shop products are docs `products/<id>` ({shop, ing, na
 "Check Rohlík + Košík" makes the server read their public product data (about 2 minutes for everything, less for one week's list) and saves `state/prices`.
 Tesco blocks server requests, so its prices come from the "Meal Prep: Tesco prices" bookmark run in your own signed-in Tesco tab; it returns to /#prices&tesco=… and the app saves them.
 Data updates can now remove docs: {"delete": true} instead of "data".
+Data updates can add missing keys inside a doc without replacing it: {"add": {"items": {...}}} instead of "data" (used for new ingredients in lib/ingredients; existing ones are never overwritten).
