@@ -137,7 +137,7 @@ function dealsView(v){const f=ui.deal||(ui.deal=newDeal());const ed=f.edit!=null
   const rows=DEALS.map((d,i)=>({d,i}));
   const act=rows.filter(r=>dealActive(r.d)).sort((a,b)=>ING[a.d.id].name.localeCompare(ING[b.d.id].name,"cs")||(dealUnit(a.d)?.price??0)-(dealUnit(b.d)?.price??0));
   const old=rows.filter(r=>!dealActive(r.d));
-  v.innerHTML=`${ui.letaky?letakyHTML():""}<section class="panel" id="dealform" style="margin-bottom:16px"><div class="row" style="justify-content:space-between"><h2>${ed?"Edit deal":"Add a deal"}</h2><button class="btn" data-act="letaky" title="Opens this week's leták page of each shop in its own tab">Open letáky</button></div>
+  v.innerHTML=`${letakyHTML()}<section class="panel" id="dealform" style="margin-bottom:16px"><div class="row" style="justify-content:space-between"><h2>${ed?"Edit deal":"Add a deal"}</h2></div>
     <p class="muted small" style="margin:4px 0 12px;max-width:65ch">Read the letáky, then add what's worth planning around. Each deal shows which of your meals use it, and Suggest favours those meals.</p>
     <div class="form-grid"><label>Ingredient<input data-df="name" list="df-ings" value="${esc(f.name)}" autocomplete="off" placeholder="e.g. Kuřecí prsa"></label>
     <label>Store<select data-df="store">${STORES.map(s=>`<option ${s===f.store?"selected":""}>${s}</option>`).join("")}</select></label>
@@ -174,12 +174,9 @@ function dealPlace(mid){const m=MEALS[mid];if(!m)return;
 function dealUnplace(mid){let n=0,locked=0;for(const[b] of BLOCKS)for(const[s] of SLOTS)if(PLAN[b][s].meal===mid){if(PLAN[b][s].locked)locked++;else{assignMeal(b,s,"");n++}}
   savePlan();render();toast(locked?"That slot is locked. Unlock it on the Plan tab first.":`${MEALS[mid]?.name||"Meal"} taken out of the plan`)}
 
-/* ---------- LETÁKY: one button opens every shop's leták page in its own tab. Edit the URLs here if a shop moves its page. ---------- */
-const LETAKY=[["Kaufland","https://www.kaufland.cz/letak.html"],["Tesco","https://www.itesco.cz/akcni-nabidky/letaky-a-katalogy/tesco-hypermarket-brno-kralovo-pole"],["Albert","https://www.albert.cz/aktualni-letaky"],["Lidl","https://www.lidl.cz/c/akcni-letak/s10008644"],["Billa","https://www.billa.cz/letaky-billa?tab=letaky-billa/velky-letak-nasledujici"]];
-function letakyHTML(){return`<div class="panel" style="margin-bottom:12px"><div class="row" style="gap:8px"><b class="small">Letáky</b>${LETAKY.map(([n,u])=>`<a class="btn" href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(n)}</a>`).join("")}<button class="btn tiny" data-act="letakyHide">Hide</button></div>
-  <p class="muted small" style="margin:8px 0 0">If a shop didn't open (browsers often allow only one tab per click), tap it here. Or allow pop-ups for this site (icon in the address bar) and press Open letáky again to get all five at once.</p></div>`}
-function openLetaky(){for(const[,u] of LETAKY){const a=document.createElement("a");a.href=u;a.target="_blank";a.rel="noopener noreferrer";a.style.display="none";document.body.appendChild(a);a.click();a.remove()}
-  ui.letaky=true;render()}  // no Referer is sent, so shops can't reject us; the links panel stays as a backup if the browser blocks extra tabs
+/* ---------- LETÁKY: links to each shop's leták page, always shown on the Deals tab. Edit the URLs here if a shop moves its page. ---------- */
+const LETAKY=[["Kaufland","https://www.kaufland.cz/letak.html"],["Tesco","https://www.itesco.cz/akcni-nabidky/letaky-a-katalogy/tesco-hypermarket-brno-kralovo-pole"],["Albert","https://www.albert.cz/aktualni-letaky"],["Lidl","https://www.lidl.cz/c/akcni-letak/s10008644"]];
+function letakyHTML(){return`<div class="panel" style="margin-bottom:12px"><div class="row" style="gap:8px"><b class="small">Letáky</b>${LETAKY.map(([n,u])=>`<a class="btn" href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(n)}</a>`).join("")}</div></div>`}
 
 /* ---------- SHOP ---------- */
 function shopView(v){const{reg,b2,lidl,kaufland,dealGroups,removed,spices}=shoppingData();const c=CHECKED;
@@ -298,8 +295,6 @@ document.addEventListener("click",e=>{const t=e.target.closest("button,[data-ope
   else if(d.lrestore){delete EDITS[d.lrestore];ui.editHome=null;savePlan();render()}
   else if(d.lcancel){ui.editHome=null;render()}
   else if(d.store){const[id,w]=d.store.split("|");setStore(id,w)}
-  else if(d.act==="letaky")openLetaky();
-  else if(d.act==="letakyHide"){ui.letaky=false;render()}
   else if(d.act==="dealAdd")dealAdd();
   else if(d.act==="dealCancel"){ui.deal=newDeal();render()}
   else if(d.act==="dealUndo")dealUndo();
