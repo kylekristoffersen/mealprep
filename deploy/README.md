@@ -11,3 +11,8 @@
 To update: change the code, bump `APP_VERSION` in app.py, push to main. The server picks it up within about a minute and restarts the app.
 If requirements.txt changes the update script installs the new libraries automatically.
 If deploy/mealprep.service changes it must be re-installed once: `sudo sh /opt/mealprep/deploy/install-app.sh`.
+
+Recipe/data changes without a browser: put a file in data-updates/ (format at apply_updates() in app.py) and push to main.
+The app applies each file once on its next start (a push restarts it), takes a backup first, and skips any doc that was
+changed in the app since the update was written. Results show in Settings > Server status. Current data can be read
+through the Cook link's /api/cook/<secret> (meals, ingredients, plan).

@@ -52,10 +52,10 @@ function fmtQty(v,u){if(/^(tsp|tbsp|lžič|lžíc|cup)/i.test(u)||!u){const opts
 /* {@ingredient-id}  prints nothing; only tells the Cook page that this step uses that ingredient (for crossing it off).
    {=id:40%} {=id:1/3} {=id:rest}  a portion of the ingredient: that share of the total, or the total minus every other portion
      in the meal's steps. A portion token also tells the Cook page the ingredient is split, so it stays part-used until the rest goes in.
-   {=id|tbsp} {=id|tsp} {=id|ml}  show the amount in spoons or millilitres too (also with a portion: {=id:rest|tbsp}).
+   {=id|tbsp} {=id|tsp} {=id|ml} {=id|spoon} {=id|cloves}  show the amount in spoons (spoon picks tbsp or tsp), millilitres or garlic cloves too (also with a portion: {=id:rest|tbsp}).
    An ingredient listed twice in a meal: {=id} shows the total, unless the steps have exactly one {=id} per row, in which case
    the first token shows the first row's amount, the second the second's, and so on (occ carries the count across steps). */
-const TOK=/\{=([a-z0-9-]+)(?::([^}|]+))?(?:\|(tbsp|tsp|ml))?\}/g;
+const TOK=/\{=([a-z0-9-]+)(?::([^}|]+))?(?:\|(tbsp|tsp|ml|spoon|cloves))?\}/g;
 const allSteps=m=>[...(m.prepSteps||[]),...(m.daySteps||[])];
 const tokensOf=st=>[...String(st).matchAll(TOK)].map(t=>({id:t[1],part:(t[2]||"").trim(),unit:t[3]||""}));
 const tokenCount=(m,id)=>allSteps(m).reduce((c,st)=>c+tokensOf(st).filter(t=>t.id===id&&!t.part).length,0);
@@ -66,10 +66,13 @@ function portionShare(m,id,part){if(part!=="rest")return partShare(part);let use
 /* grams in one tablespoon; a meal ingredient can set its own with "tbsp" in the ingredients library */
 const TBSP_G=[[/olej/,13.5],[/arasid|burak|kesu|mandl.*masl/,16],[/maslo/,14],[/\bmed\b/,21],[/soj.*omack|omack.*soj/,16],[/ocet|octa/,15],[/kecup/,17],[/horcic/,15],[/mouk/,8],[/cukr/,12.5],[/\bsul\b/,18],
   [/protlak|pyre/,16],[/jogurt|skyr|smetan|kefir|mlek|napoj|vyvar/,15],[/tvaroh/,16],[/vlakn|slupk|kakao/,7],[/vlock/,5],[/sirup/,20]];
-function tbspG(id){const x=ING[id];if(!x)return 15;if(x.tbsp>0)return+x.tbsp;const n=fold(x.name)+" "+id;for(const[re,g] of TBSP_G)if(re.test(n))return g;return x.spice?7:15}
-function fmtUnitAmt(g,id,unit){const x=ING[id];const base=fmtAmt(g,x.unit);if(!unit||x.unit==="ks")return base;const d=tbspG(id);
-  if(unit==="ml"){const ml=g/(d/15);return`${Math.round(ml/(ml<50?5:10))*(ml<50?5:10)||Math.round(ml)} ml (${base})`}
-  const v=unit==="tsp"?g/(d/3):g/d;return`${fmtQty(v,unit)} (${base})`}
+function tbspG(id,liquid){const x=ING[id];if(!x)return 15;if(x.tbsp>0)return+x.tbsp;const n=fold(x.name)+" "+id;for(const[re,g] of TBSP_G)if(re.test(n))return g;return x.spice&&!liquid?7:15}
+const halfTxt=v=>{const w=Math.floor(v);return v-w>=.25&&v-w<.75?`${w||""}½`:String(Math.round(v))};
+function fmtUnitAmt(g,id,unit){const x=ING[id];const base=fmtAmt(g,x.unit);if(!unit||x.unit==="ks")return base;
+  if(unit==="cloves"){const c=Math.max(.5,Math.round(g/5*2)/2);return`${halfTxt(c)} ${c<=1?"clove":"cloves"} / ${base}`}
+  if(unit==="ml"){const ml=g/(tbspG(id,true)/15);const st=ml<50?5:10;return`${Math.max(st,Math.round(ml/st)*st)} ml / ${base}`}
+  const d=tbspG(id);if(unit==="spoon")unit=g/d>=.9?"tbsp":"tsp";
+  const v=unit==="tsp"?g/(d/3):g/d;return`${fmtQty(v,unit)} / ${base}`}
 function renderStep(txt,m,n,occ){const k=n/(m.stepBatch||4)*(m.stepScale||1);
   return String(txt).replace(TOK,(all,id,part,unit)=>{const rows=(m.items||[]).filter(x=>x[0]===id);if(!rows.length||!ING[id])return all;
       let a=rows.reduce((t,x)=>t+x[1],0);

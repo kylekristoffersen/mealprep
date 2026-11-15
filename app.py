@@ -14,7 +14,7 @@ try:
 except ImportError:  # falls back to the htpasswd program
     bcrypt = None
 
-APP_VERSION = "0.4.4"
+APP_VERSION = "0.4.6"
 DATA_DIR = os.environ.get("MEALPREP_DATA_DIR", os.path.join(os.path.dirname(os.path.abspath(__file__)), "_data"))
 PORT = int(os.environ.get("MEALPREP_PORT", "5020"))
 HTPASSWD = os.environ.get("MEALPREP_HTPASSWD", "/etc/nginx/.mealprep-htpasswd")
@@ -433,6 +433,7 @@ def server_status():
         "passwordFile": os.path.exists(HTPASSWD),
         "signInOn": auth_on(),
         "updateLog": None if log is None else log.strip().splitlines()[-25:],
+        "dataUpdates": updates_report(),
         "switchStatus": (_read(os.path.join(DATA_DIR, "nginx-switch-status")) or "").strip() or None,
     })
 
@@ -442,7 +443,57 @@ def health():
     return jsonify({"ok": True, "version": APP_VERSION})
 
 
+# ---- data updates shipped through the repo (data-updates/*.json), applied once each when the app starts ----
+# {"id": "...", "note": "...", "docs": {"meals/x": {"base": <version it was written against>, "data": {...}}}}
+# A doc is only replaced if it is still at "base" (nobody changed it in the app since); otherwise it is skipped and reported.
+UPDATES_DIR = os.path.join(APP_DIR, "data-updates")
+
+
+def apply_updates():
+    if not os.path.isdir(UPDATES_DIR):
+        return
+    for fn in sorted(os.listdir(UPDATES_DIR)):
+        if not fn.endswith(".json"):
+            continue
+        try:
+            with open(os.path.join(UPDATES_DIR, fn), encoding="utf-8") as f:
+                u = json.load(f)
+            uid = str(u.get("id") or fn[:-5])
+        except Exception as e:
+            print("data update", fn, "unreadable:", e)
+            continue
+        with db() as c:
+            if c.execute("SELECT 1 FROM kv WHERE k=?", ("update:" + uid,)).fetchone():
+                continue
+        backup = write_backup("before-update")
+        done, skipped = [], []
+        with _lock, db() as c:
+            for path, spec in (u.get("docs") or {}).items():
+                if not PATH_RE.match(path) or "data" not in spec:
+                    skipped.append({"path": path, "why": "bad entry"})
+                    continue
+                row = c.execute("SELECT version FROM docs WHERE path=?", (path,)).fetchone()
+                cur = row["version"] if row else 0
+                if spec.get("base") is not None and spec["base"] != cur:
+                    skipped.append({"path": path, "why": f"changed in the app since (now v{cur}, update written for v{spec['base']})"})
+                    continue
+                c.execute("INSERT INTO docs(path,data,version,updated_at,updated_by) VALUES(?,?,?,?,?) "
+                          "ON CONFLICT(path) DO UPDATE SET data=excluded.data,version=excluded.version,updated_at=excluded.updated_at,updated_by=excluded.updated_by",
+                          (path, json.dumps(spec["data"], ensure_ascii=False), cur + 1, now(), "update:" + uid[:40]))
+                done.append(path)
+            c.execute("INSERT INTO kv VALUES(?,?)", ("update:" + uid, json.dumps(
+                {"id": uid, "note": u.get("note", ""), "at": now(), "applied": done, "skipped": skipped, "backup": backup}, ensure_ascii=False)))
+        print(f"data update {uid}: {len(done)} applied, {len(skipped)} skipped")
+
+
+def updates_report():
+    with db() as c:
+        rows = [json.loads(r["v"]) for r in c.execute("SELECT v FROM kv WHERE k LIKE 'update:%'")]
+    return sorted(rows, key=lambda r: r.get("at", ""), reverse=True)[:10]
+
+
 init_db()
+apply_updates()
 if __name__ == "__main__":
     threading.Thread(target=backup_loop, daemon=True).start()
     from waitress import serve
