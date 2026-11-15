@@ -251,3 +251,12 @@ table.prices td:first-child .linkbtn{text-align:left}
 .pinpanel ul.results li{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--line);margin:0}
 .pinpanel ul.results li:last-child{border-bottom:0}
 .pinpanel .btn,.pinpanel .chip{overflow-wrap:normal;white-space:nowrap;flex-shrink:0}
+
+/* Use up list: fixed-size cards so the panel keeps its height while the status text updates as you change meals */
+.uu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.uu-card{display:flex;align-items:center;gap:4px;height:52px;padding:6px 6px 6px 10px;border-radius:10px;background:var(--bg);cursor:pointer;min-width:0}
+.uu-card.on{background:var(--on-bg)} .uu-card.near{background:var(--near-bg)}
+.uu-text{flex:1;min-width:0;font:500 .78rem/1.35 var(--mono);font-variant-numeric:tabular-nums}
+.uu-name,.uu-status{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.uu-name{color:var(--ink);font-weight:600}
+.uu-card.on .uu-status{color:var(--on)} .uu-card.near .uu-status{color:var(--near)}
