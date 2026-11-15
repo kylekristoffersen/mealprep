@@ -16,13 +16,31 @@ window.fetch=async(...a)=>{const r=await _fetch(...a);if(r.status===401){locatio
 /* ---------- storage: every save carries the version it started from; a stale save is refused, not overwritten ---------- */
 let conflict=false, pending=0;
 function showBanner(html){$("#banner").innerHTML=html?`<div class="banner" role="alert">${html}</div>`:""}
-function setConflict(){conflict=true;showBanner(`<span><b>Someone else saved a change</b> while you were editing, so your last change wasn't saved.</span><button class="btn primary" data-act="reload">Reload the latest</button>`)}
+function setConflict(info){conflict=true;const when=info?.at?new Date(info.at).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}):"";
+  const by=info?.by?(info.by===ME?"another device or tab signed in as "+info.by:info.by.startsWith("update:")?"a server data update":info.by):"";
+  showBanner(`<span><b>Someone else saved a change</b>${by?` (${esc(by)}${when?", "+when:""})`:""} that clashes with yours, so your last change wasn't saved.</span><button class="btn primary" data-act="reload">Reload the latest</button>`)}
+/* Plan and deals: when someone else saved in between, merge instead of refusing. Only the parts changed here are written over theirs;
+   their other changes are kept. Anything else (recipes, settings) still shows the banner. */
+const clone=o=>o===undefined?undefined:JSON.parse(JSON.stringify(o));
+const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+const isObj=o=>o&&typeof o==="object"&&!Array.isArray(o);
+function merge3(base,mine,theirs){if(same(mine,base))return clone(theirs);if(same(theirs,base)||same(theirs,mine))return clone(mine);
+  if(isObj(mine)&&isObj(theirs)){const out={};for(const k of new Set([...Object.keys(mine),...Object.keys(theirs)])){const v=merge3(isObj(base)?base[k]:undefined,mine[k],theirs[k]);if(v!==undefined)out[k]=v}return out}
+  return clone(mine)}
+const MERGEABLE=new Set(["state/plan","state/deals"]);
 async function putDoc(path,data){
   if(conflict)return false;pending++;
-  try{const r=await fetch("/api/doc/"+path,{method:"PUT",headers:jhead,body:JSON.stringify({data,version:DOCS[path]?DOCS[path].version:0})});
-    if(r.status===409){setConflict();return false}
+  try{const send=async(d,v)=>fetch("/api/doc/"+path,{method:"PUT",headers:jhead,body:JSON.stringify({data:d,version:v})});
+    let r=await send(data,DOCS[path]?DOCS[path].version:0);
+    if(r.status===409){const j=await fetchAll();const theirs=j.docs[path];
+      if(!MERGEABLE.has(path)||!theirs){setConflict(theirs);return false}
+      const merged=merge3(DOCS[path]?.data,clone(data),theirs.data);r=await send(merged,theirs.version);
+      if(r.status===409){setConflict(theirs);return false}if(!r.ok)throw new Error("HTTP "+r.status);
+      const k=await r.json();DOCS=j.docs;DOCS[path]={...theirs,data:merged,version:k.version};
+      const typing=document.activeElement&&/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+      loadDocs(DOCS);if(!typing)render();toast("Merged with a change saved on another device");return true}
     if(!r.ok)throw new Error("HTTP "+r.status);
-    const j=await r.json();DOCS[path]={data,version:j.version};return true}
+    const j=await r.json();DOCS[path]={...(DOCS[path]||{}),data:clone(data),version:j.version};return true}
   catch(e){toast("Couldn't save: "+(e.message||e));return false}
   finally{pending--}}
 async function delDoc(path){try{const r=await fetch("/api/doc/"+path,{method:"DELETE"});if(!r.ok)throw new Error("HTTP "+r.status);delete DOCS[path];return true}catch(e){toast("Couldn't delete: "+(e.message||e));return false}}
