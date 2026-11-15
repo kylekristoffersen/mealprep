@@ -135,7 +135,19 @@ async function mergeIngredients(src,tgt,factor){
   for(const[mid,m] of Object.entries(MEALS))if((m.items||[]).some(([id])=>id===src)){const nm={...m,items:mergedItems(m.items,src,tgt,factor)};if(!await saveMeal(mid,nm))throw new Error("a meal couldn't be saved")}
   EDITS=remapObj(EDITS,src,tgt);SWAPS=remapObj(SWAPS,src,tgt);DISMISSED=remapObj(DISMISSED,src,tgt);USEUP=USEUP.map(u=>u.id===src?{...u,id:tgt}:u);
   if(SHOPSET){const S={...SHOPSET};for(const k of["lidlPick","kauflandPick"])if(S[k]&&src in S[k]){S[k]={...S[k]};if(!(tgt in S[k]))S[k][tgt]=S[k][src];delete S[k][src]}SHOPSET=S;await putDoc("settings/shopping",S)}
+  await movePinnedProducts(src,tgt);
   delete ING[src];await putDoc("lib/ingredients",{items:ING});flushPlan()}
+/* pinned shop products (and their last prices) follow the merge; a product already pinned for the kept ingredient isn't duplicated */
+async function movePinnedProducts(src,tgt){if(typeof PRODUCTS==="undefined")return;
+  const slug=tgt.slice(0,24).replace(/[^a-z0-9-]/g,"");let items={...(PRICES.items||{})},pricesChanged=false;
+  for(const[k,x] of Object.entries(PRODUCTS)){if(x.ing!==src)continue;const id=shopId(x);
+    const dup=Object.entries(PRODUCTS).find(([k2,y])=>k2!==k&&y.ing===tgt&&y.shop===x.shop&&shopId(y)===id);
+    if(!dup){const nk=x.shop[0]+id+"-"+slug;const hasUsual=Object.values(PRODUCTS).some(y=>y.ing===tgt&&y.shop===x.shop&&y.usual);
+      if(!await putDoc("products/"+nk,{...x,ing:tgt,usual:!!x.usual&&!hasUsual}))throw new Error("a pinned product couldn't be moved");
+      PRODUCTS[nk]={...x,ing:tgt,usual:!!x.usual&&!hasUsual};if(items[k]&&!items[nk]){items[nk]=items[k];pricesChanged=true}}
+    if(!await delDoc("products/"+k))throw new Error("an old pinned product couldn't be removed");delete PRODUCTS[k];if(items[k]){delete items[k];pricesChanged=true}}
+  if(pricesChanged){PRICES={...PRICES,items};await putDoc("state/prices",PRICES)}
+  const N=remapObj(NOTSOLD,src,tgt);if(JSON.stringify(N)!==JSON.stringify(NOTSOLD)){NOTSOLD=N;await putDoc("state/notsold",N)}}
 function mergePanelHTML(){const m=ui.mui,src=m.src,x=ING[src];if(!x)return"";const opts=Object.entries(ING).filter(([id])=>id!==src).sort((a,b)=>a[1].name.localeCompare(b[1].name,"cs"));
   const t=ING[m.tgt];const rows=t?mergePreview(src,m.tgt,m.factor):[];
   return`<section class="panel" id="merge-panel" style="margin:12px 0;border-color:var(--accent)"><h2>Merge ${esc(x.name)}</h2>
