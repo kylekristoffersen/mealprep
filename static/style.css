@@ -219,6 +219,17 @@ table.prices td.win{background:color-mix(in srgb,var(--accent) 12%,transparent)}
 table.prices .pn{display:block;font-size:.76rem;color:var(--muted);line-height:1.3}
 table.prices .pn.warn,.warn{color:#b45309}
 table.prices .pn.swap{color:var(--ink)}
+table.prices td.needpin{background:color-mix(in srgb,var(--tape) 22%,transparent);box-shadow:inset 3px 0 0 var(--tape)}
+table.prices .pinbtn{font:600 .78rem/1.2 var(--body);background:var(--tape);color:var(--tape-ink);border:0;border-radius:999px;padding:3px 10px;cursor:pointer}
+table.prices .nsbtn{display:block;margin-top:4px;color:var(--muted);font-size:.74rem}
+table.prices td.notsold{color:var(--muted);background:repeating-linear-gradient(135deg,transparent 0 6px,color-mix(in srgb,var(--muted) 10%,transparent) 6px 12px)}
+table.prices td.notsold .small{font-style:italic}
+table.prices td.pc.warn{background:color-mix(in srgb,#b45309 8%,transparent)}
+.legend-pr{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;color:var(--muted)}
+.legend-pr .key{display:inline-block;padding:1px 8px;border-radius:4px;font-size:.74rem;color:var(--ink)}
+.legend-pr .key.needpin{background:color-mix(in srgb,var(--tape) 40%,transparent)}
+.legend-pr .key.notsold{background:repeating-linear-gradient(135deg,transparent 0 5px,color-mix(in srgb,var(--muted) 18%,transparent) 5px 10px);border:1px solid var(--line)}
+.legend-pr .key.warnk{background:color-mix(in srgb,#b45309 14%,transparent);color:#b45309}
 table.prices .deal{color:var(--accent);font-weight:600}
 .pinpanel{overflow-wrap:anywhere;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
 .pinpanel input.tiny{width:70px;padding:2px 6px}

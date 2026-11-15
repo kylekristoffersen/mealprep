@@ -4,11 +4,19 @@
 "use strict";
 const SHOPS=[["rohlik","Rohlík"],["kosik","Košík"],["tesco","Tesco"]];
 const SHOPNAME=Object.fromEntries(SHOPS);
-let PRODUCTS={}, PRICES={items:{}};
+let PRODUCTS={}, PRICES={items:{}}, NOTSOLD={};
 const pui={open:null,busy:false,prog:null,add:{},search:{},swapsOnly:false};
 
 function loadPrices(docs){PRODUCTS={};for(const[p,d] of Object.entries(docs))if(p.startsWith("products/")&&d.data&&d.data.ing)PRODUCTS[p.slice(9)]=d.data;
-  PRICES=docs["state/prices"]?.data||{items:{}};if(!PRICES.items)PRICES.items={}}
+  PRICES=docs["state/prices"]?.data||{items:{}};if(!PRICES.items)PRICES.items={};
+  NOTSOLD=docs["state/notsold"]?.data||{}}
+/* "not sold here": a temporary mark per ingredient and shop (doc state/notsold, keys "<ing>|<shop>": {until}). It lapses after
+   NOTSOLD_DAYS so the shop gets looked at again, and pinning a product at that shop clears it. */
+const NOTSOLD_DAYS=28;
+const notSold=(ing,shop)=>{const m=NOTSOLD[ing+"|"+shop];return m&&Date.parse(m.until)>Date.now()?m:null};
+async function setNotSold(ing,shop,on){const N={};for(const[k,m] of Object.entries(NOTSOLD))if(Date.parse(m.until)>Date.now())N[k]=m;
+  if(on)N[ing+"|"+shop]={until:new Date(Date.now()+NOTSOLD_DAYS*864e5).toISOString()};else delete N[ing+"|"+shop];
+  NOTSOLD=N;render();await putDoc("state/notsold",N)}
 const priceSet=()=>({rohlikPremium:true,clubcard:true,...(SHOPSET?.prices||{})});
 const usable=x=>x&&!x.blocked&&x.status!=="rejected";
 const prodsFor=(ing,shop)=>Object.entries(PRODUCTS).filter(([,x])=>x.ing===ing&&usable(x)&&(!shop||x.shop===shop));
@@ -38,7 +46,7 @@ function costOf(key,x,need){const r=PRICES.items[key];const ing=ING[x.ing];if(!r
 
 /* per ingredient and shop: the usual product if it's in stock, otherwise the cheapest pinned one; cheaper alternatives are only suggested */
 function compareRow(item){const out={id:item.id,name:item.name,need:item.amt,unit:item.unit,shops:{}};
-  for(const[s] of SHOPS){const all=prodsFor(item.id,s).map(([k,x])=>costOf(k,x,item.amt));if(!all.length){out.shops[s]=null;continue}
+  for(const[s] of SHOPS){const all=prodsFor(item.id,s).map(([k,x])=>costOf(k,x,item.amt));if(!all.length){out.shops[s]=notSold(item.id,s)?{notSold:true}:null;continue}
     const ok=all.filter(c=>c.cost!=null&&c.inStock).sort((a,b)=>a.cost-b.cost);
     const usual=all.find(c=>c.x.usual);
     let pick=usual&&usual.cost!=null&&usual.inStock?usual:ok[0]||null;
@@ -51,8 +59,8 @@ function compareRow(item){const out={id:item.id,name:item.name,need:item.amt,uni
 function onlineItems(){const{reg,b2}=shoppingData();return[...reg,...b2]}
 
 function pricesView(v){const items=onlineItems();const rows=items.map(compareRow);const set=priceSet();
-  const tot={},miss={};for(const[s] of SHOPS){tot[s]=0;miss[s]=0}
-  let split=0,splitMiss=0;for(const r of rows){for(const[s] of SHOPS){const c=r.shops[s]?.pick?.cost;if(c!=null)tot[s]+=c;else miss[s]++}
+  const tot={},miss={},nots={},nopin={};for(const[s] of SHOPS){tot[s]=0;miss[s]=0;nots[s]=0;nopin[s]=0}
+  let split=0,splitMiss=0;for(const r of rows){for(const[s] of SHOPS){const c=r.shops[s]?.pick?.cost;if(c!=null)tot[s]+=c;else{miss[s]++;if(r.shops[s]?.notSold)nots[s]++;else if(!r.shops[s])nopin[s]++}}
     if(r.best)split+=r.shops[r.best].pick.cost;else splitMiss++}
   const full=SHOPS.filter(([s])=>!miss[s]).sort((a,b)=>tot[a[0]]-tot[b[0]]);
   const bestSingle=full[0];
@@ -69,10 +77,12 @@ function pricesView(v){const items=onlineItems();const rows=items.map(compareRow
     Rohlík shows the prices of its default warehouse; if they differ from what you see signed in, tell Claude.</p>
     ${ui.tescoHelp?tescoHelpHTML():""}</section>${pinQueueHTML(items)}${pui.open&&ING[pui.open]?`<section class="panel" id="pinrow" style="margin-top:12px">${pinPanelHTML(pui.open,items.find(x=>x.id===pui.open)?.amt)}</section>`:""}`;
   const sum=`<section class="panel" style="margin-top:12px"><h2>This week's online list</h2><div class="tot">
-    ${SHOPS.map(([s,n])=>`<div class="${bestSingle&&bestSingle[0]===s?"win":""}"><span class="muted small">All at ${n}</span><b>${Math.round(tot[s])} Kč</b><span class="small ${miss[s]?"warn":"muted"}">${miss[s]?`${miss[s]} item${miss[s]>1?"s":""} not priced`:"everything priced"}</span></div>`).join("")}
+    ${SHOPS.map(([s,n])=>`<div class="${bestSingle&&bestSingle[0]===s?"win":""}"><span class="muted small">All at ${n}</span><b>${Math.round(tot[s])} Kč</b><span class="small ${miss[s]?"warn":"muted"}">${miss[s]?`${miss[s]} item${miss[s]>1?"s":""} not priced`:"everything priced"}</span>${miss[s]&&(nopin[s]||nots[s])?`<span class="small muted">${[nopin[s]?`${nopin[s]} need a pin`:"",nots[s]?`${nots[s]} not sold here`:""].filter(Boolean).join(" · ")}</span>`:""}</div>`).join("")}
     <div><span class="muted small">Cheapest of each</span><b>${Math.round(split)} Kč</b><span class="small muted">${splitMiss?`${splitMiss} not priced anywhere`:"split across shops"}</span></div></div>
     ${bestSingle?`<p class="small" style="margin:8px 0 0">${bestSingle[1]} is the cheapest single shop with everything. Splitting would save <b>${Math.round(tot[bestSingle[0]]-split)} Kč</b>${splitMiss?" on the priced items":""}, before delivery fees.</p>`:`<p class="small muted" style="margin:8px 0 0">No shop has every item priced yet, so the totals aren't like for like. Pin the missing ones below.</p>`}</section>`;
-  const cell=(r,s)=>{const c=r.shops[s];if(!c)return`<td class="pc none"><button class="linkbtn small" data-pin="${esc(r.id)}">pin</button></td>`;
+  const cell=(r,s)=>{const c=r.shops[s];
+    if(!c)return`<td class="pc needpin"><button class="pinbtn" data-pin="${esc(r.id)}">needs pin</button><button class="linkbtn small nsbtn" data-ns="${esc(r.id)}|${s}" title="Mark as not sold at ${SHOPNAME[s]} for ${NOTSOLD_DAYS} days">not sold here?</button></td>`;
+    if(c.notSold)return`<td class="pc notsold" title="Marked not sold at ${SHOPNAME[s]} until ${esc(fmtDay(NOTSOLD[r.id+"|"+s].until))}"><span class="small">not sold here</span><span class="pn">until ${esc(fmtDay(NOTSOLD[r.id+"|"+s].until))} · <button class="linkbtn small" data-nsoff="${esc(r.id)}|${s}">undo</button></span></td>`;
     const p=c.pick;if(!p)return`<td class="pc warn"><span class="small">${c.soldOut?"sold out":c.errs?"not priced":"–"}</span>${c.note?`<span class="pn">${esc(c.note)}</span>`:""}</td>`;
     return`<td class="pc ${r.best===s?"win":""}" title="${esc(p.x.name)}"><b>${Math.round(p.cost)} Kč</b><span class="pn">${esc(p.buy)}${p.deal?` · <span class="deal">${esc(p.deal)}</span>`:""}</span>
       ${c.note?`<span class="pn warn">${esc(c.note)}</span>`:""}${p.r.inStock==null&&p.x.shop!=="tesco"?`<span class="pn">stock not shown</span>`:""}${p.nearMulti?`<span class="pn">${esc(p.nearMulti.text)}: ${kc(p.nearMulti.price)} Kč each</span>`:""}
@@ -84,13 +94,15 @@ function pricesView(v){const items=onlineItems();const rows=items.map(compareRow
     ${list.map(r=>`<tr><td><button class="linkbtn" data-pin="${esc(r.id)}">${esc(r.name)}</button>${r.spread>=20?`<span class="pn">saves ${Math.round(r.spread)} Kč at ${SHOPNAME[r.best]}</span>`:""}</td><td class="num">${fmtAmt(r.need,r.unit)}</td>${SHOPS.map(([s])=>cell(r,s)).join("")}</tr>
       `).join("")}
     </tbody></table>${items.length?"":`<p class="muted">The online list is empty. Plan the week first.</p>`}
+    <p class="small legend-pr"><span class="key needpin">needs pin</span> no product pinned at that shop yet <span class="key notsold">not sold here</span> you marked the shop as not carrying it; the mark lapses after ${NOTSOLD_DAYS} days so it gets checked again <span class="key warnk">not priced</span> pinned, but no usable price</p>
     <p class="muted small">Amounts are rounded up to whole packs; weighed items are priced by weight. A sale or member price is used when it's cheaper, multi-buy offers only when you'd buy enough. Product swaps are only suggested: press <b>use this</b> to make one your usual.</p></section>`;
   v.innerHTML=head+sum+table}
 
+const fmtDay=iso=>new Date(iso).toLocaleDateString("en-GB",{day:"numeric",month:"short"});
 function fmtWhen(iso){const d=new Date(iso);return d.toLocaleString("en-GB",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}
 
 /* ---------- pinning: a to-do list of this week's unpinned items, a Rohlík search that runs by itself, and search links for Košík and Tesco ---------- */
-const unpinned=items=>items.filter(x=>!prodsFor(x.id).length);
+const unpinned=items=>items.filter(x=>!prodsFor(x.id).length&&!SHOPS.every(([s])=>notSold(x.id,s)));
 function pinQueueHTML(items){const u=unpinned(items);if(!u.length)return"";
   return`<section class="panel" style="margin-top:12px"><div class="row" style="justify-content:space-between"><h2>To pin this week</h2><span class="tape">${u.length} item${u.length>1?"s":""}</span></div>
   <p class="muted small" style="margin:4px 0 8px">These have no product pinned at any shop, so they can't be priced. Tap one: Rohlík is searched for you, and Košík and Tesco open with the search filled in.</p>
@@ -192,12 +204,14 @@ async function setUsual(key){const x=PRODUCTS[key];if(!x)return;for(const[k,y] o
   await putDoc("products/"+key,{...x,usual:true});loadPrices(DOCS);render();toast(`${x.name} is now your usual at ${SHOPNAME[x.shop]}`)}
 async function pinProduct(ing,info){if(!info?.shop||!info.id)return;const key=info.shop[0]+info.id+"-"+ing.slice(0,24).replace(/[^a-z0-9-]/g,"");
   const first=!prodsFor(ing,info.shop).length;const data={shop:info.shop,ing,name:info.name||`${SHOPNAME[info.shop]} product ${info.id}`,url:info.url,packG:info.packG||null,perKg:!!info.perKg,usual:first,status:"ok"};
-  if(await putDoc("products/"+key,data)){loadPrices(DOCS);pui.add[ing]={msg:`Pinned at ${SHOPNAME[info.shop]}${data.packG||data.perKg?"":": enter its pack size"}${info.shop==="tesco"?". Its price comes with the next Tesco check":". Its price comes with the next check"}.`};render()}}
+  if(await putDoc("products/"+key,data)){loadPrices(DOCS);if(NOTSOLD[ing+"|"+info.shop])await setNotSold(ing,info.shop,false);pui.add[ing]={msg:`Pinned at ${SHOPNAME[info.shop]}${data.packG||data.perKg?"":": enter its pack size"}${info.shop==="tesco"?". Its price comes with the next Tesco check":". Its price comes with the next check"}.`};render()}}
 
-document.addEventListener("click",async e=>{const t=e.target.closest("[data-pr],[data-pin],[data-usual],[data-unpin],[data-addgo],[data-sgo],[data-spin],[data-pnext]");if(!t||tab!=="prices")return;const d=t.dataset;
+document.addEventListener("click",async e=>{const t=e.target.closest("[data-pr],[data-pin],[data-ns],[data-nsoff],[data-usual],[data-unpin],[data-addgo],[data-sgo],[data-spin],[data-pnext]");if(!t||tab!=="prices")return;const d=t.dataset;
   if(d.pr==="check")runCheck();
   else if(d.pr==="tesco"){ui.tescoHelp=!ui.tescoHelp;render()}
   else if(d.pr==="swaps"){pui.swapsOnly=t.checked;render()}
+  else if(d.ns){const[ing,s]=d.ns.split("|");await setNotSold(ing,s,true);toast(`${ING[ing]?.name||ing}: marked not sold at ${SHOPNAME[s]} for ${NOTSOLD_DAYS} days`)}
+  else if(d.nsoff){const[ing,s]=d.nsoff.split("|");await setNotSold(ing,s,false)}
   else if(d.pin!==undefined){if(pui.open===d.pin){pui.open=null;render()}else openPin(d.pin)}
   else if(d.pnext)openPin(d.pnext);
   else if(d.usual)setUsual(d.usual);
