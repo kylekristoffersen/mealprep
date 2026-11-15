@@ -155,12 +155,23 @@ function tescoRunner(){(async()=>{const H=new URLSearchParams(location.hash.slic
   say("Meal Prep: done, taking you back to the planner…");
   location.href=back+"#prices&tesco="+encodeURIComponent(JSON.stringify({at:new Date().toISOString(),items:out}))})()}
 const tescoBookmark=()=>"javascript:"+encodeURIComponent("("+tescoRunner.toString()+")()");
-function tescoIds(){const ings=new Set(onlineItems().map(x=>x.id));return[...new Set(Object.values(PRODUCTS).filter(x=>usable(x)&&x.shop==="tesco"&&ings.has(x.ing)).map(shopId).filter(Boolean))]}
-function tescoHelpHTML(){const ids=tescoIds();const go=`https://nakup.itesco.cz/groceries/cs-CZ/#mpcheck=${encodeURIComponent(JSON.stringify(ids))}&mpback=${encodeURIComponent(location.origin+location.pathname)}`;
+/* Tesco products on this week's list. A product whose price was already read and saved today (local date) is left out,
+   so a second check on the same day only asks Tesco for what's new or failed. Errors are always retried. */
+const sameDay=iso=>!!iso&&new Date(iso).toDateString()===new Date().toDateString();
+function tescoIdsSplit(){const ings=new Set(onlineItems().map(x=>x.id)),todo=new Set(),fresh=new Set();
+  for(const[k,x] of Object.entries(PRODUCTS)){if(!(usable(x)&&x.shop==="tesco"&&ings.has(x.ing)))continue;const id=shopId(x);if(!id)continue;
+    const r=PRICES.items[k];(r&&!r.error&&sameDay(r.at)?fresh:todo).add(id)}
+  for(const id of todo)fresh.delete(id);
+  return{todo:[...todo],fresh:[...fresh]}}
+function tescoIds(){return tescoIdsSplit().todo}
+function tescoHelpHTML(){const{todo:ids,fresh}=tescoIdsSplit();
+  const skip=fresh.length?` ${fresh.length} already checked today ${fresh.length===1?"is":"are"} skipped.`:"";
+  if(!ids.length)return`<div class="pinpanel" style="margin-top:10px"><b>Tesco check</b>
+  <p class="small" style="margin:6px 0 0">Nothing to check: ${fresh.length?`all ${fresh.length} Tesco products on this week's list were already checked today.`:"no Tesco products are pinned for this week's list."} Add or pin something new and it will show up here.</p></div>`;const go=`https://nakup.itesco.cz/groceries/cs-CZ/#mpcheck=${encodeURIComponent(JSON.stringify(ids))}&mpback=${encodeURIComponent(location.origin+location.pathname)}`;
   return`<div class="pinpanel" style="margin-top:10px"><b>Tesco check (on a computer)</b>
   <ol class="small" style="margin:6px 0 0;padding-left:20px;line-height:1.6">
    <li>One time only: drag this button to your bookmarks bar: <a class="btn tiny" href="${esc(tescoBookmark())}" onclick="event.preventDefault();toast('Drag it to the bookmarks bar instead of clicking.')">Meal Prep: Tesco prices</a></li>
-   <li><a href="${esc(go)}" target="_blank" rel="noopener">Open Tesco</a> (${ids.length} products on this week's list) and sign in if it asks, so Clubcard prices show.</li>
+   <li><a href="${esc(go)}" target="_blank" rel="noopener">Open Tesco</a> (${ids.length} product${ids.length===1?"":"s"} to check.${skip}) and sign in if it asks, so Clubcard prices show.</li>
    <li>On that Tesco tab, press the <b>Meal Prep: Tesco prices</b> bookmark. It reads one product every 4–6 seconds (about ${Math.max(1,Math.round(ids.length*5/60))} min), then brings you back here with the prices.</li></ol>
   <p class="muted small" style="margin:6px 0 0">It only reads product pages, slowly, and stops on its own if Tesco shows a warning.</p></div>`}
 
