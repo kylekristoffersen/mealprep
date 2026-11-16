@@ -1,0 +1,48 @@
+{
+ "id": "2026-11-16-new-ingredients",
+ "note": "New library ingredients for the recipe fixes: white cabbage, orange (zest only), baking soda.",
+ "docs": {
+  "lib/ingredients": {
+   "add": {
+    "items": {
+     "zeli-bile": {
+      "name": "Zelí bílé",
+      "unit": "g",
+      "kcal": 25,
+      "p": 1.3,
+      "c": 5.8,
+      "f": 0.1,
+      "fib": 2.5,
+      "bakery": false,
+      "est": true
+     },
+     "pomeranc": {
+      "name": "Pomeranč",
+      "unit": "ks",
+      "kcal": 2,
+      "p": 0,
+      "c": 0.5,
+      "f": 0,
+      "fib": 0.2,
+      "note": "Nutrition counts the zest only (that's all the recipes use).",
+      "bakery": false,
+      "est": true
+     },
+     "jedla-soda": {
+      "name": "Jedlá soda",
+      "unit": "g",
+      "kcal": 0,
+      "p": 0,
+      "c": 0,
+      "f": 0,
+      "fib": 0,
+      "spice": true,
+      "tbsp": 13.8,
+      "bakery": false,
+      "est": true
+     }
+    }
+   }
+  }
+ }
+}
